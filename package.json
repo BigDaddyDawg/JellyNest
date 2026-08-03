@@ -1,0 +1,10 @@
+{
+  "name": "jelly-nest",
+  "private": true,
+  "description": "Soft Jellycat plush gallery",
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "refresh-data": "python scripts/refresh_data.py",
+    "refresh-coming-soon": "python scripts/refresh_coming_soon.py"
+  }
+}
