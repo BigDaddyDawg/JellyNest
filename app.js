@@ -84,6 +84,10 @@
   /** @type {string | null} */
   let modalCardId = null;
   let activeTab = "collection";
+  /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
+  let wishSync = null;
+  /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
+  let ownedSync = null;
 
   initFloaties();
   loadLists();
@@ -121,6 +125,7 @@
       const res = await fetch("./data/cards.json");
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
+      await initFamilyVault();
       fillFilters();
       paintFavorites();
       bindUI();
@@ -131,6 +136,36 @@
       els.countLabel.textContent = "The nest wouldn’t settle. Try refreshing.";
       console.error(err);
     }
+  }
+
+  async function initFamilyVault() {
+    if (!window.FamilyListSync?.create) return;
+    wishSync = window.FamilyListSync.create({
+      app: "jellynest",
+      listType: "wishlist",
+      storageKey: WISHLIST_KEY,
+      onRemoteChange: (ids) => {
+        wishlist = new Set(ids.map(String));
+        updateListChrome();
+        if (activeTab === "wishlist") renderWishlist();
+        if (modalCardId) syncModalButtons();
+      },
+    });
+    ownedSync = window.FamilyListSync.create({
+      app: "jellynest",
+      listType: "owned",
+      storageKey: OWNED_KEY,
+      onRemoteChange: (ids) => {
+        owned = new Set(ids.map(String));
+        updateListChrome();
+        if (activeTab === "owned") renderOwned();
+        if (modalCardId) syncModalButtons();
+      },
+    });
+    wishlist = await wishSync.hydrate(wishlist);
+    owned = await ownedSync.hydrate(owned);
+    wishSync.subscribe();
+    ownedSync.subscribe();
   }
 
   function loadList(key) {
@@ -168,6 +203,7 @@
     if (wishlist.has(key)) wishlist.delete(key);
     else wishlist.add(key);
     saveList(WISHLIST_KEY, wishlist);
+    if (wishSync) wishSync.setItem(key, wishlist.has(key));
     syncWishButtons(key);
     updateListChrome();
     if (activeTab === "wishlist") renderWishlist();
@@ -185,10 +221,12 @@
       if (wishlist.has(key)) {
         wishlist.delete(key);
         saveList(WISHLIST_KEY, wishlist);
+        if (wishSync) wishSync.setItem(key, false);
         syncWishButtons(key);
       }
     }
     saveList(OWNED_KEY, owned);
+    if (ownedSync) ownedSync.setItem(key, owned.has(key));
     syncOwnButtons(key);
     updateListChrome();
     if (activeTab === "owned") renderOwned();
@@ -434,7 +472,7 @@
     if (els.wishCountLabel) {
       els.wishCountLabel.textContent =
         wishN === 0
-          ? "Tap the heart on any plush to save it here — it stays on this phone."
+          ? "Shared family wishlist — same list on every phone."
           : `${wishN.toLocaleString()} friend${wishN === 1 ? "" : "s"} waiting for a squeeze.`;
     }
 
@@ -446,7 +484,7 @@
     if (els.ownedCountLabel) {
       els.ownedCountLabel.textContent =
         ownN === 0
-          ? "Tap the check on any plush to mark it as yours — it stays on this phone."
+          ? "Shared family nest — anyone can tick these off."
           : `${ownN.toLocaleString()} friend${ownN === 1 ? "" : "s"} already nestled at home.`;
     }
   }

@@ -48,7 +48,7 @@ Sources of truth:
 
 Refresh behavior:
 - When she opens **Coming Soon**, the app reloads `data/coming-soon.json` and tries a live journal pull
-- GitHub Actions also refreshes the snapshot twice a week (Sun/Wed) — or run locally:
+- GitHub Actions also refreshes the snapshot twice a week (Sun/Wed), plus a **full catalogue refresh every Monday** — or run locally:
 
 ```powershell
 python scripts/refresh_coming_soon.py
@@ -58,12 +58,10 @@ Then commit + push, or trigger the **Refresh Coming Soon** workflow from GitHub 
 
 ## Wishlist & Owned
 
-Both lists live in the browser on her phone (`localStorage`), so they stay after she closes the tab.
+Both lists sync to the **Family Vault** (shared Supabase hub) across family phones, with a local cache for offline use.
 
 - **Owned** — tap the check on any friend (or **Mark as owned** in the detail view). Marking something owned also clears it from the wishlist.
 - **Wishlist** — tap the heart on any friend (or **Add to wishlist** in the detail view).
-
-Note: clearing site data, switching browsers, or using a different phone starts fresh lists.
 
 ## Credit
 
