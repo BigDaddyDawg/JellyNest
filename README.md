@@ -1,6 +1,6 @@
 # JellyNest
 
-A soft little gallery of Jellycat plush — browse by collection, size, or family, save favourites to a wishlist, and peek at what’s coming soon.
+A soft little gallery of Jellycat plush — browse by theme, catalogue, year, or status; track what she owns and wants; and peek at what’s coming soon.
 
 ## Live site
 
@@ -50,11 +50,14 @@ python scripts/refresh_coming_soon.py
 
 Then commit + push, or trigger the **Refresh Coming Soon** workflow from GitHub Actions.
 
-## Wishlist
+## Wishlist & Owned
 
-Saved plush live in the browser on her phone (`localStorage`), so they stay after she closes the tab. Open the **Wishlist** tab to browse them, or tap the heart on any friend / use **Add to wishlist** in the detail view.
+Both lists live in the browser on her phone (`localStorage`), so they stay after she closes the tab.
 
-Note: clearing site data, switching browsers, or using a different phone starts a fresh list.
+- **Owned** — tap the check on any friend (or **Mark as owned** in the detail view). Marking something owned also clears it from the wishlist.
+- **Wishlist** — tap the heart on any friend (or **Add to wishlist** in the detail view).
+
+Note: clearing site data, switching browsers, or using a different phone starts fresh lists.
 
 ## Credit
 

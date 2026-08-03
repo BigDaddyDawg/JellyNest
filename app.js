@@ -1,6 +1,7 @@
 (() => {
   const PAGE_SIZE = 48;
   const WISHLIST_KEY = "jellynest_wishlist_v1";
+  const OWNED_KEY = "jellynest_owned_v1";
   const NEWS_URL = "https://www.jellycat.com/jelly-journal/";
   const LIVE_NEWS_URL = "https://r.jina.ai/http://www.jellycat.com/jelly-journal/";
   const FAV_PICKS = {
@@ -9,6 +10,7 @@
     Bartholomew: ["Bartholomew Bear", "Bartholomew Bear Bag", "Bartholomew"],
   };
   const HEART_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.2s-6.7-4.2-9.1-8.1C1.2 9.4 2.1 6.4 5 5.4c1.8-.6 3.7.1 4.8 1.5C11 5.5 12.9 4.8 14.7 5.4c2.9 1 3.8 4 2.1 6.7-2.4 3.9-9.1 8.1-9.1 8.1z"/></svg>`;
+  const CHECK_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 13l4.5 4.5L19 7"/></svg>`;
 
   const els = {
     grid: document.getElementById("cardGrid"),
@@ -33,12 +35,20 @@
     modalYear: document.getElementById("modalYear"),
     modalStatus: document.getElementById("modalStatus"),
     modalWish: document.getElementById("modalWish"),
+    modalOwn: document.getElementById("modalOwn"),
     panelCollection: document.getElementById("panelCollection"),
+    panelOwned: document.getElementById("panelOwned"),
     panelWishlist: document.getElementById("panelWishlist"),
     panelComing: document.getElementById("panelComing"),
     tabCollection: document.getElementById("tabCollection"),
+    tabOwned: document.getElementById("tabOwned"),
     tabWishlist: document.getElementById("tabWishlist"),
     tabComing: document.getElementById("tabComing"),
+    ownedGrid: document.getElementById("ownedGrid"),
+    ownedEmpty: document.getElementById("ownedEmpty"),
+    ownedSearch: document.getElementById("ownedSearch"),
+    ownedCountLabel: document.getElementById("ownedCountLabel"),
+    ownedTabCount: document.getElementById("ownedTabCount"),
     wishGrid: document.getElementById("wishGrid"),
     wishEmpty: document.getElementById("wishEmpty"),
     wishSearch: document.getElementById("wishSearch"),
@@ -58,6 +68,7 @@
   let shown = 0;
   let searchTimer = null;
   let wishSearchTimer = null;
+  let ownedSearchTimer = null;
   let comingLoaded = false;
   let comingBusy = false;
   /** @type {any} */
@@ -66,12 +77,14 @@
   let comingDisplayCards = [];
   /** @type {Set<string>} */
   let wishlist = new Set();
+  /** @type {Set<string>} */
+  let owned = new Set();
   /** @type {string | null} */
   let modalCardId = null;
   let activeTab = "collection";
 
   initFloaties();
-  loadWishlist();
+  loadLists();
   registerServiceWorker();
   boot();
 
@@ -79,7 +92,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("service-worker.js?v=2")
+        .register("service-worker.js?v=3")
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -110,7 +123,7 @@
       paintFavorites();
       bindUI();
       applyFilters();
-      updateWishChrome();
+      updateListChrome();
       maybeOpenTabFromHash();
     } catch (err) {
       els.countLabel.textContent = "The nest wouldn’t settle. Try refreshing.";
@@ -118,20 +131,25 @@
     }
   }
 
-  function loadWishlist() {
+  function loadList(key) {
     try {
-      const raw = JSON.parse(localStorage.getItem(WISHLIST_KEY) || "[]");
-      wishlist = new Set((Array.isArray(raw) ? raw : []).map(String));
+      const raw = JSON.parse(localStorage.getItem(key) || "[]");
+      return new Set((Array.isArray(raw) ? raw : []).map(String));
     } catch {
-      wishlist = new Set();
+      return new Set();
     }
   }
 
-  function saveWishlist() {
+  function loadLists() {
+    wishlist = loadList(WISHLIST_KEY);
+    owned = loadList(OWNED_KEY);
+  }
+
+  function saveList(key, set) {
     try {
-      localStorage.setItem(WISHLIST_KEY, JSON.stringify([...wishlist]));
+      localStorage.setItem(key, JSON.stringify([...set]));
     } catch (err) {
-      console.warn("Could not save wishlist", err);
+      console.warn(`Could not save ${key}`, err);
     }
   }
 
@@ -139,16 +157,42 @@
     return wishlist.has(String(id));
   }
 
+  function isOwned(id) {
+    return owned.has(String(id));
+  }
+
   function toggleWish(id) {
     const key = String(id);
     if (wishlist.has(key)) wishlist.delete(key);
     else wishlist.add(key);
-    saveWishlist();
+    saveList(WISHLIST_KEY, wishlist);
     syncWishButtons(key);
-    updateWishChrome();
+    updateListChrome();
     if (activeTab === "wishlist") renderWishlist();
-    if (modalCardId === key) syncModalWishBtn();
+    if (modalCardId === key) syncModalButtons();
     return wishlist.has(key);
+  }
+
+  function toggleOwn(id) {
+    const key = String(id);
+    if (owned.has(key)) {
+      owned.delete(key);
+    } else {
+      owned.add(key);
+      // Got it — drop from the wish list if it was waiting there
+      if (wishlist.has(key)) {
+        wishlist.delete(key);
+        saveList(WISHLIST_KEY, wishlist);
+        syncWishButtons(key);
+      }
+    }
+    saveList(OWNED_KEY, owned);
+    syncOwnButtons(key);
+    updateListChrome();
+    if (activeTab === "owned") renderOwned();
+    if (activeTab === "wishlist") renderWishlist();
+    if (modalCardId === key) syncModalButtons();
+    return owned.has(key);
   }
 
   function fillSelect(select, values) {
@@ -231,6 +275,7 @@
     });
 
     els.grid.addEventListener("click", onGridClick);
+    els.ownedGrid?.addEventListener("click", onGridClick);
     els.wishGrid?.addEventListener("click", onGridClick);
     els.revealsGrid?.addEventListener("click", onGridClick);
 
@@ -240,6 +285,9 @@
     });
     els.modalWish?.addEventListener("click", () => {
       if (modalCardId) toggleWish(modalCardId);
+    });
+    els.modalOwn?.addEventListener("click", () => {
+      if (modalCardId) toggleOwn(modalCardId);
     });
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && els.modal.open) els.modal.close();
@@ -254,17 +302,30 @@
     io.observe(els.sentinel);
 
     els.tabCollection?.addEventListener("click", () => showTab("collection"));
+    els.tabOwned?.addEventListener("click", () => showTab("owned"));
     els.tabWishlist?.addEventListener("click", () => showTab("wishlist"));
     els.tabComing?.addEventListener("click", () => showTab("coming"));
     els.wishSearch?.addEventListener("input", () => {
       clearTimeout(wishSearchTimer);
       wishSearchTimer = setTimeout(renderWishlist, 160);
     });
+    els.ownedSearch?.addEventListener("input", () => {
+      clearTimeout(ownedSearchTimer);
+      ownedSearchTimer = setTimeout(renderOwned, 160);
+    });
     els.comingRefresh?.addEventListener("click", () => loadComingSoon(true));
     window.addEventListener("hashchange", maybeOpenTabFromHash);
   }
 
   function onGridClick(e) {
+    const ownBtn = e.target.closest(".own-btn");
+    if (ownBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = ownBtn.dataset.ownId;
+      if (id) toggleOwn(id);
+      return;
+    }
     const wishBtn = e.target.closest(".wish-btn");
     if (wishBtn) {
       e.preventDefault();
@@ -274,7 +335,7 @@
       return;
     }
     const btn = e.target.closest("[data-id]");
-    if (!btn || btn.classList.contains("wish-btn")) return;
+    if (!btn || btn.classList.contains("wish-btn") || btn.classList.contains("own-btn")) return;
     const id = btn.dataset.id;
     const card =
       catalog.cards.find((c) => String(c.id) === id) ||
@@ -286,6 +347,7 @@
   function maybeOpenTabFromHash() {
     const hash = (location.hash || "").toLowerCase();
     if (hash.includes("wishlist")) showTab("wishlist");
+    else if (hash.includes("owned")) showTab("owned");
     else if (hash.includes("coming")) showTab("coming");
     else if (hash.includes("collection")) showTab("collection");
   }
@@ -293,20 +355,26 @@
   function showTab(name) {
     activeTab = name;
     const collection = name === "collection";
+    const ownedTab = name === "owned";
     const wishlistTab = name === "wishlist";
     const coming = name === "coming";
 
     els.panelCollection.hidden = !collection;
+    if (els.panelOwned) els.panelOwned.hidden = !ownedTab;
     if (els.panelWishlist) els.panelWishlist.hidden = !wishlistTab;
     els.panelComing.hidden = !coming;
 
     els.tabCollection.classList.toggle("is-active", collection);
+    els.tabOwned?.classList.toggle("is-active", ownedTab);
     els.tabWishlist?.classList.toggle("is-active", wishlistTab);
     els.tabComing.classList.toggle("is-active", coming);
 
     if (coming) {
       history.replaceState(null, "", "#coming-soon");
       if (!comingLoaded) loadComingSoon(false);
+    } else if (ownedTab) {
+      history.replaceState(null, "", "#owned");
+      renderOwned();
     } else if (wishlistTab) {
       history.replaceState(null, "", "#wishlist");
       renderWishlist();
@@ -326,25 +394,56 @@
     });
   }
 
-  function syncModalWishBtn() {
-    if (!els.modalWish || !modalCardId) return;
-    const on = isWished(modalCardId);
-    els.modalWish.classList.toggle("is-on", on);
-    els.modalWish.setAttribute("aria-pressed", on ? "true" : "false");
-    els.modalWish.textContent = on ? "Remove from wishlist" : "Add to wishlist";
+  function syncOwnButtons(id) {
+    const key = String(id);
+    const on = isOwned(key);
+    const safe = typeof CSS !== "undefined" && CSS.escape ? CSS.escape(key) : key.replace(/"/g, '\\"');
+    document.querySelectorAll(`.own-btn[data-own-id="${safe}"]`).forEach((btn) => {
+      btn.classList.toggle("is-on", on);
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+      btn.setAttribute("aria-label", on ? "Remove from owned" : "Mark as owned");
+    });
   }
 
-  function updateWishChrome() {
-    const n = wishlist.size;
+  function syncModalButtons() {
+    if (!modalCardId) return;
+    if (els.modalWish) {
+      const on = isWished(modalCardId);
+      els.modalWish.classList.toggle("is-on", on);
+      els.modalWish.setAttribute("aria-pressed", on ? "true" : "false");
+      els.modalWish.textContent = on ? "Remove from wishlist" : "Add to wishlist";
+    }
+    if (els.modalOwn) {
+      const on = isOwned(modalCardId);
+      els.modalOwn.classList.toggle("is-on", on);
+      els.modalOwn.setAttribute("aria-pressed", on ? "true" : "false");
+      els.modalOwn.textContent = on ? "Remove from owned" : "Mark as owned";
+    }
+  }
+
+  function updateListChrome() {
+    const wishN = wishlist.size;
     if (els.wishTabCount) {
-      els.wishTabCount.hidden = n === 0;
-      els.wishTabCount.textContent = String(n);
+      els.wishTabCount.hidden = wishN === 0;
+      els.wishTabCount.textContent = String(wishN);
     }
     if (els.wishCountLabel) {
       els.wishCountLabel.textContent =
-        n === 0
+        wishN === 0
           ? "Tap the heart on any plush to save it here — it stays on this phone."
-          : `${n.toLocaleString()} friend${n === 1 ? "" : "s"} waiting for a squeeze.`;
+          : `${wishN.toLocaleString()} friend${wishN === 1 ? "" : "s"} waiting for a squeeze.`;
+    }
+
+    const ownN = owned.size;
+    if (els.ownedTabCount) {
+      els.ownedTabCount.hidden = ownN === 0;
+      els.ownedTabCount.textContent = String(ownN);
+    }
+    if (els.ownedCountLabel) {
+      els.ownedCountLabel.textContent =
+        ownN === 0
+          ? "Tap the check on any plush to mark it as yours — it stays on this phone."
+          : `${ownN.toLocaleString()} friend${ownN === 1 ? "" : "s"} already nestled at home.`;
     }
   }
 
@@ -367,7 +466,16 @@
     `;
     wrap.appendChild(btn);
 
-    if (isWishable(card.id)) {
+    if (isListable(card.id)) {
+      const own = document.createElement("button");
+      own.type = "button";
+      own.className = `own-btn${isOwned(card.id) ? " is-on" : ""}`;
+      own.dataset.ownId = String(card.id);
+      own.setAttribute("aria-pressed", isOwned(card.id) ? "true" : "false");
+      own.setAttribute("aria-label", isOwned(card.id) ? "Remove from owned" : "Mark as owned");
+      own.innerHTML = CHECK_SVG;
+      wrap.appendChild(own);
+
       const wish = document.createElement("button");
       wish.type = "button";
       wish.className = `wish-btn${isWished(card.id) ? " is-on" : ""}`;
@@ -381,7 +489,7 @@
     return wrap;
   }
 
-  function isWishable(id) {
+  function isListable(id) {
     return !String(id).startsWith("preview-");
   }
 
@@ -395,10 +503,12 @@
     );
   }
 
-  function renderWishlist() {
-    if (!els.wishGrid) return;
-    const q = (els.wishSearch?.value || "").trim().toLowerCase();
-    const cards = [...wishlist]
+  function renderSavedGrid(grid, emptyEl, ids, emptyNone, emptySearch) {
+    if (!grid) return;
+    const qInput =
+      grid === els.wishGrid ? els.wishSearch : grid === els.ownedGrid ? els.ownedSearch : null;
+    const q = (qInput?.value || "").trim().toLowerCase();
+    const cards = [...ids]
       .map(findCard)
       .filter(Boolean)
       .filter((c) => {
@@ -407,19 +517,35 @@
         return hay.includes(q);
       });
 
-    els.wishGrid.innerHTML = "";
+    grid.innerHTML = "";
     const frag = document.createDocumentFragment();
     cards.forEach((card, i) => frag.appendChild(makeCardTile(card, i)));
-    els.wishGrid.appendChild(frag);
+    grid.appendChild(frag);
 
-    if (els.wishEmpty) {
-      const emptyMsg =
-        wishlist.size === 0
-          ? "No plush saved yet. Browse the collection and tap a heart to begin."
-          : "No saved plush match that search.";
-      els.wishEmpty.textContent = emptyMsg;
-      els.wishEmpty.hidden = cards.length !== 0;
+    if (emptyEl) {
+      emptyEl.textContent = ids.size === 0 ? emptyNone : emptySearch;
+      emptyEl.hidden = cards.length !== 0;
     }
+  }
+
+  function renderWishlist() {
+    renderSavedGrid(
+      els.wishGrid,
+      els.wishEmpty,
+      wishlist,
+      "No plush saved yet. Browse the collection and tap a heart to begin.",
+      "No saved plush match that search."
+    );
+  }
+
+  function renderOwned() {
+    renderSavedGrid(
+      els.ownedGrid,
+      els.ownedEmpty,
+      owned,
+      "Nothing marked as owned yet. Browse the collection and tap a check to begin.",
+      "No owned plush match that search."
+    );
   }
 
   async function loadComingSoon(forceLive) {
@@ -713,10 +839,9 @@
     if (els.modalCatalogue) els.modalCatalogue.textContent = card.catalogue || "—";
     if (els.modalYear) els.modalYear.textContent = card.year || "—";
     if (els.modalStatus) els.modalStatus.textContent = card.status || "—";
-    if (els.modalWish) {
-      els.modalWish.hidden = !isWishable(card.id);
-      syncModalWishBtn();
-    }
+    if (els.modalWish) els.modalWish.hidden = !isListable(card.id);
+    if (els.modalOwn) els.modalOwn.hidden = !isListable(card.id);
+    syncModalButtons();
     if (typeof els.modal.showModal === "function") els.modal.showModal();
   }
 
