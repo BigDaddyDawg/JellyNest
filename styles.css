@@ -854,8 +854,96 @@ body {
   font-weight: 600;
 }
 
-.modal-facts .stock-link:hover {
-  color: #4f8f74;
+.card.is-leak {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 0.7rem;
+  padding: 1rem 0.75rem;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(240, 216, 154, 0.55), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(233, 168, 179, 0.4), transparent 50%),
+    linear-gradient(160deg, #fff8f2, #f0e4d8);
+}
+
+.leak-art {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(212, 132, 147, 0.28);
+}
+
+.leak-art-mark {
+  font-size: 1.35rem;
+  color: var(--blush-deep);
+}
+
+.leak-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  color: var(--ink);
+}
+
+.card.is-leak .card-badge {
+  opacity: 1;
+  transform: none;
+  position: absolute;
+}
+
+.leak-group {
+  margin-bottom: 1.75rem;
+  padding: 1.25rem;
+  border-radius: calc(var(--radius) + 2px);
+  border: 1px solid rgba(212, 132, 147, 0.22);
+  background: rgba(255, 248, 242, 0.55);
+}
+
+.leak-group-head {
+  margin-bottom: 1rem;
+}
+
+.leak-kicker {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--mint-deep);
+  font-weight: 700;
+}
+
+.leak-group-head h4 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.leak-blurb {
+  margin: 0.45rem 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.leak-source {
+  margin: 0.55rem 0 0;
+  font-size: 0.82rem;
+  color: var(--blush-deep);
+  font-style: italic;
+}
+
+.leak-grid {
+  margin-top: 0.25rem;
+}
+
+.modal-art img[hidden] {
+  display: none;
 }
 
 /* —— Footer —— */

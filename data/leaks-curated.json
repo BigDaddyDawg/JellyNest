@@ -1,0 +1,78 @@
+[
+  {
+    "id": "leak-group-xmas-2026",
+    "title": "Christmas 2026",
+    "catalogue": "Christmas Catalogue",
+    "year": "2026",
+    "blurb": "Fan spoilers for the next festive drop are already swirling — Westies in jumpers, dressed-up Bartholomews, and fresh Amuseables tree décor. Unofficial until Jellycat says otherwise.",
+    "sourceNote": "Community spoilers circulating ahead of any official Jellycat reveal",
+    "items": [
+      {
+        "id": "leak-xmas2026-westie-jumper",
+        "fullName": "West Highland Terrier in Christmas jumper",
+        "name": "Westie Christmas Jumper",
+        "blurb": "A Westie wrapped in a burgundy festive knit — early spoilers say he's one of the stars of the drop."
+      },
+      {
+        "id": "leak-xmas2026-bart-scarves",
+        "fullName": "Bartholomew Bear scarf charms",
+        "name": "Bartholomew Scarf Charms",
+        "blurb": "The Bart trio supposedly gets new scarf bag charms — perfect for hanging on a bag or tree."
+      },
+      {
+        "id": "leak-xmas2026-bart-puffer",
+        "fullName": "Bartholomew Bear in winter coat",
+        "name": "Bartholomew Winter Coat",
+        "blurb": "Spoilers point to another dressed-up Bart in cosy cold-weather kit."
+      },
+      {
+        "id": "leak-xmas2026-tree",
+        "fullName": "Amuseables Christmas Tree (new colourway)",
+        "name": "Christmas Tree",
+        "blurb": "A refreshed Christmas tree Amuseable, teased with pinecone details."
+      },
+      {
+        "id": "leak-xmas2026-wreath",
+        "fullName": "Amuseables Christmas Wreath (new colourway)",
+        "name": "Christmas Wreath",
+        "blurb": "The classic wreath returns with a new look and pinecone accents, per fan leaks."
+      },
+      {
+        "id": "leak-xmas2026-star",
+        "fullName": "Amuseables Christmas Star",
+        "name": "Christmas Star",
+        "blurb": "A twinkly Christmas star Amuseable spotted in spoilers."
+      },
+      {
+        "id": "leak-xmas2026-hot-chocolate",
+        "fullName": "Amuseables snow-topped hot chocolate",
+        "name": "Hot Chocolate",
+        "blurb": "A marshmallow-snow hot chocolate drink Amuseable — expect this one to vanish fast if real."
+      },
+      {
+        "id": "leak-xmas2026-boot-charm",
+        "fullName": "Festive boot bag charm",
+        "name": "Boot Bag Charm",
+        "blurb": "Chunky festive boots as a bag charm, according to early spoilers."
+      },
+      {
+        "id": "leak-xmas2026-bauble-charm",
+        "fullName": "Bauble / lightbulb bag charm",
+        "name": "Bauble Bag Charm",
+        "blurb": "A shiny ornament-style bag charm teased alongside the other festive hangers."
+      },
+      {
+        "id": "leak-xmas2026-ski-gloves",
+        "fullName": "Ski gloves (new colours)",
+        "name": "Ski Gloves",
+        "blurb": "Après-ski spoilers include fresh glove colourways for the snow crew."
+      },
+      {
+        "id": "leak-xmas2026-ski-goggles",
+        "fullName": "Ski goggles (new colours)",
+        "name": "Ski Goggles",
+        "blurb": "Matching snow-goggle colour updates for the ski-themed friends."
+      }
+    ]
+  }
+]

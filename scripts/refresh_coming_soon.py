@@ -383,20 +383,74 @@ def main() -> None:
     print("Enriching horizon collections…")
     upcoming, reveals = enrich_horizon(token, tree)
     news = fetch_news(reveals)
+    leaks = load_curated_leaks()
+    print(f"Curated leak groups: {len(leaks)}")
 
     out = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "sources": {
             "catalogue": STORE_URL,
             "news": JOURNAL_URL,
+            "leaks": "Curated fan spoilers in data/leaks-curated.json (unofficial)",
         },
         "upcomingSets": upcoming,
         "reveals": reveals,
         "news": news,
+        "leaks": leaks,
     }
     path = DATA / "coming-soon.json"
     path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Wrote {path} ({path.stat().st_size:,} bytes)")
+
+
+def load_curated_leaks() -> list[dict]:
+    curated_path = DATA / "leaks-curated.json"
+    if not curated_path.exists():
+        return []
+    raw = json.loads(curated_path.read_text(encoding="utf-8"))
+    groups: list[dict] = []
+    for group in raw:
+        items = []
+        for item in group.get("items") or []:
+            items.append(
+                {
+                    "id": item.get("id"),
+                    "fullName": item.get("fullName") or item.get("name"),
+                    "name": item.get("name") or item.get("fullName"),
+                    "version": "Unofficial leak",
+                    "rarity": "Leak",
+                    "status": "Leak",
+                    "availability": "Leak",
+                    "theme": group.get("title") or "Leak",
+                    "catalogue": group.get("catalogue") or "Main Catalogue",
+                    "year": group.get("year") or "",
+                    "setCode": group.get("id") or "leak",
+                    "setName": group.get("title") or "Leaks",
+                    "story": group.get("title") or "Leak",
+                    "type": "Leak",
+                    "color": group.get("year") or "",
+                    "size": "One size",
+                    "sku": "",
+                    "thumb": item.get("thumb") or "",
+                    "full": item.get("full") or item.get("thumb") or "",
+                    "url": item.get("url") or "",
+                    "ukUrl": "",
+                    "blurb": item.get("blurb") or group.get("blurb") or "",
+                    "sourceNote": group.get("sourceNote") or "Unofficial fan spoiler",
+                }
+            )
+        groups.append(
+            {
+                "id": group.get("id"),
+                "title": group.get("title"),
+                "catalogue": group.get("catalogue"),
+                "year": group.get("year"),
+                "blurb": group.get("blurb"),
+                "sourceNote": group.get("sourceNote"),
+                "items": items,
+            }
+        )
+    return groups
 
 
 if __name__ == "__main__":

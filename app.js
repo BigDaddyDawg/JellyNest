@@ -60,6 +60,8 @@
     newsList: document.getElementById("newsList"),
     revealsGrid: document.getElementById("revealsGrid"),
     revealsNote: document.getElementById("revealsNote"),
+    leaksList: document.getElementById("leaksList"),
+    leaksNote: document.getElementById("leaksNote"),
   };
 
   /** @type {{cards: any[], themes?: string[], catalogues?: string[], years?: string[], statuses?: string[], count?: number}} */
@@ -92,7 +94,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("service-worker.js?v=4")
+        .register("service-worker.js?v=5")
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -278,6 +280,7 @@
     els.ownedGrid?.addEventListener("click", onGridClick);
     els.wishGrid?.addEventListener("click", onGridClick);
     els.revealsGrid?.addEventListener("click", onGridClick);
+    els.leaksList?.addEventListener("click", onGridClick);
 
     els.modalClose.addEventListener("click", () => els.modal.close());
     els.modal.addEventListener("click", (e) => {
@@ -340,7 +343,8 @@
     const card =
       catalog.cards.find((c) => String(c.id) === id) ||
       comingDisplayCards.find((c) => String(c.id) === id) ||
-      (comingData?.reveals || []).find((c) => String(c.id) === id);
+      (comingData?.reveals || []).find((c) => String(c.id) === id) ||
+      allLeakCards().find((c) => String(c.id) === id);
     if (card) openModal(card);
   }
 
@@ -456,14 +460,32 @@
     btn.type = "button";
     btn.className = "card";
     btn.dataset.id = String(card.id);
-    btn.setAttribute("aria-label", `${card.fullName}, ${card.status || card.rarity || ""}`);
     const badge = card.status || card.rarity || "";
+    btn.setAttribute("aria-label", `${card.fullName}, ${badge}`);
     const statusClass =
-      badge === "Coming Soon" ? " is-soon" : badge === "Retired" ? " is-retired" : badge === "Live" ? " is-live" : "";
-    btn.innerHTML = `
-      <img src="${escapeAttr(card.thumb || card.full)}" alt="" loading="lazy" decoding="async" width="400" height="500" />
-      <span class="card-badge${statusClass}">${escapeHtml(badge)}</span>
-    `;
+      badge === "Coming Soon" || badge === "Leak"
+        ? " is-soon"
+        : badge === "Retired"
+          ? " is-retired"
+          : badge === "Live"
+            ? " is-live"
+            : "";
+    const img = card.thumb || card.full;
+    if (img) {
+      btn.innerHTML = `
+        <img src="${escapeAttr(img)}" alt="" loading="lazy" decoding="async" width="400" height="500" />
+        <span class="card-badge${statusClass}">${escapeHtml(badge)}</span>
+      `;
+    } else {
+      btn.classList.add("is-leak");
+      btn.innerHTML = `
+        <span class="leak-art" aria-hidden="true">
+          <span class="leak-art-mark">✧</span>
+        </span>
+        <span class="leak-name">${escapeHtml(card.name || card.fullName || "Leak")}</span>
+        <span class="card-badge${statusClass}">${escapeHtml(badge || "Leak")}</span>
+      `;
+    }
     wrap.appendChild(btn);
 
     if (isListable(card.id)) {
@@ -493,12 +515,22 @@
     return !String(id).startsWith("preview-");
   }
 
+  function allLeakCards() {
+    const groups = comingData?.leaks || [];
+    const out = [];
+    for (const group of groups) {
+      for (const item of group.items || []) out.push(item);
+    }
+    return out;
+  }
+
   function findCard(id) {
     const key = String(id);
     return (
       catalog.cards.find((c) => String(c.id) === key) ||
       comingDisplayCards.find((c) => String(c.id) === key) ||
       (comingData?.reveals || []).find((c) => String(c.id) === key) ||
+      allLeakCards().find((c) => String(c.id) === key) ||
       null
     );
   }
@@ -765,6 +797,43 @@
     showCards.forEach((card, i) => {
       els.revealsGrid.appendChild(makeCardTile(card, i));
     });
+
+    renderLeaks();
+  }
+
+  function renderLeaks() {
+    if (!els.leaksList) return;
+    const groups = comingData?.leaks || [];
+    const total = groups.reduce((n, g) => n + ((g.items || []).length), 0);
+    if (els.leaksNote) {
+      els.leaksNote.textContent = total
+        ? `${total} unofficial spoiler${total === 1 ? "" : "s"} — not confirmed by Jellycat yet. Tap a heart to wishlist one early.`
+        : "No leaks on the board yet — when spoilers surface, they’ll whisper here.";
+    }
+    els.leaksList.innerHTML = "";
+    if (!groups.length) {
+      els.leaksList.innerHTML = `<p class="coming-note">Nothing leaked into the nest just now.</p>`;
+      return;
+    }
+
+    for (const group of groups) {
+      const article = document.createElement("article");
+      article.className = "leak-group";
+      const meta = [group.year, group.catalogue].filter(Boolean).join(" · ");
+      article.innerHTML = `
+        <div class="leak-group-head">
+          <p class="leak-kicker">${escapeHtml(meta || "Leak")}</p>
+          <h4>${escapeHtml(group.title || "Whispers")}</h4>
+          <p class="leak-blurb">${escapeHtml(group.blurb || "")}</p>
+          ${group.sourceNote ? `<p class="leak-source">${escapeHtml(group.sourceNote)}</p>` : ""}
+        </div>
+      `;
+      const grid = document.createElement("div");
+      grid.className = "grid leak-grid";
+      (group.items || []).forEach((item, i) => grid.appendChild(makeCardTile(item, i)));
+      article.appendChild(grid);
+      els.leaksList.appendChild(article);
+    }
   }
 
   function applyFilters() {
@@ -827,6 +896,7 @@
     const avail = card.availability || "";
     if (avail === "Available") return "Available";
     if (avail === "Preorder") return "Pre-order";
+    if (avail === "Leak" || card.status === "Leak" || card.rarity === "Leak") return "Leak";
     if (card.status === "Coming Soon") return "Coming Soon";
     if (card.status === "Retired" || avail === "Unavailable") return "Unavailable";
     return card.status || avail || "—";
@@ -840,15 +910,23 @@
 
   function openModal(card) {
     modalCardId = String(card.id);
-    els.modalImg.src = card.full || card.thumb;
-    els.modalImg.alt = card.fullName;
+    const img = card.full || card.thumb;
+    if (img) {
+      els.modalImg.hidden = false;
+      els.modalImg.src = img;
+      els.modalImg.alt = card.fullName;
+    } else {
+      els.modalImg.removeAttribute("src");
+      els.modalImg.alt = "";
+      els.modalImg.hidden = true;
+    }
     els.modalStory.textContent = card.theme || card.subBrand || "Jellycat";
     els.modalName.textContent = card.name || card.fullName;
     const sizeBit = card.size && card.size !== "One size" ? card.size : card.version;
     els.modalVersion.textContent = sizeBit
       ? sizeBit
       : card.blurb
-        ? card.blurb.slice(0, 120)
+        ? card.blurb.slice(0, 160)
         : card.fullName;
     if (els.modalTheme) els.modalTheme.textContent = card.theme || "—";
     if (els.modalCatalogue) els.modalCatalogue.textContent = card.catalogue || "—";

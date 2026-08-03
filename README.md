@@ -32,6 +32,10 @@ Each friend is tagged with:
 
 **Available** and **Pre-order** stock labels in the detail view link through to the matching product on the UK store ([jellycat.com](https://jellycat.com/)).
 
+## Leaks
+
+Unofficial spoilers (for example Christmas 2026) live under **Coming Soon → Leaks & whispers**. They’re curated in `data/leaks-curated.json` and merged into `coming-soon.json` on refresh — edit that file to add or correct spoilers.
+
 ```powershell
 python scripts/refresh_data.py
 ```
