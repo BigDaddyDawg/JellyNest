@@ -847,6 +847,17 @@ body {
   color: var(--blush-deep);
 }
 
+.modal-facts .stock-link {
+  color: var(--mint-deep);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  font-weight: 600;
+}
+
+.modal-facts .stock-link:hover {
+  color: #4f8f74;
+}
+
 /* —— Footer —— */
 .site-footer {
   width: min(1180px, calc(100% - 2rem));

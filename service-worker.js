@@ -1,11 +1,11 @@
-const CACHE_NAME = "jellynest-static-v3";
+const CACHE_NAME = "jellynest-static-v4";
 const CORE_ASSETS = [
   "./",
   "index.html",
-  "styles.css?v=3",
-  "app.js?v=3",
-  "manifest.webmanifest?v=3",
-  "icon.svg?v=3",
+  "styles.css?v=4",
+  "app.js?v=4",
+  "manifest.webmanifest?v=4",
+  "icon.svg?v=4",
   "icon-192.png",
   "icon-512.png",
   "apple-touch-icon.png",

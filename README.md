@@ -30,6 +30,8 @@ Each friend is tagged with:
 - **Year** — from the official release date
 - **Status** — Coming Soon, Live, or Retired
 
+**Available** and **Pre-order** stock labels in the detail view link through to the matching product on the UK store ([jellycat.com](https://jellycat.com/)).
+
 ```powershell
 python scripts/refresh_data.py
 ```

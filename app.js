@@ -92,7 +92,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("service-worker.js?v=3")
+        .register("service-worker.js?v=4")
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -823,6 +823,21 @@
     shown += slice.length;
   }
 
+  function stockLabel(card) {
+    const avail = card.availability || "";
+    if (avail === "Available") return "Available";
+    if (avail === "Preorder") return "Pre-order";
+    if (card.status === "Coming Soon") return "Coming Soon";
+    if (card.status === "Retired" || avail === "Unavailable") return "Unavailable";
+    return card.status || avail || "—";
+  }
+
+  function stockLink(card) {
+    const label = stockLabel(card);
+    if ((label === "Available" || label === "Pre-order") && card.ukUrl) return card.ukUrl;
+    return "";
+  }
+
   function openModal(card) {
     modalCardId = String(card.id);
     els.modalImg.src = card.full || card.thumb;
@@ -838,7 +853,15 @@
     if (els.modalTheme) els.modalTheme.textContent = card.theme || "—";
     if (els.modalCatalogue) els.modalCatalogue.textContent = card.catalogue || "—";
     if (els.modalYear) els.modalYear.textContent = card.year || "—";
-    if (els.modalStatus) els.modalStatus.textContent = card.status || "—";
+    if (els.modalStatus) {
+      const label = stockLabel(card);
+      const href = stockLink(card);
+      if (href) {
+        els.modalStatus.innerHTML = `<a class="stock-link" href="${escapeAttr(href)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+      } else {
+        els.modalStatus.textContent = label;
+      }
+    }
     if (els.modalWish) els.modalWish.hidden = !isListable(card.id);
     if (els.modalOwn) els.modalOwn.hidden = !isListable(card.id);
     syncModalButtons();

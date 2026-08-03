@@ -16,8 +16,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 STORE_URL = "https://us.jellycat.com"
+UK_STORE_URL = "https://jellycat.com"
 GQL_URL = f"{STORE_URL}/graphql"
+UK_GQL_URL = f"{UK_STORE_URL}/graphql"
 SHOP_ALL = f"{STORE_URL}/shop-all/"
+UK_SHOP_ALL = f"{UK_STORE_URL}/shop-all/"
 USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
     "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
@@ -83,30 +86,37 @@ def fetch(url: str, data: bytes | None = None, headers: dict | None = None) -> b
         return resp.read()
 
 
-def get_storefront_token() -> str:
-    html = fetch(SHOP_ALL).decode("utf-8", errors="ignore")
+def get_storefront_token(shop_all_url: str = SHOP_ALL) -> str:
+    html = fetch(shop_all_url).decode("utf-8", errors="ignore")
     m = re.search(
         r"(eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)",
         html,
     )
     if not m:
-        raise RuntimeError("Could not find BigCommerce storefront API token on shop-all page")
+        raise RuntimeError(f"Could not find BigCommerce storefront API token on {shop_all_url}")
     return m.group(1)
 
 
-def gql(token: str, query: str, variables: dict | None = None) -> dict:
+def gql(
+    token: str,
+    query: str,
+    variables: dict | None = None,
+    *,
+    gql_url: str = GQL_URL,
+    origin: str = STORE_URL,
+) -> dict:
     body = json.dumps({"query": query, "variables": variables or {}}).encode("utf-8")
     last_err: Exception | None = None
     for attempt in range(4):
         try:
             raw = fetch(
-                GQL_URL,
+                gql_url,
                 data=body,
                 headers={
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {token}",
-                    "Origin": STORE_URL,
-                    "Referer": f"{STORE_URL}/",
+                    "Origin": origin,
+                    "Referer": f"{origin}/",
                 },
             )
             payload = json.loads(raw.decode("utf-8"))
@@ -190,8 +200,66 @@ def normalize_status(raw: str, category_paths: list[str]) -> str:
     return "Live"
 
 
+def normalize_availability(raw: str) -> str:
+    key = (raw or "").replace("_", " ").strip().lower()
+    if key == "available":
+        return "Available"
+    if key in {"preorder", "pre-order", "pre order"}:
+        return "Preorder"
+    if key == "unavailable":
+        return "Unavailable"
+    return (raw or "").replace("_", " ").title()
+
+
 def slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-") or "other"
+
+
+UK_PATH_QUERY = """
+query ($cursor: String) {
+  site {
+    products(first: 50, after: $cursor) {
+      pageInfo { hasNextPage endCursor }
+      edges {
+        node {
+          sku
+          path
+        }
+      }
+    }
+  }
+}
+"""
+
+
+def fetch_uk_paths(token: str) -> dict[str, str]:
+    """Map SKU -> UK product path from jellycat.com (GBP store)."""
+    mapping: dict[str, str] = {}
+    cursor = None
+    page = 0
+    while True:
+        page += 1
+        payload = gql(
+            token,
+            UK_PATH_QUERY,
+            {"cursor": cursor},
+            gql_url=UK_GQL_URL,
+            origin=UK_STORE_URL,
+        )
+        conn = payload["data"]["site"]["products"]
+        for edge in conn["edges"]:
+            node = edge["node"]
+            sku = (node.get("sku") or "").strip()
+            path = node.get("path") or ""
+            if sku and path.startswith("/"):
+                mapping[sku] = path
+        print(f"  UK page {page}: {len(mapping)} sku paths")
+        info = conn["pageInfo"]
+        if not info.get("hasNextPage"):
+            break
+        cursor = info.get("endCursor")
+        time.sleep(0.12)
+    return mapping
 
 
 PRODUCT_QUERY = """
@@ -223,7 +291,7 @@ query ($cursor: String) {
 """
 
 
-def normalize_product(node: dict) -> dict | None:
+def normalize_product(node: dict, uk_paths: dict[str, str] | None = None) -> dict | None:
     img = node.get("defaultImage") or {}
     thumb = img.get("url") or img.get("urlOriginal")
     full = img.get("urlOriginal") or thumb
@@ -259,7 +327,11 @@ def normalize_product(node: dict) -> dict | None:
 
     path = node.get("path") or ""
     url = f"{STORE_URL}{path}" if path.startswith("/") else path
-    avail = ((node.get("availabilityV2") or {}).get("status")) or ""
+    sku = (node.get("sku") or "").strip()
+    uk_path = (uk_paths or {}).get(sku) or ""
+    uk_url = f"{UK_STORE_URL}{uk_path}" if uk_path.startswith("/") else ""
+
+    avail = normalize_availability(((node.get("availabilityV2") or {}).get("status")) or "")
     price = None
     try:
         price = (((node.get("prices") or {}).get("price") or {}).get("value"))
@@ -292,18 +364,19 @@ def normalize_product(node: dict) -> dict | None:
         "animalType": mf.get("animal_type") or "",
         "seasonality": mf.get("seasonality") or "",
         "releaseDate": mf.get("release_date") or "",
-        "sku": node.get("sku") or "",
+        "sku": sku,
         "thumb": thumb,
         "full": full,
         "url": url,
+        "ukUrl": uk_url,
         "price": price,
         "blurb": blurb,
-        "availability": avail.replace("_", " ").title() if avail else "",
+        "availability": avail,
         "categories": [c.get("name") for c in cats if c.get("name")],
     }
 
 
-def fetch_all_products(token: str) -> list[dict]:
+def fetch_all_products(token: str, uk_paths: dict[str, str]) -> list[dict]:
     items: list[dict] = []
     cursor = None
     page = 0
@@ -312,7 +385,7 @@ def fetch_all_products(token: str) -> list[dict]:
         payload = gql(token, PRODUCT_QUERY, {"cursor": cursor})
         conn = payload["data"]["site"]["products"]
         for edge in conn["edges"]:
-            item = normalize_product(edge["node"])
+            item = normalize_product(edge["node"], uk_paths)
             if item:
                 items.append(item)
         print(f"  page {page}: kept {len(items)} so far")
@@ -335,10 +408,15 @@ def fetch_all_products(token: str) -> list[dict]:
 
 def main() -> None:
     DATA.mkdir(exist_ok=True)
-    print("Fetching storefront token…")
+    print("Fetching UK storefront token + SKU paths…")
+    uk_token = get_storefront_token(UK_SHOP_ALL)
+    uk_paths = fetch_uk_paths(uk_token)
+    print(f"UK paths: {len(uk_paths)}")
+
+    print("Fetching US storefront token…")
     token = get_storefront_token()
     print("Paging through full GraphQL catalogue (live + coming soon + retired)…")
-    cards = fetch_all_products(token)
+    cards = fetch_all_products(token, uk_paths)
 
     def sort_key(c: dict):
         st = STATUS_ORDER.index(c["status"]) if c["status"] in STATUS_ORDER else 99
@@ -359,9 +437,15 @@ def main() -> None:
     # Alias lists for the existing filter plumbing
     sets = [{"code": slug(t), "name": t, "number": None, "type": "theme"} for t in themes]
 
+    with_uk = sum(1 for c in cards if c.get("ukUrl"))
+    linkable = sum(
+        1 for c in cards if c.get("ukUrl") and c.get("availability") in {"Available", "Preorder"}
+    )
+
     out = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": STORE_URL,
+        "ukSource": UK_STORE_URL,
         "count": len(cards),
         "themes": themes,
         "catalogues": catalogues,
@@ -378,6 +462,7 @@ def main() -> None:
     path.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote {path} ({path.stat().st_size:,} bytes, {out['count']} plush)")
     print(f"  statuses: { {s: sum(1 for c in cards if c['status']==s) for s in statuses} }")
+    print(f"  ukUrl coverage: {with_uk}/{len(cards)}, buyable links: {linkable}")
     print(f"  themes: {len(themes)}, catalogues: {len(catalogues)}, years: {years[:8]}…")
 
 
