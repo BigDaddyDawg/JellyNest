@@ -1,7 +1,7 @@
 {
   "name": "JellyNest",
   "short_name": "JellyNest",
-  "description": "A soft gallery of Jellycat plush — browse, wishlist, and peek at what's coming soon.",
+  "description": "A soft gallery of Jellycat plush — browse, track owned & wishlist, and peek at what's coming soon.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
