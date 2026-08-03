@@ -4,8 +4,8 @@
   const NEWS_URL = "https://www.jellycat.com/jelly-journal/";
   const LIVE_NEWS_URL = "https://r.jina.ai/http://www.jellycat.com/jelly-journal/";
   const FAV_PICKS = {
-    Bunnies: ["Bashful Bunny", "Bashful Blush Bunny", "Bashful Cream Bunny"],
-    "Food & Drink": ["Amuseables Avocado", "Amuseables Toast", "Amuseables Coffee"],
+    Bashful: ["Bashful Bunny", "Bashful Blush Bunny", "Bashful Cream Bunny"],
+    Amuseables: ["Amuseables Avocado", "Amuseables Toast", "Amuseables Coffee"],
     Bartholomew: ["Bartholomew Bear", "Bartholomew Bear Bag", "Bartholomew"],
   };
   const HEART_SVG = `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20.2s-6.7-4.2-9.1-8.1C1.2 9.4 2.1 6.4 5 5.4c1.8-.6 3.7.1 4.8 1.5C11 5.5 12.9 4.8 14.7 5.4c2.9 1 3.8 4 2.1 6.7-2.4 3.9-9.1 8.1-9.1 8.1z"/></svg>`;
@@ -16,9 +16,10 @@
     empty: document.getElementById("emptyState"),
     countLabel: document.getElementById("countLabel"),
     search: document.getElementById("search"),
-    setFilter: document.getElementById("setFilter"),
-    rarityFilter: document.getElementById("rarityFilter"),
-    storyFilter: document.getElementById("storyFilter"),
+    themeFilter: document.getElementById("themeFilter"),
+    catalogueFilter: document.getElementById("catalogueFilter"),
+    yearFilter: document.getElementById("yearFilter"),
+    statusFilter: document.getElementById("statusFilter"),
     clearFilters: document.getElementById("clearFilters"),
     activePills: document.getElementById("activePills"),
     modal: document.getElementById("cardModal"),
@@ -27,10 +28,10 @@
     modalStory: document.getElementById("modalStory"),
     modalName: document.getElementById("modalName"),
     modalVersion: document.getElementById("modalVersion"),
-    modalRarity: document.getElementById("modalRarity"),
-    modalSet: document.getElementById("modalSet"),
-    modalType: document.getElementById("modalType"),
-    modalColor: document.getElementById("modalColor"),
+    modalTheme: document.getElementById("modalTheme"),
+    modalCatalogue: document.getElementById("modalCatalogue"),
+    modalYear: document.getElementById("modalYear"),
+    modalStatus: document.getElementById("modalStatus"),
     modalWish: document.getElementById("modalWish"),
     panelCollection: document.getElementById("panelCollection"),
     panelWishlist: document.getElementById("panelWishlist"),
@@ -51,8 +52,8 @@
     revealsNote: document.getElementById("revealsNote"),
   };
 
-  /** @type {{cards: any[], sets: any[], rarities: string[], stories: string[], count?: number}} */
-  let catalog = { cards: [], sets: [], rarities: [], stories: [] };
+  /** @type {{cards: any[], themes?: string[], catalogues?: string[], years?: string[], statuses?: string[], count?: number}} */
+  let catalog = { cards: [], themes: [], catalogues: [], years: [], statuses: [] };
   let filtered = [];
   let shown = 0;
   let searchTimer = null;
@@ -78,7 +79,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("service-worker.js?v=1")
+        .register("service-worker.js?v=2")
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -150,56 +151,50 @@
     return wishlist.has(key);
   }
 
+  function fillSelect(select, values) {
+    if (!select) return;
+    for (const value of values) {
+      const opt = document.createElement("option");
+      opt.value = value;
+      opt.textContent = value;
+      select.appendChild(opt);
+    }
+  }
+
   function fillFilters() {
-    for (const set of catalog.sets) {
-      const opt = document.createElement("option");
-      opt.value = set.code;
-      opt.textContent = set.name;
-      els.setFilter.appendChild(opt);
-    }
-    for (const rarity of catalog.rarities) {
-      const opt = document.createElement("option");
-      opt.value = rarity;
-      opt.textContent = rarity;
-      els.rarityFilter.appendChild(opt);
-    }
-    for (const story of catalog.stories) {
-      const opt = document.createElement("option");
-      opt.value = story;
-      opt.textContent = story;
-      els.storyFilter.appendChild(opt);
-    }
+    fillSelect(els.themeFilter, catalog.themes || []);
+    fillSelect(els.catalogueFilter, catalog.catalogues || []);
+    fillSelect(els.yearFilter, catalog.years || []);
+    fillSelect(els.statusFilter, catalog.statuses || ["Coming Soon", "Live", "Retired"]);
+  }
+
+  function themeMatches(card, needle) {
+    if (!needle) return true;
+    const hay = `${card.theme || ""} ${card.subBrand || ""} ${card.fullName || ""}`;
+    return hay.toLowerCase().includes(needle.toLowerCase());
   }
 
   function paintFavorites() {
     const map = {
-      Bunnies: "favArtBashful",
-      "Food & Drink": "favArtAmuse",
+      Bashful: "favArtBashful",
+      Amuseables: "favArtAmuse",
+      Bartholomew: "favArtBart",
     };
-    for (const [story, id] of Object.entries(map)) {
+    for (const [needle, id] of Object.entries(map)) {
       const art = document.getElementById(id);
       if (!art) continue;
-      const names = FAV_PICKS[story] || [];
-      const card =
-        catalog.cards.find(
-          (c) => c.story === story && names.some((n) => (c.fullName || c.name || "").includes(n))
-        ) ||
-        catalog.cards.find((c) => c.story === story && c.type === "Soft Toy") ||
-        catalog.cards.find((c) => c.story === story);
-      if (card) art.style.backgroundImage = `url("${card.full || card.thumb}")`;
-    }
-    const bartArt = document.getElementById("favArtBart");
-    if (bartArt) {
-      const names = FAV_PICKS.Bartholomew || [];
+      const names = FAV_PICKS[needle] || [];
+      const liveFirst = (c) => c.status === "Live";
       const card =
         catalog.cards.find(
           (c) =>
-            c.setCode === "bartholomew" &&
+            themeMatches(c, needle) &&
+            liveFirst(c) &&
             names.some((n) => (c.fullName || c.name || "").includes(n))
         ) ||
-        catalog.cards.find((c) => c.setCode === "bartholomew") ||
-        catalog.cards.find((c) => /bartholomew/i.test(c.fullName || ""));
-      if (card) bartArt.style.backgroundImage = `url("${card.full || card.thumb}")`;
+        catalog.cards.find((c) => themeMatches(c, needle) && liveFirst(c)) ||
+        catalog.cards.find((c) => themeMatches(c, needle));
+      if (card) art.style.backgroundImage = `url("${card.full || card.thumb}")`;
     }
   }
 
@@ -208,26 +203,28 @@
       clearTimeout(searchTimer);
       searchTimer = setTimeout(applyFilters, 160);
     });
-    els.setFilter.addEventListener("change", applyFilters);
-    els.rarityFilter.addEventListener("change", applyFilters);
-    els.storyFilter.addEventListener("change", applyFilters);
+    els.themeFilter?.addEventListener("change", applyFilters);
+    els.catalogueFilter?.addEventListener("change", applyFilters);
+    els.yearFilter?.addEventListener("change", applyFilters);
+    els.statusFilter?.addEventListener("change", applyFilters);
     els.clearFilters.addEventListener("click", () => {
       els.search.value = "";
-      els.setFilter.value = "";
-      els.rarityFilter.value = "";
-      els.storyFilter.value = "";
+      if (els.themeFilter) els.themeFilter.value = "";
+      if (els.catalogueFilter) els.catalogueFilter.value = "";
+      if (els.yearFilter) els.yearFilter.value = "";
+      if (els.statusFilter) els.statusFilter.value = "";
       applyFilters();
     });
 
     document.querySelectorAll(".fav-card").forEach((btn) => {
       btn.addEventListener("click", () => {
         showTab("collection");
-        const story = btn.getAttribute("data-story") || "";
-        const setCode = btn.getAttribute("data-set") || "";
-        els.search.value = "";
-        els.setFilter.value = setCode;
-        els.rarityFilter.value = "";
-        els.storyFilter.value = story;
+        const themeNeedle = btn.getAttribute("data-theme") || "";
+        if (els.themeFilter) els.themeFilter.value = "";
+        if (els.catalogueFilter) els.catalogueFilter.value = "";
+        if (els.yearFilter) els.yearFilter.value = "";
+        if (els.statusFilter) els.statusFilter.value = "Live";
+        els.search.value = themeNeedle;
         applyFilters();
         document.getElementById("collection")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
@@ -360,10 +357,13 @@
     btn.type = "button";
     btn.className = "card";
     btn.dataset.id = String(card.id);
-    btn.setAttribute("aria-label", `${card.fullName}, ${card.rarity}`);
+    btn.setAttribute("aria-label", `${card.fullName}, ${card.status || card.rarity || ""}`);
+    const badge = card.status || card.rarity || "";
+    const statusClass =
+      badge === "Coming Soon" ? " is-soon" : badge === "Retired" ? " is-retired" : badge === "Live" ? " is-live" : "";
     btn.innerHTML = `
       <img src="${escapeAttr(card.thumb || card.full)}" alt="" loading="lazy" decoding="async" width="400" height="500" />
-      <span class="card-badge">${escapeHtml(card.rarity || "")}</span>
+      <span class="card-badge${statusClass}">${escapeHtml(badge)}</span>
     `;
     wrap.appendChild(btn);
 
@@ -403,7 +403,7 @@
       .filter(Boolean)
       .filter((c) => {
         if (!q) return true;
-        const hay = `${c.fullName} ${c.name} ${c.version} ${c.story}`.toLowerCase();
+        const hay = `${c.fullName} ${c.name} ${c.theme} ${c.catalogue} ${c.year} ${c.status} ${c.sku || ""}`.toLowerCase();
         return hay.includes(q);
       });
 
@@ -643,16 +643,19 @@
 
   function applyFilters() {
     const q = els.search.value.trim().toLowerCase();
-    const setCode = els.setFilter.value;
-    const rarity = els.rarityFilter.value;
-    const story = els.storyFilter.value;
+    const theme = els.themeFilter?.value || "";
+    const catalogue = els.catalogueFilter?.value || "";
+    const year = els.yearFilter?.value || "";
+    const status = els.statusFilter?.value || "";
 
     filtered = catalog.cards.filter((c) => {
-      if (setCode && c.setCode !== setCode) return false;
-      if (rarity && c.rarity !== rarity) return false;
-      if (story && c.story !== story) return false;
+      if (theme && c.theme !== theme) return false;
+      if (catalogue && c.catalogue !== catalogue) return false;
+      if (year && c.year !== year) return false;
+      if (status && c.status !== status) return false;
       if (q) {
-        const hay = `${c.fullName} ${c.name} ${c.version} ${c.story} ${c.sku || ""}`.toLowerCase();
+        const hay =
+          `${c.fullName} ${c.name} ${c.theme} ${c.catalogue} ${c.year} ${c.status} ${c.subBrand || ""} ${c.animalType || ""} ${c.sku || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
       return true;
@@ -668,16 +671,14 @@
     const total = catalog.count || catalog.cards.length;
     const n = filtered.length;
     const parts = [];
-    if (els.storyFilter.value) parts.push(els.storyFilter.value);
-    if (els.setFilter.value) {
-      const set = catalog.sets.find((s) => s.code === els.setFilter.value);
-      parts.push(set?.name || els.setFilter.value);
-    }
-    if (els.rarityFilter.value) parts.push(els.rarityFilter.value);
+    if (els.themeFilter?.value) parts.push(els.themeFilter.value);
+    if (els.catalogueFilter?.value) parts.push(els.catalogueFilter.value);
+    if (els.yearFilter?.value) parts.push(els.yearFilter.value);
+    if (els.statusFilter?.value) parts.push(els.statusFilter.value);
     if (els.search.value.trim()) parts.push(`“${els.search.value.trim()}”`);
 
     if (n === total && !parts.length) {
-      els.countLabel.textContent = `${total.toLocaleString()} plush across the nest`;
+      els.countLabel.textContent = `${total.toLocaleString()} Jellycats across every catalogue`;
     } else {
       els.countLabel.textContent = `${n.toLocaleString()} friend${n === 1 ? "" : "s"} found`;
     }
@@ -700,17 +701,18 @@
     modalCardId = String(card.id);
     els.modalImg.src = card.full || card.thumb;
     els.modalImg.alt = card.fullName;
-    els.modalStory.textContent = card.story || "Jellycat";
+    els.modalStory.textContent = card.theme || card.subBrand || "Jellycat";
     els.modalName.textContent = card.name || card.fullName;
-    els.modalVersion.textContent = card.version
-      ? card.version
+    const sizeBit = card.size && card.size !== "One size" ? card.size : card.version;
+    els.modalVersion.textContent = sizeBit
+      ? sizeBit
       : card.blurb
         ? card.blurb.slice(0, 120)
         : card.fullName;
-    els.modalRarity.textContent = card.rarity || "—";
-    els.modalSet.textContent = card.setName || card.setCode || "—";
-    els.modalType.textContent = card.type || "—";
-    els.modalColor.textContent = card.color || "—";
+    if (els.modalTheme) els.modalTheme.textContent = card.theme || "—";
+    if (els.modalCatalogue) els.modalCatalogue.textContent = card.catalogue || "—";
+    if (els.modalYear) els.modalYear.textContent = card.year || "—";
+    if (els.modalStatus) els.modalStatus.textContent = card.status || "—";
     if (els.modalWish) {
       els.modalWish.hidden = !isWishable(card.id);
       syncModalWishBtn();

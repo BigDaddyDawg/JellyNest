@@ -1,4 +1,8 @@
-"""Refresh data/cards.json from the Jellycat US BigCommerce GraphQL API."""
+"""Refresh data/cards.json from the Jellycat US BigCommerce GraphQL API.
+
+Includes every plush (live, coming soon, and retired) with:
+  theme · catalogue release · release year · status
+"""
 from __future__ import annotations
 
 import json
@@ -42,59 +46,28 @@ SIZE_ORDER = [
     "One size",
 ]
 
-# Prefer these as the "collection / set" for filters.
-SET_PRIORITY = [
-    ("bartholomew", "Bartholomew Bear & Friends", "bartholomew"),
-    ("bashful", "Bashfuls", "bashful"),
-    ("amuseables", "Amuseables", "amuseables"),
-    ("bags-bag-charms", "Accessories", "accessories"),
-    ("/books", "Books", "books"),
-    ("personalised", "Personalized", "personalized"),
-    ("personalized", "Personalized", "personalized"),
-    ("/baby", "Baby", "baby"),
-    ("animals/", "Animals", "animals"),
-    ("/animals", "Animals", "animals"),
-]
+STATUS_ORDER = ["Coming Soon", "Live", "Retired"]
 
-META_CATEGORY_NAMES = {
-    "explore all",
-    "shop all",
-    "new",
-    "collections",
-    "gifts",
-    "retired",
-    "best sellers",
-    "back in stock",
-    "coming soon",
-    "all soft toys",
-    "early access",
-    "spring & summer",
-    "autumn & winter",
+SEASON_TO_CATALOGUE = {
+    "Christmas": "Christmas Catalogue",
+    "Easter": "Easter Catalogue",
+    "Valentine": "Valentine's Catalogue",
+    "Halloween": "Halloween Catalogue",
+    "Chinese New Year": "Chinese New Year",
+    "25 Years": "25th Anniversary",
 }
 
-STORY_PATH_HINTS = [
-    ("/animals/bunnies", "Bunnies"),
-    ("/animals/bears", "Bears"),
-    ("/animals/dogs-puppies", "Dogs & Puppies"),
-    ("/animals/cats-kittens", "Cats & Kittens"),
-    ("/animals/ocean", "Ocean"),
-    ("/animals/woodland-animals", "Woodland Animals"),
-    ("/animals/farmyard", "Farmyard"),
-    ("/animals/jungle-safari", "Jungle & Safari"),
-    ("/animals/dragons-dinosaurs", "Dragons & Dinosaurs"),
-    ("/animals/mythical-creatures", "Mythical Creatures"),
-    ("/animals/arctic-antarctic", "Arctic & Antarctic"),
-    ("/animals/amphibians-reptiles", "Amphibians & Reptiles"),
-    ("/animals/birds", "Birds"),
-    ("/animals/bugs-insects", "Bugs & Insects"),
-    ("/amuseables/amuseables-food-drink", "Food & Drink"),
-    ("/amuseables/amuseables-objects", "Objects"),
-    ("/amuseables/amuseables-plants-woodland", "Plants & Woodland"),
-    ("/amuseables/amuseables-sports", "Sports"),
-    ("/bags-bag-charms/bag-charms", "Bag Charms"),
-    ("/bags-bag-charms/bags", "Bags & Purses"),
-    ("/baby/", "Baby"),
-    ("/books", "Books"),
+META_KEYS = [
+    "release_date",
+    "seasonality",
+    "product_status",
+    "Sub_Brand",
+    "animal_group",
+    "animal_type",
+    "product_group",
+    "product_style",
+    "generic_colour",
+    "short_description",
 ]
 
 
@@ -146,6 +119,19 @@ def gql(token: str, query: str, variables: dict | None = None) -> dict:
     raise RuntimeError(f"GraphQL failed after retries: {last_err}")
 
 
+def parse_meta_value(raw: str) -> str:
+    if not raw:
+        return ""
+    try:
+        obj = json.loads(raw)
+        if isinstance(obj, dict) and "data" in obj:
+            val = obj["data"]
+            return "" if val is None else str(val).strip()
+        return str(obj).strip()
+    except Exception:  # noqa: BLE001
+        return str(raw).strip()
+
+
 def parse_size(name: str) -> str:
     for label, pat in SIZE_PATTERNS:
         if pat.search(name):
@@ -159,122 +145,53 @@ def strip_size(name: str) -> str:
         cleaned = pat.sub("", cleaned)
     cleaned = re.sub(r"\s{2,}", " ", cleaned)
     cleaned = re.sub(r"\s+([–—-])\s*$", "", cleaned)
-    return cleaned.strip(" -–—") or name
+    return cleaned.strip(" -–—\u200b") or name
 
 
-def pick_set(categories: list[dict]) -> tuple[str, str]:
-    paths = [(c.get("path") or "").lower() for c in categories]
-    joined = " ".join(paths)
-    for needle, label, code in SET_PRIORITY:
-        if any(needle in p for p in paths) or needle in joined:
-            return code, label
-    # fall back to first non-meta category
-    for c in categories:
-        n = (c.get("name") or "").strip()
-        p = (c.get("path") or "").lower()
-        if not n or n.lower() in META_CATEGORY_NAMES:
-            continue
-        if p.startswith("/collections/") or p.startswith("/gift-ideas/"):
-            continue
-        code = re.sub(r"[^a-z0-9]+", "-", n.lower()).strip("-") or "other"
-        return code, n
-    return "other", "Other"
+def primary_theme(product_style: str, sub_brand: str, animal_group: str) -> str:
+    style = (product_style or "").strip()
+    if style:
+        # Prefer the lead style when comma-separated ("Halloween, Ooky")
+        return style.split(",")[0].strip() or style
+    if sub_brand and sub_brand not in {"Marketing Materials"}:
+        return sub_brand
+    if animal_group:
+        return animal_group
+    return "Other"
 
 
-def pick_story(categories: list[dict], set_name: str, set_code: str) -> str:
-    paths = [(c.get("path") or "").lower() for c in categories]
-    names = " ".join((c.get("name") or "").lower() for c in categories)
-    if set_code == "bartholomew" or "bartholomew" in names or any("bartholomew" in p for p in paths):
-        return "Bartholomew"
-    if set_code == "bashful" or any("bashful" in p for p in paths):
-        # Prefer animal family when available, else Bashfuls
-        for needle, label in STORY_PATH_HINTS:
-            if needle.startswith("/animals/") and any(needle in p for p in paths):
-                return label
-        return "Bashfuls"
-    for needle, label in STORY_PATH_HINTS:
-        if any(needle in p for p in paths):
-            return label
-    if set_name == "Amuseables":
-        return "Amuseables"
-    return set_name or "Jellycat"
+def catalogue_of(seasonality: str) -> str:
+    season = (seasonality or "").strip()
+    if not season:
+        return "Main Catalogue"
+    return SEASON_TO_CATALOGUE.get(season, f"{season} Catalogue")
 
 
-def pick_type(categories: list[dict], set_code: str) -> str:
-    paths = " ".join((c.get("path") or "").lower() for c in categories)
-    if "bag-charm" in paths or "/bags" in paths:
-        return "Accessory"
-    if "/books" in paths or "soft-books" in paths:
-        return "Book"
-    if "/baby" in paths and "soft-toys" not in paths:
-        return "Baby"
-    if set_code == "accessories":
-        return "Accessory"
-    if set_code == "books":
-        return "Book"
-    if set_code == "baby":
-        return "Baby"
-    return "Soft Toy"
+def year_of(release_date: str, created_utc: str | None = None) -> str:
+    for raw in (release_date, created_utc or ""):
+        m = re.match(r"^(\d{4})", raw or "")
+        if m:
+            return m.group(1)
+    return "Unknown"
 
 
-def normalize_product(node: dict) -> dict | None:
-    img = node.get("defaultImage") or {}
-    thumb = img.get("url") or img.get("urlOriginal")
-    full = img.get("urlOriginal") or thumb
-    if not thumb:
-        # try first gallery image
-        edges = ((node.get("images") or {}).get("edges")) or []
-        if edges:
-            n0 = edges[0].get("node") or {}
-            thumb = n0.get("url") or n0.get("urlOriginal")
-            full = n0.get("urlOriginal") or thumb
-    if not thumb:
-        return None
+def normalize_status(raw: str, category_paths: list[str]) -> str:
+    status = (raw or "").strip()
+    if status in STATUS_ORDER:
+        return status
+    paths = " ".join(category_paths).lower()
+    if "coming-soon" in paths:
+        return "Coming Soon"
+    if "/retired" in paths or paths.endswith("/retired"):
+        return "Retired"
+    if status:
+        # Unknown store values — keep readable
+        return status.title()
+    return "Live"
 
-    cats = [e["node"] for e in ((node.get("categories") or {}).get("edges") or []) if e.get("node")]
-    # Skip items that only live under Retired (still include if also in active cats)
-    paths = [(c.get("path") or "").lower() for c in cats]
-    if paths and all(p.startswith("/retired") or p == "/retired" for p in paths):
-        return None
 
-    name = (node.get("name") or "").strip()
-    if not name:
-        return None
-
-    size = parse_size(name)
-    base = strip_size(name)
-    set_code, set_name = pick_set(cats)
-    story = pick_story(cats, set_name, set_code)
-    ptype = pick_type(cats, set_code)
-    path = node.get("path") or ""
-    url = f"{STORE_URL}{path}" if path.startswith("/") else path
-
-    avail = ((node.get("availabilityV2") or {}).get("status")) or ""
-    price = None
-    try:
-        price = (((node.get("prices") or {}).get("price") or {}).get("value"))
-    except Exception:  # noqa: BLE001
-        price = None
-
-    return {
-        "id": node.get("entityId"),
-        "fullName": name,
-        "name": base,
-        "version": size if size != "One size" else "",
-        "rarity": size,
-        "setCode": set_code,
-        "setName": set_name,
-        "story": story,
-        "type": ptype,
-        "color": avail.replace("_", " ").title() if avail else "",
-        "sku": node.get("sku") or "",
-        "thumb": thumb,
-        "full": full,
-        "url": url,
-        "price": price,
-        "blurb": (node.get("plainTextDescription") or "")[:280],
-        "categories": [c.get("name") for c in cats if c.get("name")],
-    }
+def slug(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-") or "other"
 
 
 PRODUCT_QUERY = """
@@ -289,17 +206,101 @@ query ($cursor: String) {
           path
           sku
           plainTextDescription
+          createdAt { utc }
           defaultImage { url(width: 500) urlOriginal }
           images(first: 1) { edges { node { url(width: 500) urlOriginal } } }
           categories { edges { node { entityId name path } } }
           prices { price { value currencyCode } }
           availabilityV2 { status }
+          metafields(namespace: "jellycat", first: 40) {
+            edges { node { key value } }
+          }
         }
       }
     }
   }
 }
 """
+
+
+def normalize_product(node: dict) -> dict | None:
+    img = node.get("defaultImage") or {}
+    thumb = img.get("url") or img.get("urlOriginal")
+    full = img.get("urlOriginal") or thumb
+    if not thumb:
+        edges = ((node.get("images") or {}).get("edges")) or []
+        if edges:
+            n0 = edges[0].get("node") or {}
+            thumb = n0.get("url") or n0.get("urlOriginal")
+            full = n0.get("urlOriginal") or thumb
+    if not thumb:
+        return None
+
+    name = (node.get("name") or "").replace("\u200b", "").strip()
+    if not name:
+        return None
+
+    mf = {
+        m["node"]["key"]: parse_meta_value(m["node"].get("value") or "")
+        for m in ((node.get("metafields") or {}).get("edges") or [])
+        if m.get("node")
+    }
+
+    cats = [e["node"] for e in ((node.get("categories") or {}).get("edges") or []) if e.get("node")]
+    paths = [(c.get("path") or "") for c in cats]
+
+    size = parse_size(name)
+    base = strip_size(name)
+    theme = primary_theme(mf.get("product_style", ""), mf.get("Sub_Brand", ""), mf.get("animal_group", ""))
+    catalogue = catalogue_of(mf.get("seasonality", ""))
+    created = ((node.get("createdAt") or {}).get("utc")) or ""
+    year = year_of(mf.get("release_date", ""), created)
+    status = normalize_status(mf.get("product_status", ""), paths)
+
+    path = node.get("path") or ""
+    url = f"{STORE_URL}{path}" if path.startswith("/") else path
+    avail = ((node.get("availabilityV2") or {}).get("status")) or ""
+    price = None
+    try:
+        price = (((node.get("prices") or {}).get("price") or {}).get("value"))
+    except Exception:  # noqa: BLE001
+        price = None
+
+    blurb = (mf.get("short_description") or node.get("plainTextDescription") or "")[:280]
+    theme_code = slug(theme)
+
+    return {
+        "id": node.get("entityId"),
+        "fullName": name,
+        "name": base,
+        "version": size if size != "One size" else "",
+        # Filter dimensions
+        "theme": theme,
+        "catalogue": catalogue,
+        "year": year,
+        "status": status,
+        # Back-compat aliases used by the gallery UI
+        "rarity": status,
+        "setCode": theme_code,
+        "setName": theme,
+        "story": catalogue,
+        "type": mf.get("product_group") or "Soft Toy",
+        "color": year,
+        "size": size,
+        "subBrand": mf.get("Sub_Brand") or "",
+        "animalGroup": mf.get("animal_group") or "",
+        "animalType": mf.get("animal_type") or "",
+        "seasonality": mf.get("seasonality") or "",
+        "releaseDate": mf.get("release_date") or "",
+        "sku": node.get("sku") or "",
+        "thumb": thumb,
+        "full": full,
+        "url": url,
+        "price": price,
+        "blurb": blurb,
+        "availability": avail.replace("_", " ").title() if avail else "",
+        "categories": [c.get("name") for c in cats if c.get("name")],
+    }
 
 
 def fetch_all_products(token: str) -> list[dict]:
@@ -319,8 +320,8 @@ def fetch_all_products(token: str) -> list[dict]:
         if not info.get("hasNextPage"):
             break
         cursor = info.get("endCursor")
-        time.sleep(0.15)
-    # de-dupe by id
+        time.sleep(0.12)
+
     seen: set[int] = set()
     unique: list[dict] = []
     for it in items:
@@ -336,30 +337,48 @@ def main() -> None:
     DATA.mkdir(exist_ok=True)
     print("Fetching storefront token…")
     token = get_storefront_token()
-    print("Paging through GraphQL catalogue…")
+    print("Paging through full GraphQL catalogue (live + coming soon + retired)…")
     cards = fetch_all_products(token)
-    cards.sort(key=lambda c: (c["setName"], c["name"], SIZE_ORDER.index(c["rarity"]) if c["rarity"] in SIZE_ORDER else 99, c["id"]))
 
-    sets_map: dict[str, dict] = {}
-    for c in cards:
-        sets_map.setdefault(
-            c["setCode"],
-            {"code": c["setCode"], "name": c["setName"], "number": None, "type": "collection"},
-        )
+    def sort_key(c: dict):
+        st = STATUS_ORDER.index(c["status"]) if c["status"] in STATUS_ORDER else 99
+        year = c["year"] if c["year"].isdigit() else "0000"
+        return (st, c["theme"], -int(year) if year.isdigit() else 0, c["name"], c["id"])
+
+    cards.sort(key=sort_key)
+
+    themes = sorted({c["theme"] for c in cards if c["theme"]})
+    catalogues = sorted({c["catalogue"] for c in cards if c["catalogue"]})
+    years = sorted({c["year"] for c in cards if c["year"]}, reverse=True)
+    # Keep Unknown at end
+    if "Unknown" in years:
+        years = [y for y in years if y != "Unknown"] + ["Unknown"]
+    statuses = [s for s in STATUS_ORDER if any(c["status"] == s for c in cards)]
+    sizes = [s for s in SIZE_ORDER if any(c.get("size") == s for c in cards)]
+
+    # Alias lists for the existing filter plumbing
+    sets = [{"code": slug(t), "name": t, "number": None, "type": "theme"} for t in themes]
 
     out = {
         "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": STORE_URL,
         "count": len(cards),
-        "sets": sorted(sets_map.values(), key=lambda s: s["name"]),
-        "rarities": [s for s in SIZE_ORDER if any(c["rarity"] == s for c in cards)],
-        "stories": sorted({c["story"] for c in cards if c["story"]}),
+        "themes": themes,
+        "catalogues": catalogues,
+        "years": years,
+        "statuses": statuses,
+        "sizes": sizes,
+        "sets": sets,
+        "rarities": statuses,
+        "stories": catalogues,
         "cards": cards,
     }
 
     path = DATA / "cards.json"
     path.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     print(f"Wrote {path} ({path.stat().st_size:,} bytes, {out['count']} plush)")
+    print(f"  statuses: { {s: sum(1 for c in cards if c['status']==s) for s in statuses} }")
+    print(f"  themes: {len(themes)}, catalogues: {len(catalogues)}, years: {years[:8]}…")
 
 
 if __name__ == "__main__":

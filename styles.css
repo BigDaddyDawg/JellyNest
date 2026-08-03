@@ -393,7 +393,7 @@ body {
 /* —— Filters —— */
 .filters {
   display: grid;
-  grid-template-columns: 1.6fr repeat(3, 1fr) auto;
+  grid-template-columns: 1.4fr repeat(4, minmax(0, 1fr)) auto;
   gap: 0.75rem;
   align-items: end;
   padding: 1rem;
@@ -531,6 +531,19 @@ body {
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.card-badge.is-live {
+  background: linear-gradient(135deg, var(--mint), var(--mint-deep));
+}
+
+.card-badge.is-soon {
+  background: linear-gradient(135deg, var(--butter), #e0b85c);
+  color: #4a3a18;
+}
+
+.card-badge.is-retired {
+  background: linear-gradient(135deg, #c4b5b0, #8a7a76);
 }
 
 .card-wrap:hover .card-badge,

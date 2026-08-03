@@ -22,7 +22,13 @@ Open the live site in Safari/Chrome, then **Add to Home Screen**. It installs as
 
 ## Data
 
-The catalogue is built from the official [Jellycat US store](https://us.jellycat.com/) GraphQL API into `data/cards.json`.
+The catalogue is built from the official [Jellycat US store](https://us.jellycat.com/) GraphQL API into `data/cards.json` — **every** plush currently on the store, including retired and coming soon.
+
+Each friend is tagged with:
+- **Theme** — product style / range (Bashful Bunny, Amuseables Food & Drink, …)
+- **Catalogue** — Main, Christmas, Easter, Halloween, etc.
+- **Year** — from the official release date
+- **Status** — Coming Soon, Live, or Retired
 
 ```powershell
 python scripts/refresh_data.py
