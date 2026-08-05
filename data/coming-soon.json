@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-03T16:53:54Z",
+  "generated": "2026-08-05T16:28:32Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,7 +13,7 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 12,
+      "revealedCount": 14,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1845/50709/OOK3JOL__38839.1751390672.jpg",
@@ -49,7 +49,7 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 24,
+      "revealedCount": 23,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/138/51531/A2CL__83625.1762489562.jpg",
@@ -265,6 +265,40 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2081/53577/BAS3BCPW__27627.1785166045.jpg",
       "url": "https://us.jellycat.com/rufferty-puppy-wizard-original/",
       "blurb": "Rufferty Puppy 'Wizard' may not be the most talented magician, but he’s certainly the most enthusiastic!He’s spent..."
+    },
+    {
+      "id": 2082,
+      "fullName": "Bashful Bunny Junior",
+      "name": "Bashful Bunny Junior",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "All Bashfuls",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "BASJ6BC",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2082/53658/BASJ6BC__41174.1785756365.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2082/53658/BASJ6BC__41174.1785756365.jpg",
+      "url": "https://us.jellycat.com/bashful-bunny-junior/",
+      "blurb": "Meet the junior version of our beloved Bashful Bunny, just as brave and adventurous as her grown-up self (and still..."
+    },
+    {
+      "id": 2083,
+      "fullName": "Jellycat Jack Junior",
+      "name": "Jellycat Jack Junior",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "JEL6J",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2083/53654/JEL6J__62129.1785756365.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2083/53654/JEL6J__62129.1785756365.jpg",
+      "url": "https://us.jellycat.com/jellycat-jack-junior/",
+      "blurb": "Jellycat Jack Junior has questions. Good ones, too.Small in size but no less curious, he’s constantly asking them – why..."
     },
     {
       "id": 1968,
