@@ -24,6 +24,9 @@
     statusFilter: document.getElementById("statusFilter"),
     clearFilters: document.getElementById("clearFilters"),
     activePills: document.getElementById("activePills"),
+    groupToolbar: document.getElementById("groupToolbar"),
+    expandAllGroups: document.getElementById("expandAllGroups"),
+    collapseAllGroups: document.getElementById("collapseAllGroups"),
     modal: document.getElementById("cardModal"),
     modalClose: document.getElementById("modalClose"),
     modalImg: document.getElementById("modalImg"),
@@ -66,7 +69,10 @@
 
   /** @type {{cards: any[], themes?: string[], catalogues?: string[], years?: string[], statuses?: string[], count?: number}} */
   let catalog = { cards: [], themes: [], catalogues: [], years: [], statuses: [] };
+  /** @type {any[]} */
   let filtered = [];
+  /** @type {{ theme: string, cards: any[] }[]} */
+  let filteredGroups = [];
   let shown = 0;
   let searchTimer = null;
   let wishSearchTimer = null;
@@ -98,7 +104,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register(`service-worker.js?v=10`)
+        .register(`service-worker.js?v=11`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -126,7 +132,7 @@
 
   async function boot() {
     try {
-      const res = await fetch(`./data/cards.json?v=10`, { cache: "no-cache" });
+      const res = await fetch(`./data/cards.json?v=11`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();
@@ -355,11 +361,12 @@
 
     const io = new IntersectionObserver(
       (entries) => {
+        // Kept for older layouts; grouped browse fills groups on expand.
         if (entries.some((en) => en.isIntersecting)) renderMore();
       },
       { rootMargin: "600px 0px" }
     );
-    io.observe(els.sentinel);
+    if (els.sentinel) io.observe(els.sentinel);
 
     els.tabCollection?.addEventListener("click", () => showTab("collection"));
     els.tabOwned?.addEventListener("click", () => showTab("owned"));
@@ -375,6 +382,9 @@
     });
     els.comingRefresh?.addEventListener("click", () => loadComingSoon(true));
     window.addEventListener("hashchange", maybeOpenTabFromHash);
+
+    els.expandAllGroups?.addEventListener("click", () => setAllGroupsOpen(true));
+    els.collapseAllGroups?.addEventListener("click", () => setAllGroupsOpen(false));
   }
 
   function onGridClick(e) {
@@ -918,15 +928,88 @@
       return true;
     });
 
+    const byTheme = new Map();
+    for (const card of filtered) {
+      const key = card.theme || "Other friends";
+      if (!byTheme.has(key)) byTheme.set(key, []);
+      byTheme.get(key).push(card);
+    }
+    filteredGroups = [...byTheme.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0], undefined, { sensitivity: "base" }))
+      .map(([themeName, cards]) => ({ theme: themeName, cards }));
+
     shown = 0;
-    els.grid.innerHTML = "";
+    renderThemeGroups();
     updateMeta();
-    renderMore();
+  }
+
+  function shouldAutoOpenGroups() {
+    if (els.themeFilter?.value) return true;
+    if (filteredGroups.length <= 3) return true;
+    if (filtered.length <= 72) return true;
+    return false;
+  }
+
+  function fillGroupGrid(grid, cards) {
+    if (!grid || grid.dataset.filled === "1") return;
+    const frag = document.createDocumentFragment();
+    cards.forEach((card, i) => frag.appendChild(makeCardTile(card, i)));
+    grid.appendChild(frag);
+    grid.dataset.filled = "1";
+  }
+
+  function renderThemeGroups() {
+    if (!els.grid) return;
+    els.grid.innerHTML = "";
+    els.grid.className = "theme-groups";
+
+    const autoOpen = shouldAutoOpenGroups();
+    if (els.groupToolbar) {
+      els.groupToolbar.hidden = filteredGroups.length < 2;
+    }
+    if (els.sentinel) els.sentinel.hidden = true;
+
+    for (const group of filteredGroups) {
+      const details = document.createElement("details");
+      details.className = "theme-group";
+      details.dataset.theme = group.theme;
+      if (autoOpen) details.open = true;
+
+      const summary = document.createElement("summary");
+      summary.className = "theme-group-summary";
+      summary.innerHTML = `
+        <span class="theme-group-chevron" aria-hidden="true"></span>
+        <span class="theme-group-name">${escapeHtml(group.theme)}</span>
+        <span class="theme-group-count">${group.cards.length}</span>
+      `;
+
+      const inner = document.createElement("div");
+      inner.className = "grid theme-group-grid";
+
+      details.addEventListener("toggle", () => {
+        if (details.open) fillGroupGrid(inner, group.cards);
+      });
+
+      details.appendChild(summary);
+      details.appendChild(inner);
+      if (details.open) fillGroupGrid(inner, group.cards);
+      els.grid.appendChild(details);
+    }
+
+    shown = filtered.length;
+  }
+
+  function setAllGroupsOpen(open) {
+    if (!els.grid) return;
+    els.grid.querySelectorAll("details.theme-group").forEach((details) => {
+      details.open = open;
+    });
   }
 
   function updateMeta() {
     const total = catalog.count || catalog.cards.length;
     const n = filtered.length;
+    const groups = filteredGroups.length;
     const parts = [];
     if (els.themeFilter?.value) parts.push(els.themeFilter.value);
     if (els.catalogueFilter?.value) parts.push(els.catalogueFilter.value);
@@ -935,7 +1018,9 @@
     if (els.search.value.trim()) parts.push(`“${els.search.value.trim()}”`);
 
     if (n === total && !parts.length) {
-      els.countLabel.textContent = `${total.toLocaleString()} Jellycats across every catalogue`;
+      els.countLabel.textContent = `${total.toLocaleString()} Jellycats in ${groups.toLocaleString()} themes`;
+    } else if (groups > 1) {
+      els.countLabel.textContent = `${n.toLocaleString()} friend${n === 1 ? "" : "s"} in ${groups.toLocaleString()} themes`;
     } else {
       els.countLabel.textContent = `${n.toLocaleString()} friend${n === 1 ? "" : "s"} found`;
     }
@@ -946,12 +1031,7 @@
   }
 
   function renderMore() {
-    if (shown >= filtered.length) return;
-    const slice = filtered.slice(shown, shown + PAGE_SIZE);
-    const frag = document.createDocumentFragment();
-    slice.forEach((card, i) => frag.appendChild(makeCardTile(card, i)));
-    els.grid.appendChild(frag);
-    shown += slice.length;
+    // Flat infinite scroll no longer used — groups fill as each family is opened.
   }
 
   function stockLabel(card) {

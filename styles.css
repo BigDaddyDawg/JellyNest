@@ -471,6 +471,140 @@ body {
   font-size: 0.85rem;
 }
 
+/* —— Theme groups (collapsible browse) —— */
+.group-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.group-toolbar-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.group-toolbar-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.group-tool-btn {
+  border: 1px solid rgba(212, 132, 147, 0.35);
+  background: rgba(255, 248, 242, 0.75);
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 0.4rem 0.85rem;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.group-tool-btn:hover,
+.group-tool-btn:focus-visible {
+  background: #fff;
+  border-color: rgba(212, 132, 147, 0.65);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.theme-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.theme-group {
+  border: 1px solid rgba(212, 132, 147, 0.2);
+  border-radius: calc(var(--radius) + 2px);
+  background: rgba(255, 248, 242, 0.45);
+  overflow: clip;
+}
+
+.theme-group[open] {
+  background: rgba(255, 248, 242, 0.72);
+  box-shadow: 0 10px 28px rgba(90, 60, 70, 0.06);
+}
+
+.theme-group-summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.theme-group-summary::-webkit-details-marker {
+  display: none;
+}
+
+.theme-group-chevron {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-right: 2px solid var(--blush-deep);
+  border-bottom: 2px solid var(--blush-deep);
+  transform: rotate(-45deg);
+  transition: transform 0.2s ease;
+  margin-left: 0.15rem;
+}
+
+.theme-group[open] .theme-group-chevron {
+  transform: rotate(45deg);
+  margin-top: -0.15rem;
+}
+
+.theme-group-name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.theme-group-count {
+  min-width: 2rem;
+  text-align: center;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(157, 207, 184, 0.35);
+  color: var(--mint-deep);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.theme-group-grid {
+  padding: 0 1rem 1rem;
+}
+
+.theme-group-summary:hover .theme-group-name,
+.theme-group-summary:focus-visible .theme-group-name {
+  color: var(--blush-deep);
+}
+
+.theme-group-summary:focus-visible {
+  outline: 2px solid rgba(212, 132, 147, 0.55);
+  outline-offset: -2px;
+}
+
+@media (max-width: 640px) {
+  .theme-group-name {
+    font-size: 1.15rem;
+  }
+
+  .group-toolbar {
+    align-items: flex-start;
+  }
+}
+
 /* —— Card grid —— */
 .grid {
   display: grid;

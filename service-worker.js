@@ -1,5 +1,5 @@
-const CACHE_NAME = "jellynest-static-v10";
-const ASSET_V = "10";
+const CACHE_NAME = "jellynest-static-v11";
+const ASSET_V = "11";
 const CORE_ASSETS = [
   "./",
   "index.html",
