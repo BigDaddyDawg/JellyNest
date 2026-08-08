@@ -2,6 +2,12 @@
 
 Includes every plush (live, coming soon, and retired) with:
   theme · catalogue release · release year · status
+
+Also merges store / experience exclusives from:
+  - data/exclusives-fetched.json (official jellycat.com experience pages)
+  - data/exclusives-curated.json (hand overrides + pages the site under-lists)
+
+Run scripts/refresh_exclusives.py before a full refresh to refresh the fetched feed.
 """
 from __future__ import annotations
 
@@ -406,46 +412,227 @@ def fetch_all_products(token: str, uk_paths: dict[str, str]) -> list[dict]:
     return unique
 
 
-def main() -> None:
-    DATA.mkdir(exist_ok=True)
-    print("Fetching UK storefront token + SKU paths…")
-    uk_token = get_storefront_token(UK_SHOP_ALL)
-    uk_paths = fetch_uk_paths(uk_token)
-    print(f"UK paths: {len(uk_paths)}")
+def normalize_exclusive(item: dict) -> dict | None:
+    """Map a curated/fetched store-exclusive row into a gallery card."""
+    full_name = (item.get("fullName") or item.get("name") or "").replace("\u200b", "").strip()
+    if not full_name:
+        return None
+    name = (item.get("name") or full_name).replace("\u200b", "").strip()
+    eid = item.get("id") or f"exclusive-{slug(full_name)}"
+    theme = (item.get("theme") or "Characters").strip()
+    catalogue = (item.get("catalogue") or "Store Exclusive").strip()
+    year = str(item.get("year") or "Unknown").strip() or "Unknown"
+    status = (item.get("status") or "Live").strip()
+    if status not in STATUS_ORDER:
+        status = "Live"
+    size = item.get("size") or "One size"
+    thumb = item.get("thumb") or ""
+    full = item.get("full") or thumb
+    sku = (item.get("sku") or "").strip()
+    theme_code = slug(theme)
+    return {
+        "id": eid,
+        "fullName": full_name,
+        "name": name,
+        "version": item.get("version") or "Store exclusive",
+        "theme": theme,
+        "catalogue": catalogue,
+        "year": year,
+        "status": status,
+        "rarity": status,
+        "setCode": theme_code,
+        "setName": theme,
+        "story": catalogue,
+        "type": item.get("type") or "Soft Toy",
+        "color": year,
+        "size": size,
+        "subBrand": item.get("subBrand") or "",
+        "animalGroup": item.get("animalGroup") or "",
+        "animalType": item.get("animalType") or "",
+        "seasonality": item.get("seasonality") or "",
+        "releaseDate": item.get("releaseDate") or "",
+        "sku": sku,
+        "thumb": thumb,
+        "full": full,
+        "url": item.get("url") or "",
+        "ukUrl": item.get("ukUrl") or "",
+        "price": item.get("price"),
+        "blurb": (item.get("blurb") or "")[:280],
+        "availability": item.get("availability") or "Store Exclusive",
+        "categories": item.get("categories")
+        or ["Store Exclusive"],
+    }
 
-    print("Fetching US storefront token…")
-    token = get_storefront_token()
-    print("Paging through full GraphQL catalogue (live + coming soon + retired)…")
-    cards = fetch_all_products(token, uk_paths)
 
-    def sort_key(c: dict):
-        st = STATUS_ORDER.index(c["status"]) if c["status"] in STATUS_ORDER else 99
-        year = c["year"] if c["year"].isdigit() else "0000"
-        return (st, c["theme"], -int(year) if year.isdigit() else 0, c["name"], c["id"])
+def exclusive_name_key(text: str) -> str:
+    s = (text or "").replace("\u200b", "").replace("’", "'").casefold()
+    s = re.sub(r"^jellycat\s+", "", s)
+    s = re.sub(r"^amuseables?\s+", "", s)
+    s = s.replace("&", "and").replace(".", " ")
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
 
-    cards.sort(key=sort_key)
 
-    themes = sorted({c["theme"] for c in cards if c["theme"]})
-    catalogues = sorted({c["catalogue"] for c in cards if c["catalogue"]})
-    years = sorted({c["year"] for c in cards if c["year"]}, reverse=True)
+# Experience pages sometimes shorten a name that already exists online.
+ONLINE_NAME_ALIASES = {
+    "pizza": {"slice of pizza"},
+}
+
+
+def load_exclusive_rows(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if isinstance(raw, dict):
+        raw = raw.get("cards") or raw.get("items") or []
+    if not isinstance(raw, list):
+        raise SystemExit(f"Expected a JSON array (or {{cards: []}}) in {path}")
+    out: list[dict] = []
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        card = normalize_exclusive(item)
+        if card:
+            out.append(card)
+    return out
+
+
+def load_curated_exclusives() -> list[dict]:
+    return load_exclusive_rows(DATA / "exclusives-curated.json")
+
+
+def load_fetched_exclusives() -> list[dict]:
+    return load_exclusive_rows(DATA / "exclusives-fetched.json")
+
+
+def merge_exclusive_sources(fetched: list[dict], curated: list[dict]) -> list[dict]:
+    """Combine scraped experience exclusives with hand curation.
+
+    Curated wins on conflicting fields for the same normalised name, but we keep
+    a scraped image when curation lacks one.
+    """
+    by_key: dict[str, dict] = {}
+    for card in fetched:
+        key = exclusive_name_key(card.get("fullName") or "")
+        if key:
+            by_key[key] = card
+    for card in curated:
+        key = exclusive_name_key(card.get("fullName") or "")
+        if not key:
+            continue
+        prev = by_key.get(key)
+        if not prev:
+            by_key[key] = card
+            continue
+        merged = {**prev, **{k: v for k, v in card.items() if v not in (None, "", [])}}
+        if prev.get("thumb") and not merged.get("thumb"):
+            merged["thumb"] = prev["thumb"]
+            merged["full"] = prev.get("full") or prev["thumb"]
+        if str(card.get("id", "")).startswith("exclusive-"):
+            merged["id"] = card["id"]
+        by_key[key] = merged
+    return list(by_key.values())
+
+
+def website_name_keys(cards: list[dict]) -> set[str]:
+    keys: set[str] = set()
+    for c in cards:
+        if str(c.get("id", "")).startswith("exclusive-"):
+            continue
+        if c.get("catalogue") == "Store Exclusive":
+            continue
+        for field in ("fullName", "name"):
+            key = exclusive_name_key(c.get(field) or "")
+            if key:
+                keys.add(key)
+    return keys
+
+
+def is_already_online(card: dict, online_keys: set[str]) -> bool:
+    key = exclusive_name_key(card.get("fullName") or "")
+    if not key:
+        return False
+    variants = {
+        key,
+        exclusive_name_key("Amuseables " + (card.get("fullName") or "")),
+        exclusive_name_key(re.sub(r"(?i)^amuseables?\s+", "", card.get("fullName") or "")),
+    }
+    variants |= ONLINE_NAME_ALIASES.get(key, set())
+    return any(v and v in online_keys for v in variants)
+
+
+def merge_exclusives(cards: list[dict]) -> list[dict]:
+    """Append fetched + curated exclusives that are not already on the website."""
+    fetched = load_fetched_exclusives()
+    curated = load_curated_exclusives()
+    exclusives = merge_exclusive_sources(fetched, curated)
+    print(
+        f"Store exclusives loaded: {len(fetched)} fetched + {len(curated)} curated "
+        f"-> {len(exclusives)} unique"
+    )
+    if not exclusives:
+        return cards
+
+    online_keys = website_name_keys(cards)
+    existing_ids = {str(c.get("id")) for c in cards}
+    existing_skus = {(c.get("sku") or "").strip() for c in cards if (c.get("sku") or "").strip()}
+    existing_names = {exclusive_name_key(c.get("fullName") or "") for c in cards}
+
+    added = 0
+    skipped_online = 0
+    for ex in exclusives:
+        eid = str(ex["id"])
+        sku = (ex.get("sku") or "").strip()
+        name_key = exclusive_name_key(ex.get("fullName") or "")
+        if eid in existing_ids:
+            continue
+        if sku and sku in existing_skus:
+            print(f"  skip exclusive (SKU already online): {ex['fullName']} ({sku})")
+            skipped_online += 1
+            continue
+        if is_already_online(ex, online_keys):
+            print(f"  skip exclusive (already online): {ex['fullName']}")
+            skipped_online += 1
+            continue
+        if name_key and name_key in existing_names:
+            continue
+        cards.append(ex)
+        added += 1
+        existing_ids.add(eid)
+        if sku:
+            existing_skus.add(sku)
+        if name_key:
+            existing_names.add(name_key)
+
+    print(f"Store exclusives added: {added} (skipped online: {skipped_online})")
+    return cards
+
+
+def card_sort_key(c: dict):
+    st = STATUS_ORDER.index(c["status"]) if c["status"] in STATUS_ORDER else 99
+    year = c["year"] if str(c.get("year", "")).isdigit() else "0000"
+    return (st, c.get("theme") or "", -int(year) if year.isdigit() else 0, c.get("name") or "", str(c.get("id")))
+
+
+def build_catalog(cards: list[dict], *, generated: str | None = None) -> dict:
+    cards = list(cards)
+    cards.sort(key=card_sort_key)
+
+    themes = sorted({c["theme"] for c in cards if c.get("theme")})
+    catalogues = sorted({c["catalogue"] for c in cards if c.get("catalogue")})
+    years = sorted({c["year"] for c in cards if c.get("year")}, reverse=True)
     # Keep Unknown at end
     if "Unknown" in years:
         years = [y for y in years if y != "Unknown"] + ["Unknown"]
-    statuses = [s for s in STATUS_ORDER if any(c["status"] == s for c in cards)]
+    statuses = [s for s in STATUS_ORDER if any(c.get("status") == s for c in cards)]
     sizes = [s for s in SIZE_ORDER if any(c.get("size") == s for c in cards)]
-
-    # Alias lists for the existing filter plumbing
     sets = [{"code": slug(t), "name": t, "number": None, "type": "theme"} for t in themes]
 
-    with_uk = sum(1 for c in cards if c.get("ukUrl"))
-    linkable = sum(
-        1 for c in cards if c.get("ukUrl") and c.get("availability") in {"Available", "Preorder"}
-    )
-
-    out = {
-        "generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    return {
+        "generated": generated or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "source": STORE_URL,
         "ukSource": UK_STORE_URL,
+        "exclusivesSource": "jellycat.com/events-experiences + data/exclusives-curated.json",
         "count": len(cards),
         "themes": themes,
         "catalogues": catalogues,
@@ -458,13 +645,64 @@ def main() -> None:
         "cards": cards,
     }
 
+
+def write_catalog(out: dict) -> Path:
     path = DATA / "cards.json"
     path.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    cards = out["cards"]
+    statuses = out["statuses"]
+    with_uk = sum(1 for c in cards if c.get("ukUrl"))
+    linkable = sum(
+        1 for c in cards if c.get("ukUrl") and c.get("availability") in {"Available", "Preorder"}
+    )
+    exclusives = sum(1 for c in cards if c.get("catalogue") == "Store Exclusive")
     print(f"Wrote {path} ({path.stat().st_size:,} bytes, {out['count']} plush)")
     print(f"  statuses: { {s: sum(1 for c in cards if c['status']==s) for s in statuses} }")
+    print(f"  store exclusives: {exclusives}")
     print(f"  ukUrl coverage: {with_uk}/{len(cards)}, buyable links: {linkable}")
-    print(f"  themes: {len(themes)}, catalogues: {len(catalogues)}, years: {years[:8]}…")
+    print(f"  themes: {len(out['themes'])}, catalogues: {len(out['catalogues'])}, years: {out['years'][:8]}…")
+    return path
+
+
+def merge_exclusives_only() -> None:
+    """Re-merge exclusives into the existing cards.json (no live GraphQL scrape)."""
+    DATA.mkdir(exist_ok=True)
+    path = DATA / "cards.json"
+    if not path.exists():
+        raise SystemExit(f"Missing {path}; run a full refresh first.")
+    data = json.loads(path.read_text(encoding="utf-8"))
+    # Drop previous exclusives so fetch/curated edits apply cleanly
+    website_cards = [
+        c
+        for c in data.get("cards") or []
+        if not str(c.get("id", "")).startswith("exclusive-")
+        and c.get("catalogue") != "Store Exclusive"
+    ]
+    cards = merge_exclusives(website_cards)
+    out = build_catalog(cards, generated=data.get("generated"))
+    write_catalog(out)
+
+
+def main() -> None:
+    DATA.mkdir(exist_ok=True)
+    print("Fetching UK storefront token + SKU paths…")
+    uk_token = get_storefront_token(UK_SHOP_ALL)
+    uk_paths = fetch_uk_paths(uk_token)
+    print(f"UK paths: {len(uk_paths)}")
+
+    print("Fetching US storefront token…")
+    token = get_storefront_token()
+    print("Paging through full GraphQL catalogue (live + coming soon + retired)…")
+    cards = fetch_all_products(token, uk_paths)
+    cards = merge_exclusives(cards)
+    out = build_catalog(cards)
+    write_catalog(out)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] in {"--merge-exclusives", "--exclusives-only"}:
+        merge_exclusives_only()
+    else:
+        main()

@@ -854,7 +854,8 @@ body {
   font-weight: 600;
 }
 
-.card.is-leak {
+.card.is-leak,
+.card.is-exclusive {
   display: grid;
   place-items: center;
   align-content: center;
@@ -864,6 +865,13 @@ body {
     radial-gradient(circle at 30% 20%, rgba(240, 216, 154, 0.55), transparent 45%),
     radial-gradient(circle at 80% 70%, rgba(233, 168, 179, 0.4), transparent 50%),
     linear-gradient(160deg, #fff8f2, #f0e4d8);
+}
+
+.card.is-exclusive {
+  background:
+    radial-gradient(circle at 28% 22%, rgba(157, 207, 184, 0.5), transparent 46%),
+    radial-gradient(circle at 78% 72%, rgba(185, 215, 234, 0.45), transparent 52%),
+    linear-gradient(160deg, #f4fbf7, #e8f0f4);
 }
 
 .leak-art {
@@ -890,7 +898,8 @@ body {
   color: var(--ink);
 }
 
-.card.is-leak .card-badge {
+.card.is-leak .card-badge,
+.card.is-exclusive .card-badge {
   opacity: 1;
   transform: none;
   position: absolute;

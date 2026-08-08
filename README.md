@@ -26,19 +26,36 @@ The catalogue is built from the official [Jellycat US store](https://us.jellycat
 
 Each friend is tagged with:
 - **Theme** — product style / range (Bashful Bunny, Amuseables Food & Drink, …)
-- **Catalogue** — Main, Christmas, Easter, Halloween, etc.
+- **Catalogue** — Main, Christmas, Easter, Halloween, **Store Exclusive**, etc.
 - **Year** — from the official release date
 - **Status** — Coming Soon, Live, or Retired
 
 **Available** and **Pre-order** stock labels in the detail view link through to the matching product on the UK store ([jellycat.com](https://jellycat.com/)).
 
+## Store exclusives
+
+A second source covers in-store / experience friends that never land in the shop GraphQL feed — New York Diner, Paris Patisserie, Shanghai/Beijing Café, London Fish & Chips, and Selfridges General Stores.
+
+1. **Fetched** — `python scripts/refresh_exclusives.py` scrapes the official [Events & Experiences](https://jellycat.com/events-experiences/) pages into `data/exclusives-fetched.json` (names + product photos when the page has them), skipping anything already online.
+2. **Curated** — `data/exclusives-curated.json` fills gaps the pages under-list (Shanghai Café cast, Selfridges Bashful colourways, bag-charm add-ons) and can override fetched rows.
+
+Both merge into `cards.json` on catalogue refresh. Filter Browse by catalogue **Store Exclusive**.
+
+```powershell
+python scripts/refresh_exclusives.py
+python scripts/refresh_data.py --merge-exclusives
+```
+
+Or run a full catalogue refresh (expects `exclusives-fetched.json` to already exist, or run the exclusives script first):
+
+```powershell
+python scripts/refresh_exclusives.py
+python scripts/refresh_data.py
+```
+
 ## Leaks
 
 Unofficial spoilers (for example Christmas 2026) live under **Coming Soon → Leaks & whispers**. They’re curated in `data/leaks-curated.json` and merged into `coming-soon.json` on refresh — edit that file to add or correct spoilers.
-
-```powershell
-python scripts/refresh_data.py
-```
 
 ## Coming Soon tab
 

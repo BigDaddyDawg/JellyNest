@@ -515,13 +515,14 @@
         <span class="card-badge${statusClass}">${escapeHtml(badge)}</span>
       `;
     } else {
-      btn.classList.add("is-leak");
+      const isExclusive = card.catalogue === "Store Exclusive" || card.availability === "Store Exclusive";
+      btn.classList.add(isExclusive ? "is-exclusive" : "is-leak");
       btn.innerHTML = `
         <span class="leak-art" aria-hidden="true">
-          <span class="leak-art-mark">✧</span>
+          <span class="leak-art-mark">${isExclusive ? "✦" : "✧"}</span>
         </span>
-        <span class="leak-name">${escapeHtml(card.name || card.fullName || "Leak")}</span>
-        <span class="card-badge${statusClass}">${escapeHtml(badge || "Leak")}</span>
+        <span class="leak-name">${escapeHtml(card.name || card.fullName || (isExclusive ? "Exclusive" : "Leak"))}</span>
+        <span class="card-badge${statusClass}">${escapeHtml(isExclusive ? "Exclusive" : badge || "Leak")}</span>
       `;
     }
     wrap.appendChild(btn);
@@ -934,6 +935,7 @@
     const avail = card.availability || "";
     if (avail === "Available") return "Available";
     if (avail === "Preorder") return "Pre-order";
+    if (avail === "Store Exclusive" || card.catalogue === "Store Exclusive") return "Store exclusive";
     if (avail === "Leak" || card.status === "Leak" || card.rarity === "Leak") return "Leak";
     if (card.status === "Coming Soon") return "Coming Soon";
     if (card.status === "Retired" || avail === "Unavailable") return "Unavailable";
@@ -943,6 +945,7 @@
   function stockLink(card) {
     const label = stockLabel(card);
     if ((label === "Available" || label === "Pre-order") && card.ukUrl) return card.ukUrl;
+    if (label === "Store exclusive" && (card.url || card.ukUrl)) return card.url || card.ukUrl;
     return "";
   }
 
