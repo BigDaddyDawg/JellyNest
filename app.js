@@ -98,10 +98,14 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("service-worker.js?v=5")
+        .register(`service-worker.js?v=9`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
+          // Check again when she returns to the tab — helps after publishes
+          document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") reg.update().catch(() => {});
+          });
         })
         .catch(() => {});
 
@@ -122,7 +126,7 @@
 
   async function boot() {
     try {
-      const res = await fetch("./data/cards.json");
+      const res = await fetch(`./data/cards.json?v=9`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();

@@ -1,20 +1,24 @@
-const CACHE_NAME = "jellynest-static-v8";
+const CACHE_NAME = "jellynest-static-v9";
+const ASSET_V = "9";
 const CORE_ASSETS = [
   "./",
   "index.html",
-  "styles.css?v=5",
-  "app.js?v=5",
-  "manifest.webmanifest?v=5",
-  "icon.svg?v=5",
+  `styles.css?v=${ASSET_V}`,
+  `app.js?v=${ASSET_V}`,
+  `family-vault-config.js?v=${ASSET_V}`,
+  `family-list-sync.js?v=${ASSET_V}`,
+  `manifest.webmanifest?v=${ASSET_V}`,
+  `icon.svg?v=${ASSET_V}`,
   "icon-192.png",
   "icon-512.png",
   "apple-touch-icon.png",
-  "data/coming-soon.json",
+  `data/coming-soon.json?v=${ASSET_V}`,
+  `data/cards.json?v=${ASSET_V}`,
 ];
 
 /** Network-first with offline fallback — keeps the gallery fresh after publishes. */
 function networkFirst(request, fallbackUrl) {
-  return fetch(request)
+  return fetch(request, { cache: "no-cache" })
     .then((response) => {
       if (response && response.ok) {
         const copy = response.clone();
@@ -33,8 +37,8 @@ self.addEventListener("install", (event) => {
       .open(CACHE_NAME)
       .then((cache) => cache.addAll(CORE_ASSETS))
       .catch(() => undefined)
+      .then(() => self.skipWaiting())
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -65,7 +69,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (path.endsWith("/cards.json") || path.endsWith("/coming-soon.json")) {
+  if (path.endsWith("/cards.json") || path.endsWith("/coming-soon.json") || path.endsWith("/service-worker.js")) {
     event.respondWith(networkFirst(event.request));
     return;
   }
