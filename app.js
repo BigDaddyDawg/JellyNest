@@ -96,6 +96,14 @@
   /** @type {string | null} */
   let modalCardId = null;
   let activeTab = "collection";
+  /** @type {Record<string, number>} */
+  const tabScrollY = {
+    collection: 0,
+    owned: 0,
+    foryou: 0,
+    wishlist: 0,
+    coming: 0,
+  };
   /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
   let wishSync = null;
   /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
@@ -110,7 +118,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register(`service-worker.js?v=12`)
+        .register(`service-worker.js?v=13`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -138,7 +146,7 @@
 
   async function boot() {
     try {
-      const res = await fetch(`./data/cards.json?v=12`, { cache: "no-cache" });
+      const res = await fetch(`./data/cards.json?v=13`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();
@@ -436,6 +444,10 @@
   }
 
   function showTab(name) {
+    if (name === activeTab) return;
+
+    tabScrollY[activeTab] = window.scrollY || window.pageYOffset || 0;
+
     activeTab = name;
     const collection = name === "collection";
     const ownedTab = name === "owned";
@@ -443,11 +455,19 @@
     const wishlistTab = name === "wishlist";
     const coming = name === "coming";
 
-    els.panelCollection.hidden = !collection;
-    if (els.panelOwned) els.panelOwned.hidden = !ownedTab;
-    if (els.panelForYou) els.panelForYou.hidden = !forYouTab;
-    if (els.panelWishlist) els.panelWishlist.hidden = !wishlistTab;
-    els.panelComing.hidden = !coming;
+    const panels = [
+      [els.panelCollection, collection],
+      [els.panelOwned, ownedTab],
+      [els.panelForYou, forYouTab],
+      [els.panelWishlist, wishlistTab],
+      [els.panelComing, coming],
+    ];
+    for (const [panel, on] of panels) {
+      if (!panel) continue;
+      panel.hidden = !on;
+      panel.classList.toggle("is-active", on);
+      panel.setAttribute("aria-hidden", on ? "false" : "true");
+    }
 
     els.tabCollection.classList.toggle("is-active", collection);
     els.tabOwned?.classList.toggle("is-active", ownedTab);
@@ -470,6 +490,11 @@
     } else {
       history.replaceState(null, "", "#collection");
     }
+
+    const y = tabScrollY[name] || 0;
+    requestAnimationFrame(() => {
+      window.scrollTo(0, y);
+    });
   }
 
   function syncWishButtons(id) {
@@ -1224,11 +1249,27 @@
     updateMeta();
   }
 
-  function shouldAutoOpenGroups() {
-    if (els.themeFilter?.value) return true;
-    if (filteredGroups.length <= 3) return true;
-    if (filtered.length <= 72) return true;
-    return false;
+  /** @type {IntersectionObserver | null} */
+  let groupIO = null;
+
+  function ensureGroupObserver() {
+    if (groupIO) return groupIO;
+    groupIO = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const details = entry.target;
+          if (!(details instanceof HTMLElement)) continue;
+          const theme = details.dataset.theme || "";
+          const inner = details.querySelector(".theme-group-grid");
+          const group = filteredGroups.find((g) => g.theme === theme);
+          if (group && inner) fillGroupGrid(inner, group.cards);
+          groupIO?.unobserve(details);
+        }
+      },
+      { rootMargin: "480px 0px" }
+    );
+    return groupIO;
   }
 
   function fillGroupGrid(grid, cards) {
@@ -1241,20 +1282,23 @@
 
   function renderThemeGroups() {
     if (!els.grid) return;
+    if (groupIO) groupIO.disconnect();
     els.grid.innerHTML = "";
     els.grid.className = "theme-groups";
 
-    const autoOpen = shouldAutoOpenGroups();
     if (els.groupToolbar) {
       els.groupToolbar.hidden = filteredGroups.length < 2;
     }
     if (els.sentinel) els.sentinel.hidden = true;
 
+    const observer = ensureGroupObserver();
+
     for (const group of filteredGroups) {
       const details = document.createElement("details");
       details.className = "theme-group";
       details.dataset.theme = group.theme;
-      if (autoOpen) details.open = true;
+      details.dataset.deferFill = "1";
+      details.open = true;
 
       const summary = document.createElement("summary");
       summary.className = "theme-group-summary";
@@ -1268,13 +1312,15 @@
       inner.className = "grid theme-group-grid";
 
       details.addEventListener("toggle", () => {
+        if (details.dataset.deferFill === "1") return;
         if (details.open) fillGroupGrid(inner, group.cards);
       });
 
       details.appendChild(summary);
       details.appendChild(inner);
-      if (details.open) fillGroupGrid(inner, group.cards);
       els.grid.appendChild(details);
+      delete details.dataset.deferFill;
+      observer.observe(details);
     }
 
     shown = filtered.length;
@@ -1284,6 +1330,12 @@
     if (!els.grid) return;
     els.grid.querySelectorAll("details.theme-group").forEach((details) => {
       details.open = open;
+      if (open) {
+        const theme = details.dataset.theme || "";
+        const inner = details.querySelector(".theme-group-grid");
+        const group = filteredGroups.find((g) => g.theme === theme);
+        if (group && inner) fillGroupGrid(inner, group.cards);
+      }
     });
   }
 

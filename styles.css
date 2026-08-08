@@ -219,6 +219,18 @@ body {
   backdrop-filter: blur(14px);
 }
 
+.tab-stage {
+  min-height: 55vh;
+}
+
+.tab-panel[hidden] {
+  display: none !important;
+}
+
+.tab-panel.is-active {
+  display: block;
+}
+
 .tab {
   border: 1px solid var(--line);
   background: rgba(255, 248, 242, 0.7);
