@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-08T20:47:19Z",
+  "generated": "2026-08-08T20:51:33Z",
   "source": "https://jellycat.com/events-experiences/",
   "experiences": [
     {
@@ -28,7 +28,7 @@
       "url": "https://jellycat.com/jellycat-general-store-in-birmingham-manchester/"
     }
   ],
-  "count": 20,
+  "count": 19,
   "cards": [
     {
       "id": "exclusive-cafe-shanghai-amuseables-berrity-latte",
@@ -406,30 +406,6 @@
       "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/categorywidget-a2vs-amuseable-vinny-vinegar-blue.jpg?t=1741372734",
       "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/categorywidget-a2vs-amuseable-vinny-vinegar-blue.jpg?t=1741372734",
       "blurb": "Amuseables Vinny Vinegar from the Jellycat Fish & Chips Experience (Selfridges London) — store / experience exclusive, not sold on jellycat.com.",
-      "categories": [
-        "Store Exclusive",
-        "Fish & Chips · London / Selfridges"
-      ],
-      "source": "jellycat-experience-page",
-      "experienceId": "fish-chips-london",
-      "experienceLabel": "Fish & Chips · London / Selfridges"
-    },
-    {
-      "id": "exclusive-fish-chips-london-chip-seagull-bag-charm",
-      "fullName": "Chip Seagull Bag Charm",
-      "name": "Chip Seagull Bag Charm",
-      "theme": "Bag Charms",
-      "catalogue": "Store Exclusive",
-      "year": "2024",
-      "status": "Live",
-      "subBrand": "",
-      "version": "Fish & Chips Experience",
-      "type": "Bag Charm",
-      "availability": "Store Exclusive",
-      "url": "https://jellycat.com/jellycat-fish-chips-experience-london/",
-      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/chip-seagull-bag-charm-blue-detail-shots-1.jpg?t=1756983340",
-      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/chip-seagull-bag-charm-blue-detail-shots-1.jpg?t=1756983340",
-      "blurb": "Chip Seagull Bag Charm from the Jellycat Fish & Chips Experience (Selfridges London) — store / experience exclusive, not sold on jellycat.com.",
       "categories": [
         "Store Exclusive",
         "Fish & Chips · London / Selfridges"

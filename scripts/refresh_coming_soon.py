@@ -129,6 +129,12 @@ def slim_from_node(node: dict, set_code: str, set_name: str) -> dict | None:
     if not thumb:
         return None
     name = (node.get("name") or "").strip()
+    if not name:
+        return None
+    # Nest is cuddly-toys only — skip bag charms / bags / pin badges
+    nl = name.casefold()
+    if "bag charm" in nl or "pin badge" in nl or "enamel pin" in nl or "tote bag" in nl or "handbag" in nl:
+        return None
     path = node.get("path") or ""
     cats = [e["node"]["name"] for e in ((node.get("categories") or {}).get("edges") or []) if e.get("node")]
     story = cats[0] if cats else set_name
@@ -412,6 +418,9 @@ def load_curated_leaks() -> list[dict]:
     for group in raw:
         items = []
         for item in group.get("items") or []:
+            full = item.get("fullName") or item.get("name") or ""
+            if "bag charm" in full.casefold():
+                continue
             items.append(
                 {
                     "id": item.get("id"),

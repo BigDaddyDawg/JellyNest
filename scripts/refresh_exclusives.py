@@ -111,14 +111,13 @@ PRODUCT_NAME = re.compile(
     r"|Onnie Pickled Onion"
     r"|Michelle Mussel"
     r"|Leicester Pigeon"
-    r"|Chip Seagull Bag Charm"
     r"|Strutton Pigeon"
     r"|Bubbeca Milkshake"
     r"|Oatus Bear"
     r"|Crember Cheesecake"
     r"|Leola Bear with Strawberr(?:y|ies)\s+Cake"
     r"|Bartholomew Bear(?:\s+with)?\s+(?:a\s+)?Magnolia\s+Cupcake"
-    r"|Thistlepop Blossom (?:Luxe Bunny|Bunny Bag Charm)"
+    r"|Thistlepop Blossom Luxe Bunny"
     r"|Sip\s*(?:&|and)\s*Slurp Teacups"
     r")(?![A-Za-z])",
     re.U,
@@ -453,7 +452,12 @@ def fetch_experience(exp: dict, online: set[str]) -> list[dict]:
         if is_online(full_name, online):
             skipped_online += 1
             continue
-        cards.append(card_from_hit(exp, full_name, thumb))
+        card = card_from_hit(exp, full_name, thumb)
+        if "bag charm" in full_name.casefold() or (card.get("theme") or "").casefold() == "bag charms":
+            continue
+        if (card.get("type") or "").casefold() in {"bag charm", "bag"}:
+            continue
+        cards.append(card)
     print(f"    candidates {len(hits)}, online skips {skipped_online}, kept {len(cards)}")
     time.sleep(0.2)
     return cards

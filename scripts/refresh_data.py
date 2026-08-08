@@ -297,6 +297,37 @@ query ($cursor: String) {
 """
 
 
+def is_cuddly_plush(card: dict) -> bool:
+    """Keep soft toys; drop bag charms, handbags/backpacks/totes, and pin badges."""
+    ptype = (card.get("type") or "").casefold()
+    name = (card.get("fullName") or card.get("name") or "").casefold()
+    theme = (card.get("theme") or "").casefold()
+    tokens = {part.strip() for part in ptype.split(",") if part.strip()}
+
+    if "bag charm" in tokens or "bag charm" in name or theme == "bag charms":
+        return False
+    if "bag" in tokens:
+        return False
+    if "pin badge" in name or "enamel pin" in name:
+        return False
+    if "display" in tokens and re.search(r"\bpin\b|\bbadge\b", name):
+        return False
+    if "tote bag" in name or "handbag" in name:
+        return False
+    # Real bags named backpack; keep Soft Toy "Backpack Panda" characters
+    if re.search(r"\bbackpack\b", name) and "soft toy" not in tokens:
+        return False
+    return True
+
+
+def filter_cuddly_plush(cards: list[dict], *, label: str = "catalogue") -> list[dict]:
+    kept = [c for c in cards if is_cuddly_plush(c)]
+    dropped = len(cards) - len(kept)
+    if dropped:
+        print(f"  filtered non-cuddly accessories from {label}: {dropped}")
+    return kept
+
+
 def normalize_product(node: dict, uk_paths: dict[str, str] | None = None) -> dict | None:
     img = node.get("defaultImage") or {}
     thumb = img.get("url") or img.get("urlOriginal")
@@ -392,7 +423,7 @@ def fetch_all_products(token: str, uk_paths: dict[str, str]) -> list[dict]:
         conn = payload["data"]["site"]["products"]
         for edge in conn["edges"]:
             item = normalize_product(edge["node"], uk_paths)
-            if item:
+            if item and is_cuddly_plush(item):
                 items.append(item)
         print(f"  page {page}: kept {len(items)} so far")
         info = conn["pageInfo"]
@@ -566,9 +597,10 @@ def merge_exclusives(cards: list[dict]) -> list[dict]:
     fetched = load_fetched_exclusives()
     curated = load_curated_exclusives()
     exclusives = merge_exclusive_sources(fetched, curated)
+    exclusives = filter_cuddly_plush(exclusives, label="exclusives")
     print(
         f"Store exclusives loaded: {len(fetched)} fetched + {len(curated)} curated "
-        f"-> {len(exclusives)} unique"
+        f"-> {len(exclusives)} cuddly unique"
     )
     if not exclusives:
         return cards
@@ -678,6 +710,7 @@ def merge_exclusives_only() -> None:
         if not str(c.get("id", "")).startswith("exclusive-")
         and c.get("catalogue") != "Store Exclusive"
     ]
+    website_cards = filter_cuddly_plush(website_cards, label="website catalogue")
     cards = merge_exclusives(website_cards)
     out = build_catalog(cards, generated=data.get("generated"))
     write_catalog(out)
