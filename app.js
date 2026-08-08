@@ -247,9 +247,24 @@
 
   function fillFilters() {
     fillSelect(els.themeFilter, catalog.themes || []);
-    fillSelect(els.catalogueFilter, catalog.catalogues || []);
+    const catalogues = [...(catalog.catalogues || [])];
+    const hasExclusives = (catalog.cards || []).some(
+      (c) => c.catalogue === "Exclusives" || c.catalogue === "Store Exclusive"
+    );
+    if (hasExclusives) {
+      const withoutLegacy = catalogues.filter((c) => c !== "Store Exclusive");
+      if (!withoutLegacy.includes("Exclusives")) withoutLegacy.push("Exclusives");
+      withoutLegacy.sort((a, b) => a.localeCompare(b));
+      fillSelect(els.catalogueFilter, withoutLegacy);
+    } else {
+      fillSelect(els.catalogueFilter, catalogues);
+    }
     fillSelect(els.yearFilter, catalog.years || []);
     fillSelect(els.statusFilter, catalog.statuses || ["Coming Soon", "Live", "Retired"]);
+  }
+
+  function isExclusiveCard(card) {
+    return card.catalogue === "Exclusives" || card.catalogue === "Store Exclusive" || card.availability === "Store Exclusive";
   }
 
   function themeMatches(card, needle) {
@@ -515,7 +530,7 @@
         <span class="card-badge${statusClass}">${escapeHtml(badge)}</span>
       `;
     } else {
-      const isExclusive = card.catalogue === "Store Exclusive" || card.availability === "Store Exclusive";
+      const isExclusive = isExclusiveCard(card);
       btn.classList.add(isExclusive ? "is-exclusive" : "is-leak");
       btn.innerHTML = `
         <span class="leak-art" aria-hidden="true">
@@ -884,7 +899,11 @@
 
     filtered = catalog.cards.filter((c) => {
       if (theme && c.theme !== theme) return false;
-      if (catalogue && c.catalogue !== catalogue) return false;
+      if (catalogue === "Exclusives") {
+        if (!isExclusiveCard(c)) return false;
+      } else if (catalogue && c.catalogue !== catalogue) {
+        return false;
+      }
       if (year && c.year !== year) return false;
       if (status && c.status !== status) return false;
       if (q) {
@@ -935,7 +954,7 @@
     const avail = card.availability || "";
     if (avail === "Available") return "Available";
     if (avail === "Preorder") return "Pre-order";
-    if (avail === "Store Exclusive" || card.catalogue === "Store Exclusive") return "Store exclusive";
+    if (avail === "Store Exclusive" || isExclusiveCard(card)) return "Exclusive";
     if (avail === "Leak" || card.status === "Leak" || card.rarity === "Leak") return "Leak";
     if (card.status === "Coming Soon") return "Coming Soon";
     if (card.status === "Retired" || avail === "Unavailable") return "Unavailable";
@@ -945,7 +964,7 @@
   function stockLink(card) {
     const label = stockLabel(card);
     if ((label === "Available" || label === "Pre-order") && card.ukUrl) return card.ukUrl;
-    if (label === "Store exclusive" && (card.url || card.ukUrl)) return card.url || card.ukUrl;
+    if (label === "Exclusive" && (card.url || card.ukUrl)) return card.url || card.ukUrl;
     return "";
   }
 

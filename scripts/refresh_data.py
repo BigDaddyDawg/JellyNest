@@ -451,7 +451,9 @@ def normalize_exclusive(item: dict) -> dict | None:
     name = (item.get("name") or full_name).replace("\u200b", "").strip()
     eid = item.get("id") or f"exclusive-{slug(full_name)}"
     theme = (item.get("theme") or "Characters").strip()
-    catalogue = (item.get("catalogue") or "Store Exclusive").strip()
+    catalogue = (item.get("catalogue") or "Exclusives").strip()
+    if catalogue == "Store Exclusive":
+        catalogue = "Exclusives"
     year = str(item.get("year") or "Unknown").strip() or "Unknown"
     status = (item.get("status") or "Live").strip()
     if status not in STATUS_ORDER:
@@ -461,11 +463,13 @@ def normalize_exclusive(item: dict) -> dict | None:
     full = item.get("full") or thumb
     sku = (item.get("sku") or "").strip()
     theme_code = slug(theme)
+    cats = item.get("categories") or ["Exclusives"]
+    cats = ["Exclusives" if c == "Store Exclusive" else c for c in cats]
     return {
         "id": eid,
         "fullName": full_name,
         "name": name,
-        "version": item.get("version") or "Store exclusive",
+        "version": item.get("version") or "Exclusive",
         "theme": theme,
         "catalogue": catalogue,
         "year": year,
@@ -490,8 +494,7 @@ def normalize_exclusive(item: dict) -> dict | None:
         "price": item.get("price"),
         "blurb": (item.get("blurb") or "")[:280],
         "availability": item.get("availability") or "Store Exclusive",
-        "categories": item.get("categories")
-        or ["Store Exclusive"],
+        "categories": cats,
     }
 
 
@@ -570,7 +573,7 @@ def website_name_keys(cards: list[dict]) -> set[str]:
     for c in cards:
         if str(c.get("id", "")).startswith("exclusive-"):
             continue
-        if c.get("catalogue") == "Store Exclusive":
+        if c.get("catalogue") in {"Exclusives", "Store Exclusive"}:
             continue
         for field in ("fullName", "name"):
             key = exclusive_name_key(c.get(field) or "")
@@ -687,10 +690,10 @@ def write_catalog(out: dict) -> Path:
     linkable = sum(
         1 for c in cards if c.get("ukUrl") and c.get("availability") in {"Available", "Preorder"}
     )
-    exclusives = sum(1 for c in cards if c.get("catalogue") == "Store Exclusive")
+    exclusives = sum(1 for c in cards if c.get("catalogue") in {"Exclusives", "Store Exclusive"})
     print(f"Wrote {path} ({path.stat().st_size:,} bytes, {out['count']} plush)")
     print(f"  statuses: { {s: sum(1 for c in cards if c['status']==s) for s in statuses} }")
-    print(f"  store exclusives: {exclusives}")
+    print(f"  exclusives catalogue: {exclusives}")
     print(f"  ukUrl coverage: {with_uk}/{len(cards)}, buyable links: {linkable}")
     print(f"  themes: {len(out['themes'])}, catalogues: {len(out['catalogues'])}, years: {out['years'][:8]}…")
     return path
@@ -708,7 +711,7 @@ def merge_exclusives_only() -> None:
         c
         for c in data.get("cards") or []
         if not str(c.get("id", "")).startswith("exclusive-")
-        and c.get("catalogue") != "Store Exclusive"
+        and c.get("catalogue") not in {"Exclusives", "Store Exclusive"}
     ]
     website_cards = filter_cuddly_plush(website_cards, label="website catalogue")
     cards = merge_exclusives(website_cards)

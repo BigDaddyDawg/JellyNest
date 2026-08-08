@@ -382,7 +382,7 @@ def card_from_hit(exp: dict, full_name: str, thumb: str) -> dict:
         "fullName": full_name,
         "name": short_name(full_name),
         "theme": theme,
-        "catalogue": "Store Exclusive",
+        "catalogue": "Exclusives",
         "year": exp["year"],
         "status": "Live",
         "subBrand": "Amuseables" if theme.startswith("Amuseables") else "",
@@ -396,7 +396,7 @@ def card_from_hit(exp: dict, full_name: str, thumb: str) -> dict:
             f"{full_name} from the Jellycat {exp['version']} "
             f"({exp['location']}) — store / experience exclusive, not sold on jellycat.com."
         )[:280],
-        "categories": ["Store Exclusive", exp["label"]],
+        "categories": ["Exclusives", exp["label"]],
         "source": "jellycat-experience-page",
         "experienceId": exp["id"],
         "experienceLabel": exp["label"],
@@ -412,7 +412,7 @@ def load_online_names() -> set[str]:
     for c in cards:
         if str(c.get("id", "")).startswith("exclusive-"):
             continue
-        if c.get("catalogue") == "Store Exclusive":
+        if c.get("catalogue") in {"Exclusives", "Store Exclusive"}:
             continue
         for field in ("fullName", "name"):
             n = norm_name(c.get(field) or "")

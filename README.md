@@ -26,7 +26,7 @@ The catalogue is built from the official [Jellycat US store](https://us.jellycat
 
 Each friend is tagged with:
 - **Theme** — product style / range (Bashful Bunny, Amuseables Food & Drink, …)
-- **Catalogue** — Main, Christmas, Easter, Halloween, **Store Exclusive**, etc.
+- **Catalogue** — Main, Christmas, Easter, Halloween, **Exclusives**, etc.
 - **Year** — from the official release date
 - **Status** — Coming Soon, Live, or Retired
 
@@ -39,7 +39,7 @@ A second source covers in-store / experience friends that never land in the shop
 1. **Fetched** — `python scripts/refresh_exclusives.py` scrapes the official [Events & Experiences](https://jellycat.com/events-experiences/) pages into `data/exclusives-fetched.json` (names + product photos when the page has them), skipping anything already online.
 2. **Curated** — `data/exclusives-curated.json` fills gaps the pages under-list (Shanghai Café cast, Selfridges Bashful colourways, bag-charm add-ons) and can override fetched rows.
 
-Both merge into `cards.json` on catalogue refresh. Filter Browse by catalogue **Store Exclusive**.
+Both merge into `cards.json` on catalogue refresh. Filter Browse by catalogue **Exclusives**.
 
 ```powershell
 python scripts/refresh_exclusives.py
