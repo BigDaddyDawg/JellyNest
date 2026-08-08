@@ -45,6 +45,7 @@
     panelComing: document.getElementById("panelComing"),
     tabCollection: document.getElementById("tabCollection"),
     tabOwned: document.getElementById("tabOwned"),
+    tabForYou: document.getElementById("tabForYou"),
     tabWishlist: document.getElementById("tabWishlist"),
     tabComing: document.getElementById("tabComing"),
     ownedGrid: document.getElementById("ownedGrid"),
@@ -52,6 +53,11 @@
     ownedSearch: document.getElementById("ownedSearch"),
     ownedCountLabel: document.getElementById("ownedCountLabel"),
     ownedTabCount: document.getElementById("ownedTabCount"),
+    panelForYou: document.getElementById("panelForYou"),
+    forYouStatus: document.getElementById("forYouStatus"),
+    forYouTaste: document.getElementById("forYouTaste"),
+    forYouShelves: document.getElementById("forYouShelves"),
+    forYouEmpty: document.getElementById("forYouEmpty"),
     wishGrid: document.getElementById("wishGrid"),
     wishEmpty: document.getElementById("wishEmpty"),
     wishSearch: document.getElementById("wishSearch"),
@@ -104,7 +110,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register(`service-worker.js?v=11`)
+        .register(`service-worker.js?v=12`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -132,7 +138,7 @@
 
   async function boot() {
     try {
-      const res = await fetch(`./data/cards.json?v=11`, { cache: "no-cache" });
+      const res = await fetch(`./data/cards.json?v=12`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();
@@ -169,6 +175,7 @@
         owned = new Set(ids.map(String));
         updateListChrome();
         if (activeTab === "owned") renderOwned();
+        if (activeTab === "foryou") renderForYou();
         if (modalCardId) syncModalButtons();
       },
     });
@@ -241,6 +248,7 @@
     updateListChrome();
     if (activeTab === "owned") renderOwned();
     if (activeTab === "wishlist") renderWishlist();
+    if (activeTab === "foryou") renderForYou();
     if (modalCardId === key) syncModalButtons();
     return owned.has(key);
   }
@@ -368,8 +376,11 @@
     );
     if (els.sentinel) io.observe(els.sentinel);
 
+    els.forYouShelves?.addEventListener("click", onGridClick);
+
     els.tabCollection?.addEventListener("click", () => showTab("collection"));
     els.tabOwned?.addEventListener("click", () => showTab("owned"));
+    els.tabForYou?.addEventListener("click", () => showTab("foryou"));
     els.tabWishlist?.addEventListener("click", () => showTab("wishlist"));
     els.tabComing?.addEventListener("click", () => showTab("coming"));
     els.wishSearch?.addEventListener("input", () => {
@@ -418,6 +429,7 @@
   function maybeOpenTabFromHash() {
     const hash = (location.hash || "").toLowerCase();
     if (hash.includes("wishlist")) showTab("wishlist");
+    else if (hash.includes("foryou") || hash.includes("for-you")) showTab("foryou");
     else if (hash.includes("owned")) showTab("owned");
     else if (hash.includes("coming")) showTab("coming");
     else if (hash.includes("collection")) showTab("collection");
@@ -427,16 +439,19 @@
     activeTab = name;
     const collection = name === "collection";
     const ownedTab = name === "owned";
+    const forYouTab = name === "foryou";
     const wishlistTab = name === "wishlist";
     const coming = name === "coming";
 
     els.panelCollection.hidden = !collection;
     if (els.panelOwned) els.panelOwned.hidden = !ownedTab;
+    if (els.panelForYou) els.panelForYou.hidden = !forYouTab;
     if (els.panelWishlist) els.panelWishlist.hidden = !wishlistTab;
     els.panelComing.hidden = !coming;
 
     els.tabCollection.classList.toggle("is-active", collection);
     els.tabOwned?.classList.toggle("is-active", ownedTab);
+    els.tabForYou?.classList.toggle("is-active", forYouTab);
     els.tabWishlist?.classList.toggle("is-active", wishlistTab);
     els.tabComing.classList.toggle("is-active", coming);
 
@@ -446,6 +461,9 @@
     } else if (ownedTab) {
       history.replaceState(null, "", "#owned");
       renderOwned();
+    } else if (forYouTab) {
+      history.replaceState(null, "", "#foryou");
+      renderForYou();
     } else if (wishlistTab) {
       history.replaceState(null, "", "#wishlist");
       renderWishlist();
@@ -645,6 +663,269 @@
       owned,
       "Nothing marked as owned yet. Browse the collection and tap a check to begin.",
       "No owned plush match that search."
+    );
+  }
+
+  function topCounts(map, limit = 3, min = 1) {
+    return [...map.entries()]
+      .filter(([, n]) => n >= min)
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .slice(0, limit);
+  }
+
+  function bumpCount(map, key, by = 1) {
+    if (!key) return;
+    map.set(key, (map.get(key) || 0) + by);
+  }
+
+  function isBabyish(card) {
+    const type = (card.type || "").toLowerCase();
+    const theme = (card.theme || "").toLowerCase();
+    const size = (card.size || "").toLowerCase();
+    const name = (card.name || "").toLowerCase();
+    return (
+      type.includes("baby") ||
+      type.includes("soother") ||
+      type.includes("comforter") ||
+      theme.includes("baby") ||
+      name.includes("baby") ||
+      size === "tiny" ||
+      size === "little" ||
+      size === "small"
+    );
+  }
+
+  function friendLabel(type) {
+    if (!type) return "friends";
+    if (/s$/i.test(type) || /sheep|fish|moose|mice$/i.test(type)) return type;
+    return `${type}s`;
+  }
+
+  function buildTasteProfile(ownedCards) {
+    const themes = new Map();
+    const animalTypes = new Map();
+    const animalGroups = new Map();
+    const sizes = new Map();
+    const subBrands = new Map();
+    let babyScore = 0;
+
+    for (const card of ownedCards) {
+      bumpCount(themes, card.theme);
+      bumpCount(animalTypes, card.animalType);
+      bumpCount(animalGroups, card.animalGroup);
+      if (card.size && card.size !== "One size") bumpCount(sizes, card.size);
+      bumpCount(subBrands, card.subBrand);
+      if (isBabyish(card)) babyScore += 1;
+    }
+
+    return {
+      ownedCount: ownedCards.length,
+      themes: topCounts(themes, 4),
+      animalTypes: topCounts(animalTypes, 4),
+      animalGroups: topCounts(animalGroups, 3),
+      sizes: topCounts(sizes, 2),
+      subBrands: topCounts(subBrands, 3),
+      babyScore,
+      lovesBabies: babyScore >= Math.max(2, Math.ceil(ownedCards.length * 0.35)),
+    };
+  }
+
+  function scoreRecommendation(card, taste) {
+    let score = 0;
+    /** @type {string[]} */
+    const reasons = [];
+
+    for (const [type, n] of taste.animalTypes) {
+      if (card.animalType === type) {
+        score += 12 + n * 3;
+        reasons.push(`More ${type.toLowerCase()} friends`);
+        break;
+      }
+    }
+    for (const [theme, n] of taste.themes) {
+      if (card.theme === theme) {
+        score += 10 + n * 2;
+        reasons.push(`Because you love ${theme}`);
+        break;
+      }
+    }
+    for (const [group, n] of taste.animalGroups) {
+      if (card.animalGroup === group) {
+        score += 6 + n;
+        reasons.push(`From your favourite ${group} world`);
+        break;
+      }
+    }
+    for (const [size, n] of taste.sizes) {
+      if (card.size === size) {
+        score += 5 + n;
+        reasons.push(`That same ${size.toLowerCase()} squeeze`);
+        break;
+      }
+    }
+    for (const [brand, n] of taste.subBrands) {
+      if (card.subBrand === brand) {
+        score += 4 + n;
+        if (reasons.length < 2) reasons.push(`More ${brand}`);
+        break;
+      }
+    }
+    if (taste.lovesBabies && isBabyish(card)) {
+      score += 8;
+      reasons.push("Soft little one energy");
+    }
+
+    if (card.status === "Live") score += 2;
+    if (card.availability === "Available" || card.availability === "Preorder") score += 2;
+    if (isExclusiveCard(card)) score += 1;
+    if (isWished(card.id)) score += 1;
+
+    return { score, reason: reasons[0] || "Matches her nest" };
+  }
+
+  function makeRecoTile(card, reason, index) {
+    const wrap = document.createElement("div");
+    wrap.className = "reco-wrap";
+    wrap.style.animationDelay = `${Math.min(index, 12) * 0.04}s`;
+    wrap.appendChild(makeCardTile(card, index));
+    if (reason) {
+      const note = document.createElement("p");
+      note.className = "reco-reason";
+      note.textContent = reason;
+      wrap.appendChild(note);
+    }
+    return wrap;
+  }
+
+  function appendRecoShelf(parent, title, blurb, items, used) {
+    const fresh = items.filter((item) => !used.has(String(item.card.id)));
+    if (!fresh.length) return;
+    const article = document.createElement("article");
+    article.className = "reco-shelf";
+    article.innerHTML = `
+      <div class="reco-shelf-head">
+        <h3>${escapeHtml(title)}</h3>
+        ${blurb ? `<p>${escapeHtml(blurb)}</p>` : ""}
+      </div>
+    `;
+    const grid = document.createElement("div");
+    grid.className = "grid reco-grid";
+    fresh.forEach((item, i) => {
+      used.add(String(item.card.id));
+      grid.appendChild(makeRecoTile(item.card, item.reason, i));
+    });
+    article.appendChild(grid);
+    parent.appendChild(article);
+  }
+
+  function renderForYou() {
+    if (!els.forYouShelves) return;
+    const ownedCards = [...owned].map(findCard).filter(Boolean);
+    els.forYouShelves.innerHTML = "";
+    if (els.forYouTaste) {
+      els.forYouTaste.hidden = true;
+      els.forYouTaste.innerHTML = "";
+    }
+
+    if (!ownedCards.length) {
+      if (els.forYouStatus) {
+        els.forYouStatus.textContent = "Soft picks shaped by what she already cuddles.";
+      }
+      if (els.forYouEmpty) {
+        els.forYouEmpty.hidden = false;
+        els.forYouEmpty.textContent =
+          "Mark a few friends as owned, and we’ll nestle lookalike suggestions here — rabbits, little babies, snack Amuseables, the lot.";
+      }
+      return;
+    }
+
+    const taste = buildTasteProfile(ownedCards);
+    const pills = [
+      ...taste.animalTypes.slice(0, 2).map(([k, n]) => `${k} ×${n}`),
+      ...taste.themes.slice(0, 2).map(([k]) => k),
+      ...taste.sizes.slice(0, 1).map(([k]) => k),
+    ];
+    if (taste.lovesBabies) pills.unshift("Little ones");
+    if (els.forYouTaste && pills.length) {
+      els.forYouTaste.hidden = false;
+      els.forYouTaste.innerHTML = pills
+        .slice(0, 6)
+        .map((p) => `<span class="taste-pill">${escapeHtml(p)}</span>`)
+        .join("");
+    }
+    if (els.forYouStatus) {
+      els.forYouStatus.textContent = `Reading ${taste.ownedCount} owned friend${taste.ownedCount === 1 ? "" : "s"} for matching cuddles (live and retired).`;
+    }
+    if (els.forYouEmpty) els.forYouEmpty.hidden = true;
+
+    const scored = [];
+    for (const card of catalog.cards) {
+      if (isOwned(card.id)) continue;
+      if (!isListable(card.id)) continue;
+      const { score, reason } = scoreRecommendation(card, taste);
+      if (score < 8) continue;
+      scored.push({ card, score, reason });
+    }
+    scored.sort((a, b) => b.score - a.score || a.card.name.localeCompare(b.card.name));
+
+    if (!scored.length) {
+      if (els.forYouEmpty) {
+        els.forYouEmpty.hidden = false;
+        els.forYouEmpty.textContent = "Her nest is wonderfully specific — no clear lookalikes right now. Add a few more owned friends and try again.";
+      }
+      return;
+    }
+
+    const used = new Set();
+    appendRecoShelf(
+      els.forYouShelves,
+      "Top picks for her",
+      "Closest matches to the nest she’s building.",
+      scored.slice(0, 12),
+      used
+    );
+
+    for (const [type] of taste.animalTypes.slice(0, 3)) {
+      const label = friendLabel(type);
+      const items = scored.filter((s) => s.card.animalType === type).slice(0, 8);
+      appendRecoShelf(
+        els.forYouShelves,
+        `More ${label}`,
+        `She already has a soft spot for ${label.toLowerCase()}.`,
+        items,
+        used
+      );
+    }
+
+    for (const [theme] of taste.themes.slice(0, 3)) {
+      const items = scored.filter((s) => s.card.theme === theme).slice(0, 8);
+      appendRecoShelf(
+        els.forYouShelves,
+        `More ${theme}`,
+        "Because that family lives in the nest already.",
+        items,
+        used
+      );
+    }
+
+    if (taste.lovesBabies) {
+      const items = scored.filter((s) => isBabyish(s.card)).slice(0, 10);
+      appendRecoShelf(
+        els.forYouShelves,
+        "Tiny & baby-soft",
+        "Little squeezes in the same spirit as her smaller friends.",
+        items,
+        used
+      );
+    }
+
+    const leftovers = scored.filter((s) => !used.has(String(s.card.id))).slice(0, 10);
+    appendRecoShelf(
+      els.forYouShelves,
+      "Still worth a peek",
+      "Nearby flavours from the nest’s pattern.",
+      leftovers,
+      used
     );
   }
 
