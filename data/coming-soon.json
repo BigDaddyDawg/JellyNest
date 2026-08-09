@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-05T16:28:32Z",
+  "generated": "2026-08-09T15:25:45Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,14 +13,14 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 14,
+      "revealedCount": 13,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1845/50709/OOK3JOL__38839.1751390672.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1865/51190/A6PCT__48621.1755274481.png",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1946/51814/RR4P__44882.1765311969.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2057/53183/A4CUCHBC__70861.1780586939.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2075/53567/A2DOUH__03092.1785166045.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2075/53567/A2DOUH__03092.1785166045.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2076/53558/A4CAND__75018.1785166044.jpg"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg"
     },
@@ -31,14 +31,14 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 50,
+      "revealedCount": 47,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1968/52184/A4AUBBAG__40859.1768854356.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2005/52487/FF4BC__40780.1771273568.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2006/52526/A2CRAFT__60077.1772468803.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2007/52885/MUN3SPD__76978.1774628833.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2008/53402/A2HYD__31462.1782833234.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2009/52539/A2MAR__34730.1772468803.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2009/52539/A2MAR__34730.1772468803.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2010/52569/AL3HA__94125.1772468804.jpg"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1968/52184/A4AUBBAG__40859.1768854356.jpg"
     },
@@ -49,14 +49,14 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 23,
+      "revealedCount": 21,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/138/51531/A2CL__83625.1762489562.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/163/48556/A2SCL__15428.1749467849.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/237/48696/A6PE__41727.1749765441.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/246/48724/A6TR__36291.1732743522.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/374/41777/BAS3UUS__77291.1727976065.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/375/41780/BAS3VB__31343.1727976070.jpg"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png"
     }
@@ -1171,6 +1171,14 @@
       "summary": "Rufferty Puppy 'Wizard' may not be the most talented magician, but he’s certainly the most enthusiastic!He’s spent...",
       "url": "https://us.jellycat.com/rufferty-puppy-wizard-original/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2081/53577/BAS3BCPW__27627.1785166045.jpg"
+    },
+    {
+      "title": "Bashful Bunny Junior",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Meet the junior version of our beloved Bashful Bunny, just as brave and adventurous as her grown-up self (and still...",
+      "url": "https://us.jellycat.com/bashful-bunny-junior/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2082/53658/BASJ6BC__41174.1785756365.jpg"
     }
   ],
   "leaks": [
