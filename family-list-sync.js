@@ -5,16 +5,20 @@
  * No accounts — every phone reads/writes the same rows.
  * Cloud is the source of truth after a one-time localStorage migration.
  *
+ * Rows may carry a `meta` JSON object (dossier fields, wishlist priority, …).
+ *
  * Usage from app.js:
  *   const sync = window.FamilyListSync.create({
  *     app: "jellynest",
  *     listType: "wishlist",
  *     storageKey: "jellynest_wishlist_v1",
- *     onRemoteChange: (ids) => { wishlist = new Set(ids); ...refresh UI... }
+ *     metaStorageKey: "jellynest_wishlist_meta_v1",
+ *     onRemoteChange: (ids, metaById) => { ... }
  *   });
- *   await sync.hydrate(localSet);
+ *   const { ids, meta } = await sync.hydrate(localSet);
  *   sync.subscribe();
- *   sync.setItem(id, true|false);
+ *   sync.setItem(id, true|false, optionalMeta);
+ *   sync.setMeta(id, patch);
  */
 (function () {
   const DEVICE_KEY = "family_vault_device_name_v1";
@@ -63,10 +67,32 @@
     return true;
   }
 
+  function cloneMeta(meta) {
+    const out = {};
+    for (const [k, v] of Object.entries(meta || {})) {
+      if (v && typeof v === "object" && !Array.isArray(v)) out[k] = { ...v };
+    }
+    return out;
+  }
+
+  function metaEqual(a, b) {
+    const keys = new Set([...Object.keys(a || {}), ...Object.keys(b || {})]);
+    for (const key of keys) {
+      if (JSON.stringify(a?.[key] || {}) !== JSON.stringify(b?.[key] || {})) return false;
+    }
+    return true;
+  }
+
+  function normalizeMeta(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+    return { ...raw };
+  }
+
   function create(options) {
     const app = String(options.app || "").trim();
     const listType = String(options.listType || "wishlist").trim();
     const storageKey = String(options.storageKey || "").trim();
+    const metaStorageKey = String(options.metaStorageKey || "").trim();
     const onRemoteChange =
       typeof options.onRemoteChange === "function" ? options.onRemoteChange : null;
     const migratedKey = `family_vault_migrated_${app}_${listType}_v1`;
@@ -75,6 +101,8 @@
     let channel = null;
     let pollTimer = null;
     let lastKnown = new Set();
+    /** @type {Record<string, Record<string, unknown>>} */
+    let lastMeta = {};
     let applyingRemote = false;
 
     function persistLocal(ids) {
@@ -86,6 +114,15 @@
       }
     }
 
+    function persistMeta(meta) {
+      if (!metaStorageKey) return;
+      try {
+        localStorage.setItem(metaStorageKey, JSON.stringify(meta || {}));
+      } catch (err) {
+        console.warn("Could not cache list meta locally", err);
+      }
+    }
+
     function readLocal() {
       if (!storageKey) return new Set();
       try {
@@ -93,6 +130,21 @@
         return new Set((Array.isArray(raw) ? raw : []).map(String));
       } catch {
         return new Set();
+      }
+    }
+
+    function readLocalMeta() {
+      if (!metaStorageKey) return {};
+      try {
+        const raw = JSON.parse(localStorage.getItem(metaStorageKey) || "{}");
+        if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+        const out = {};
+        for (const [k, v] of Object.entries(raw)) {
+          if (v && typeof v === "object" && !Array.isArray(v)) out[String(k)] = { ...v };
+        }
+        return out;
+      } catch {
+        return {};
       }
     }
 
@@ -112,12 +164,19 @@
       }
     }
 
-    function applyRemote(ids, notify) {
+    function applyRemote(ids, meta, notify) {
       const next = new Set([...ids].map(String));
+      const nextMeta = cloneMeta(meta);
+      // Drop meta for items no longer on the list
+      for (const key of Object.keys(nextMeta)) {
+        if (!next.has(key)) delete nextMeta[key];
+      }
       lastKnown = next;
+      lastMeta = nextMeta;
       persistLocal(next);
-      if (notify && onRemoteChange) onRemoteChange([...next]);
-      return next;
+      persistMeta(nextMeta);
+      if (notify && onRemoteChange) onRemoteChange([...next], cloneMeta(nextMeta));
+      return { ids: next, meta: cloneMeta(nextMeta) };
     }
 
     async function fetchRemote() {
@@ -125,7 +184,7 @@
       const url =
         `${baseUrl()}?app=eq.${encodeURIComponent(app)}` +
         `&list_type=eq.${encodeURIComponent(listType)}` +
-        `&select=item_id`;
+        `&select=item_id,meta`;
       const res = await fetch(url, {
         headers: {
           apikey: cfg().anonKey.trim(),
@@ -134,10 +193,18 @@
       });
       if (!res.ok) throw new Error(`Family vault fetch failed (${res.status})`);
       const rows = await res.json();
-      return new Set((rows || []).map((r) => String(r.item_id)));
+      const ids = new Set();
+      /** @type {Record<string, Record<string, unknown>>} */
+      const meta = {};
+      for (const row of rows || []) {
+        const id = String(row.item_id);
+        ids.add(id);
+        meta[id] = normalizeMeta(row.meta);
+      }
+      return { ids, meta };
     }
 
-    async function upsertItem(itemId) {
+    async function upsertItem(itemId, meta) {
       if (!ready()) return;
       const res = await fetch(baseUrl(), {
         method: "POST",
@@ -146,6 +213,7 @@
           app,
           list_type: listType,
           item_id: String(itemId),
+          meta: normalizeMeta(meta),
           updated_by: deviceName(),
           updated_at: new Date().toISOString(),
         }),
@@ -181,49 +249,104 @@
      */
     async function hydrate(seedSet) {
       const local = seedSet instanceof Set ? new Set([...seedSet].map(String)) : readLocal();
+      const localMeta = readLocalMeta();
       if (!ready()) {
         persistLocal(local);
+        persistMeta(localMeta);
         lastKnown = local;
-        return local;
+        lastMeta = cloneMeta(localMeta);
+        return { ids: local, meta: cloneMeta(localMeta) };
       }
       try {
         let remote = await fetchRemote();
         if (!remote) {
           persistLocal(local);
+          persistMeta(localMeta);
           lastKnown = local;
-          return local;
+          lastMeta = cloneMeta(localMeta);
+          return { ids: local, meta: cloneMeta(localMeta) };
         }
 
         if (!wasMigrated() && local.size) {
-          const toUpload = [...local].filter((id) => !remote.has(id));
-          for (const id of toUpload) await upsertItem(id);
-          if (toUpload.length) remote = (await fetchRemote()) || remote;
+          const toUpload = [...local].filter((id) => !remote.ids.has(id));
+          for (const id of toUpload) await upsertItem(id, localMeta[id] || {});
+          // Also push local meta for ids already remote if remote meta is empty
+          const metaUpload = [...local].filter((id) => {
+            if (!remote.ids.has(id)) return false;
+            const remoteEmpty = !Object.keys(remote.meta[id] || {}).length;
+            const localHas = Object.keys(localMeta[id] || {}).length > 0;
+            return remoteEmpty && localHas;
+          });
+          for (const id of metaUpload) await upsertItem(id, localMeta[id] || {});
+          if (toUpload.length || metaUpload.length) remote = (await fetchRemote()) || remote;
           markMigrated();
         } else {
           markMigrated();
         }
 
-        return applyRemote(remote, false);
+        return applyRemote(remote.ids, remote.meta, false);
       } catch (err) {
         console.warn("Family vault hydrate failed; using local cache", err);
         persistLocal(local);
+        persistMeta(localMeta);
         lastKnown = local;
-        return local;
+        lastMeta = cloneMeta(localMeta);
+        return { ids: local, meta: cloneMeta(localMeta) };
       }
     }
 
-    function setItem(itemId, wanted) {
+    function setItem(itemId, wanted, meta) {
       const id = String(itemId);
       const local = new Set(lastKnown.size ? lastKnown : readLocal());
-      if (wanted) local.add(id);
-      else local.delete(id);
+      const nextMeta = cloneMeta(lastMeta);
+      if (wanted) {
+        local.add(id);
+        if (meta && typeof meta === "object") nextMeta[id] = normalizeMeta(meta);
+        else if (!nextMeta[id]) nextMeta[id] = {};
+      } else {
+        local.delete(id);
+        delete nextMeta[id];
+      }
       lastKnown = local;
+      lastMeta = nextMeta;
       persistLocal(local);
-      if (!ready()) return Promise.resolve(local);
-      const op = wanted ? upsertItem(id) : deleteItem(id);
+      persistMeta(nextMeta);
+      if (!ready()) return Promise.resolve({ ids: local, meta: cloneMeta(nextMeta) });
+      const op = wanted ? upsertItem(id, nextMeta[id] || {}) : deleteItem(id);
       return op
         .catch((err) => console.warn("Family vault sync failed", err))
-        .then(() => local);
+        .then(() => ({ ids: local, meta: cloneMeta(nextMeta) }));
+    }
+
+    function setMeta(itemId, patch) {
+      const id = String(itemId);
+      if (!lastKnown.has(id) && !(lastKnown.size ? lastKnown : readLocal()).has(id)) {
+        return Promise.resolve(cloneMeta(lastMeta));
+      }
+      const local = new Set(lastKnown.size ? lastKnown : readLocal());
+      local.add(id);
+      const prev = normalizeMeta(lastMeta[id]);
+      const merged = { ...prev, ...(patch && typeof patch === "object" ? patch : {}) };
+      // Drop empty string fields so clears sync cleanly
+      for (const [k, v] of Object.entries(merged)) {
+        if (v == null || v === "") delete merged[k];
+      }
+      lastKnown = local;
+      lastMeta = { ...cloneMeta(lastMeta), [id]: merged };
+      persistLocal(local);
+      persistMeta(lastMeta);
+      if (!ready()) return Promise.resolve(cloneMeta(lastMeta));
+      return upsertItem(id, merged)
+        .catch((err) => console.warn("Family vault meta sync failed", err))
+        .then(() => cloneMeta(lastMeta));
+    }
+
+    function getMeta(itemId) {
+      return normalizeMeta(lastMeta[String(itemId)]);
+    }
+
+    function readMeta() {
+      return cloneMeta(lastMeta);
     }
 
     async function pullAndNotify() {
@@ -232,8 +355,8 @@
       try {
         const remote = await fetchRemote();
         if (!remote) return;
-        if (sameSet(remote, lastKnown)) return;
-        applyRemote(remote, true);
+        if (sameSet(remote.ids, lastKnown) && metaEqual(remote.meta, lastMeta)) return;
+        applyRemote(remote.ids, remote.meta, true);
       } catch (err) {
         console.warn("Family vault pull failed", err);
       } finally {
@@ -294,6 +417,9 @@
       ready,
       hydrate,
       setItem,
+      setMeta,
+      getMeta,
+      readMeta,
       subscribe,
       unsubscribe,
       pullAndNotify,

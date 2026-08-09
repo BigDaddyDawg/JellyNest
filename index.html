@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="JellyNest" />
   <title>JellyNest · Jellycat Gallery</title>
-  <link rel="manifest" href="manifest.webmanifest?v=13" />
-  <link rel="icon" href="icon.svg?v=13" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=13" />
+  <link rel="manifest" href="manifest.webmanifest?v=14" />
+  <link rel="icon" href="icon.svg?v=14" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=14" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bagelow:wght@500;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=13" />
+  <link rel="stylesheet" href="styles.css?v=14" />
 </head>
 <body>
   <div class="sky" aria-hidden="true">
@@ -27,22 +27,8 @@
     <div class="vignette"></div>
   </div>
 
-  <nav class="tabs" aria-label="Gallery sections">
-    <button type="button" class="tab is-active" data-tab="collection" id="tabCollection">Collection</button>
-    <button type="button" class="tab" data-tab="owned" id="tabOwned">
-      Owned
-      <span class="tab-count" id="ownedTabCount" hidden>0</span>
-    </button>
-    <button type="button" class="tab" data-tab="foryou" id="tabForYou">For You</button>
-    <button type="button" class="tab" data-tab="wishlist" id="tabWishlist">
-      Wishlist
-      <span class="tab-count" id="wishTabCount" hidden>0</span>
-    </button>
-    <button type="button" class="tab" data-tab="coming" id="tabComing">Coming Soon</button>
-  </nav>
-
   <div class="tab-stage">
-  <div id="panelCollection" class="tab-panel is-active" role="tabpanel">
+  <div id="panelCollection" class="tab-panel is-active" role="tabpanel" aria-labelledby="tabCollection">
   <header class="hero">
     <div class="hero-inner">
       <p class="eyebrow">A private nest · made with love</p>
@@ -135,23 +121,26 @@
   </main>
   </div>
 
-  <section id="panelOwned" class="owned tab-panel" hidden>
-    <div class="section-head">
-      <h2>Owned</h2>
+  <section id="panelOwned" class="owned tab-panel" role="tabpanel" aria-labelledby="tabOwned" hidden>
+    <div class="tab-page-head">
+      <h2>Nest</h2>
       <p id="ownedCountLabel">Shared family nest — anyone can tick these off.</p>
     </div>
+
+    <div id="collectionMap" class="collection-map" hidden></div>
+
     <div class="filters wish-filters" id="ownedFilters">
       <label class="search-wrap">
         <span class="sr-only">Search owned</span>
-        <input id="ownedSearch" type="search" placeholder="Search your owned plush…" autocomplete="off" />
+        <input id="ownedSearch" type="search" placeholder="Search your nest…" autocomplete="off" />
       </label>
     </div>
     <div class="grid" id="ownedGrid" aria-live="polite"></div>
     <p class="empty" id="ownedEmpty" hidden>Nothing marked as owned yet. Browse the collection and tap a check to begin.</p>
   </section>
 
-  <section id="panelForYou" class="foryou tab-panel" hidden>
-    <div class="section-head">
+  <section id="panelForYou" class="foryou tab-panel" role="tabpanel" aria-labelledby="tabForYou" hidden>
+    <div class="tab-page-head">
       <h2>For You</h2>
       <p id="forYouStatus">Soft picks shaped by what she already cuddles.</p>
     </div>
@@ -160,23 +149,23 @@
     <p class="empty" id="forYouEmpty" hidden>Mark a few friends as owned, and we’ll nestle suggestions here.</p>
   </section>
 
-  <section id="panelWishlist" class="wishlist tab-panel" hidden>
-    <div class="section-head">
+  <section id="panelWishlist" class="wishlist tab-panel" role="tabpanel" aria-labelledby="tabWishlist" hidden>
+    <div class="tab-page-head">
       <h2>Wishlist</h2>
-      <p id="wishCountLabel">Shared family wishlist — same list on every phone.</p>
+      <p id="wishCountLabel">Shared family wishlist — sorted into soft little shelves.</p>
     </div>
     <div class="filters wish-filters" id="wishFilters">
       <label class="search-wrap">
         <span class="sr-only">Search wishlist</span>
-        <input id="wishSearch" type="search" placeholder="Search your saved plush…" autocomplete="off" />
+        <input id="wishSearch" type="search" placeholder="Search saved plush…" autocomplete="off" />
       </label>
     </div>
-    <div class="grid" id="wishGrid" aria-live="polite"></div>
+    <div id="wishShelves" aria-live="polite"></div>
     <p class="empty" id="wishEmpty" hidden>No plush saved yet. Browse the collection and tap a heart to begin.</p>
   </section>
 
-  <section id="panelComing" class="coming tab-panel" hidden>
-    <div class="section-head">
+  <section id="panelComing" class="coming tab-panel" role="tabpanel" aria-labelledby="tabComing" hidden>
+    <div class="tab-page-head">
       <h2>Coming Soon</h2>
       <p id="comingStatus">Peeking into the next cuddles…</p>
       <button type="button" class="refresh-btn" id="comingRefresh">Refresh news &amp; new friends</button>
@@ -205,6 +194,31 @@
     </div>
   </section>
   </div>
+
+  <nav class="tab-nav" role="tablist" aria-label="Main">
+    <button type="button" class="tab-btn is-active" role="tab" data-tab="collection" id="tabCollection" aria-selected="true" aria-controls="panelCollection">
+      <span class="tab-icon" aria-hidden="true">⌕</span>
+      <span>Browse</span>
+    </button>
+    <button type="button" class="tab-btn" role="tab" data-tab="owned" id="tabOwned" aria-selected="false" aria-controls="panelOwned">
+      <span class="tab-icon" aria-hidden="true">⌂</span>
+      <span>Nest</span>
+      <span class="tab-count" id="ownedTabCount" hidden>0</span>
+    </button>
+    <button type="button" class="tab-btn" role="tab" data-tab="foryou" id="tabForYou" aria-selected="false" aria-controls="panelForYou">
+      <span class="tab-icon" aria-hidden="true">✧</span>
+      <span>For You</span>
+    </button>
+    <button type="button" class="tab-btn" role="tab" data-tab="wishlist" id="tabWishlist" aria-selected="false" aria-controls="panelWishlist">
+      <span class="tab-icon" aria-hidden="true">♡</span>
+      <span>Wish</span>
+      <span class="tab-count" id="wishTabCount" hidden>0</span>
+    </button>
+    <button type="button" class="tab-btn" role="tab" data-tab="coming" id="tabComing" aria-selected="false" aria-controls="panelComing">
+      <span class="tab-icon" aria-hidden="true">☼</span>
+      <span>Soon</span>
+    </button>
+  </nav>
 
   <footer class="site-footer">
     <p>JellyNest · fan gallery · product data via the official <a href="https://us.jellycat.com/" rel="noopener" target="_blank">Jellycat store</a></p>
@@ -244,13 +258,54 @@
           <button type="button" class="own-toggle" id="modalOwn" aria-pressed="false">Mark as owned</button>
           <button type="button" class="wish-toggle" id="modalWish" aria-pressed="false">Add to wishlist</button>
         </div>
+
+        <div class="wish-priority" id="modalPriority" hidden>
+          <p class="dossier-label">Wishlist shelf</p>
+          <div class="priority-seg" role="group" aria-label="Wishlist priority">
+            <button type="button" class="priority-btn" data-priority="next">Next</button>
+            <button type="button" class="priority-btn" data-priority="someday">Someday</button>
+            <button type="button" class="priority-btn" data-priority="maybe">Maybe</button>
+          </div>
+        </div>
+
+        <div class="nest-dossier" id="modalDossier" hidden>
+          <p class="dossier-label">Nest dossier</p>
+          <div class="dossier-grid">
+            <label>
+              <span>Size</span>
+              <select id="dossierSize">
+                <option value="">—</option>
+                <option>Tiny</option>
+                <option>Little</option>
+                <option>Small</option>
+                <option>Medium</option>
+                <option>Large</option>
+                <option>Huge</option>
+                <option>Really Big</option>
+                <option>One size</option>
+              </select>
+            </label>
+            <label>
+              <span>Got it</span>
+              <input id="dossierGot" type="date" />
+            </label>
+            <label class="dossier-wide">
+              <span>From</span>
+              <input id="dossierFrom" type="text" maxlength="80" placeholder="Who nestled them here…" autocomplete="off" />
+            </label>
+            <label class="dossier-wide">
+              <span>Note</span>
+              <textarea id="dossierNote" rows="2" maxlength="240" placeholder="A soft little memory…"></textarea>
+            </label>
+          </div>
+        </div>
       </div>
     </div>
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="family-vault-config.js?v=13"></script>
-  <script src="family-list-sync.js?v=13"></script>
-  <script src="app.js?v=13" defer></script>
+  <script src="family-vault-config.js?v=14"></script>
+  <script src="family-list-sync.js?v=14"></script>
+  <script src="app.js?v=14" defer></script>
 </body>
 </html>

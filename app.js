@@ -2,8 +2,16 @@
   const PAGE_SIZE = 48;
   const WISHLIST_KEY = "jellynest_wishlist_v1";
   const OWNED_KEY = "jellynest_owned_v1";
+  const WISHLIST_META_KEY = "jellynest_wishlist_meta_v1";
+  const OWNED_META_KEY = "jellynest_owned_meta_v1";
   const NEWS_URL = "https://www.jellycat.com/jelly-journal/";
   const LIVE_NEWS_URL = "https://r.jina.ai/http://www.jellycat.com/jelly-journal/";
+  const DEFAULT_WISH_PRIORITY = "someday";
+  const WISH_SHELVES = [
+    { id: "next", label: "Next", blurb: "The next squeezes on the list." },
+    { id: "someday", label: "Someday", blurb: "Friends she still dreams about." },
+    { id: "maybe", label: "Maybe", blurb: "Soft maybes — no rush." },
+  ];
   const FAV_PICKS = {
     Bashful: ["Bashful Bunny", "Bashful Blush Bunny", "Bashful Cream Bunny"],
     Amuseables: ["Amuseables Avocado", "Amuseables Toast", "Amuseables Coffee"],
@@ -39,6 +47,12 @@
     modalStatus: document.getElementById("modalStatus"),
     modalWish: document.getElementById("modalWish"),
     modalOwn: document.getElementById("modalOwn"),
+    modalPriority: document.getElementById("modalPriority"),
+    modalDossier: document.getElementById("modalDossier"),
+    dossierSize: document.getElementById("dossierSize"),
+    dossierGot: document.getElementById("dossierGot"),
+    dossierFrom: document.getElementById("dossierFrom"),
+    dossierNote: document.getElementById("dossierNote"),
     panelCollection: document.getElementById("panelCollection"),
     panelOwned: document.getElementById("panelOwned"),
     panelWishlist: document.getElementById("panelWishlist"),
@@ -53,12 +67,13 @@
     ownedSearch: document.getElementById("ownedSearch"),
     ownedCountLabel: document.getElementById("ownedCountLabel"),
     ownedTabCount: document.getElementById("ownedTabCount"),
+    collectionMap: document.getElementById("collectionMap"),
     panelForYou: document.getElementById("panelForYou"),
     forYouStatus: document.getElementById("forYouStatus"),
     forYouTaste: document.getElementById("forYouTaste"),
     forYouShelves: document.getElementById("forYouShelves"),
     forYouEmpty: document.getElementById("forYouEmpty"),
-    wishGrid: document.getElementById("wishGrid"),
+    wishShelves: document.getElementById("wishShelves"),
     wishEmpty: document.getElementById("wishEmpty"),
     wishSearch: document.getElementById("wishSearch"),
     wishCountLabel: document.getElementById("wishCountLabel"),
@@ -93,6 +108,11 @@
   let wishlist = new Set();
   /** @type {Set<string>} */
   let owned = new Set();
+  /** @type {Record<string, Record<string, unknown>>} */
+  let wishMeta = {};
+  /** @type {Record<string, Record<string, unknown>>} */
+  let ownedMeta = {};
+  let dossierSilent = false;
   /** @type {string | null} */
   let modalCardId = null;
   let activeTab = "collection";
@@ -118,7 +138,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register(`service-worker.js?v=13`)
+        .register(`service-worker.js?v=14`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -146,7 +166,7 @@
 
   async function boot() {
     try {
-      const res = await fetch(`./data/cards.json?v=13`, { cache: "no-cache" });
+      const res = await fetch(`./data/cards.json?v=14`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();
@@ -168,8 +188,10 @@
       app: "jellynest",
       listType: "wishlist",
       storageKey: WISHLIST_KEY,
-      onRemoteChange: (ids) => {
+      metaStorageKey: WISHLIST_META_KEY,
+      onRemoteChange: (ids, meta) => {
         wishlist = new Set(ids.map(String));
+        wishMeta = meta || {};
         updateListChrome();
         if (activeTab === "wishlist") renderWishlist();
         if (modalCardId) syncModalButtons();
@@ -179,16 +201,22 @@
       app: "jellynest",
       listType: "owned",
       storageKey: OWNED_KEY,
-      onRemoteChange: (ids) => {
+      metaStorageKey: OWNED_META_KEY,
+      onRemoteChange: (ids, meta) => {
         owned = new Set(ids.map(String));
+        ownedMeta = meta || {};
         updateListChrome();
         if (activeTab === "owned") renderOwned();
         if (activeTab === "foryou") renderForYou();
         if (modalCardId) syncModalButtons();
       },
     });
-    wishlist = await wishSync.hydrate(wishlist);
-    owned = await ownedSync.hydrate(owned);
+    const wishState = await wishSync.hydrate(wishlist);
+    const ownedState = await ownedSync.hydrate(owned);
+    wishlist = wishState.ids;
+    wishMeta = wishState.meta || {};
+    owned = ownedState.ids;
+    ownedMeta = ownedState.meta || {};
     wishSync.subscribe();
     ownedSync.subscribe();
   }
@@ -202,14 +230,34 @@
     }
   }
 
+  function loadMeta(key) {
+    try {
+      const raw = JSON.parse(localStorage.getItem(key) || "{}");
+      if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+      return raw;
+    } catch {
+      return {};
+    }
+  }
+
   function loadLists() {
     wishlist = loadList(WISHLIST_KEY);
     owned = loadList(OWNED_KEY);
+    wishMeta = loadMeta(WISHLIST_META_KEY);
+    ownedMeta = loadMeta(OWNED_META_KEY);
   }
 
   function saveList(key, set) {
     try {
       localStorage.setItem(key, JSON.stringify([...set]));
+    } catch (err) {
+      console.warn(`Could not save ${key}`, err);
+    }
+  }
+
+  function saveMeta(key, meta) {
+    try {
+      localStorage.setItem(key, JSON.stringify(meta || {}));
     } catch (err) {
       console.warn(`Could not save ${key}`, err);
     }
@@ -223,12 +271,61 @@
     return owned.has(String(id));
   }
 
+  function wishPriorityOf(id) {
+    const p = String(wishMeta[String(id)]?.priority || DEFAULT_WISH_PRIORITY);
+    return WISH_SHELVES.some((s) => s.id === p) ? p : DEFAULT_WISH_PRIORITY;
+  }
+
+  function ownedDossierOf(id) {
+    const m = ownedMeta[String(id)] || {};
+    return {
+      size: String(m.size || ""),
+      got: String(m.got || ""),
+      from: String(m.from || ""),
+      note: String(m.note || ""),
+    };
+  }
+
+  function setWishPriority(id, priority) {
+    const key = String(id);
+    if (!wishlist.has(key)) return;
+    const next = WISH_SHELVES.some((s) => s.id === priority) ? priority : DEFAULT_WISH_PRIORITY;
+    wishMeta[key] = { ...(wishMeta[key] || {}), priority: next };
+    saveMeta(WISHLIST_META_KEY, wishMeta);
+    if (wishSync) wishSync.setMeta(key, { priority: next });
+    if (activeTab === "wishlist") renderWishlist();
+    if (modalCardId === key) syncModalButtons();
+  }
+
+  function saveOwnedDossier(id, patch) {
+    const key = String(id);
+    if (!owned.has(key)) return;
+    const prev = { ...(ownedMeta[key] || {}) };
+    const merged = { ...prev, ...patch };
+    for (const [k, v] of Object.entries(merged)) {
+      if (v == null || v === "") delete merged[k];
+    }
+    ownedMeta[key] = merged;
+    saveMeta(OWNED_META_KEY, ownedMeta);
+    if (ownedSync) ownedSync.setMeta(key, patch);
+    if (activeTab === "owned") renderCollectionMap();
+  }
+
   function toggleWish(id) {
     const key = String(id);
-    if (wishlist.has(key)) wishlist.delete(key);
-    else wishlist.add(key);
-    saveList(WISHLIST_KEY, wishlist);
-    if (wishSync) wishSync.setItem(key, wishlist.has(key));
+    if (wishlist.has(key)) {
+      wishlist.delete(key);
+      delete wishMeta[key];
+      saveList(WISHLIST_KEY, wishlist);
+      saveMeta(WISHLIST_META_KEY, wishMeta);
+      if (wishSync) wishSync.setItem(key, false);
+    } else {
+      wishlist.add(key);
+      wishMeta[key] = { ...(wishMeta[key] || {}), priority: DEFAULT_WISH_PRIORITY };
+      saveList(WISHLIST_KEY, wishlist);
+      saveMeta(WISHLIST_META_KEY, wishMeta);
+      if (wishSync) wishSync.setItem(key, true, { priority: DEFAULT_WISH_PRIORITY });
+    }
     syncWishButtons(key);
     updateListChrome();
     if (activeTab === "wishlist") renderWishlist();
@@ -240,18 +337,22 @@
     const key = String(id);
     if (owned.has(key)) {
       owned.delete(key);
+      delete ownedMeta[key];
+      saveMeta(OWNED_META_KEY, ownedMeta);
     } else {
       owned.add(key);
       // Got it — drop from the wish list if it was waiting there
       if (wishlist.has(key)) {
         wishlist.delete(key);
+        delete wishMeta[key];
         saveList(WISHLIST_KEY, wishlist);
+        saveMeta(WISHLIST_META_KEY, wishMeta);
         if (wishSync) wishSync.setItem(key, false);
         syncWishButtons(key);
       }
     }
     saveList(OWNED_KEY, owned);
-    if (ownedSync) ownedSync.setItem(key, owned.has(key));
+    if (ownedSync) ownedSync.setItem(key, owned.has(key), owned.has(key) ? ownedMeta[key] || {} : undefined);
     syncOwnButtons(key);
     updateListChrome();
     if (activeTab === "owned") renderOwned();
@@ -357,7 +458,8 @@
 
     els.grid.addEventListener("click", onGridClick);
     els.ownedGrid?.addEventListener("click", onGridClick);
-    els.wishGrid?.addEventListener("click", onGridClick);
+    els.wishShelves?.addEventListener("click", onGridClick);
+    els.collectionMap?.addEventListener("click", onGridClick);
     els.revealsGrid?.addEventListener("click", onGridClick);
     els.leaksList?.addEventListener("click", onGridClick);
 
@@ -371,6 +473,16 @@
     els.modalOwn?.addEventListener("click", () => {
       if (modalCardId) toggleOwn(modalCardId);
     });
+    els.modalPriority?.addEventListener("click", (e) => {
+      const btn = e.target.closest("[data-priority]");
+      if (!btn || !modalCardId) return;
+      setWishPriority(modalCardId, btn.getAttribute("data-priority"));
+    });
+    const dossierFields = [els.dossierSize, els.dossierGot, els.dossierFrom, els.dossierNote];
+    for (const field of dossierFields) {
+      field?.addEventListener("change", onDossierFieldChange);
+      field?.addEventListener("input", onDossierFieldChange);
+    }
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape" && els.modal.open) els.modal.close();
     });
@@ -386,11 +498,9 @@
 
     els.forYouShelves?.addEventListener("click", onGridClick);
 
-    els.tabCollection?.addEventListener("click", () => showTab("collection"));
-    els.tabOwned?.addEventListener("click", () => showTab("owned"));
-    els.tabForYou?.addEventListener("click", () => showTab("foryou"));
-    els.tabWishlist?.addEventListener("click", () => showTab("wishlist"));
-    els.tabComing?.addEventListener("click", () => showTab("coming"));
+    document.querySelectorAll(".tab-btn[data-tab]").forEach((btn) => {
+      btn.addEventListener("click", () => showTab(btn.getAttribute("data-tab")));
+    });
     els.wishSearch?.addEventListener("input", () => {
       clearTimeout(wishSearchTimer);
       wishSearchTimer = setTimeout(renderWishlist, 160);
@@ -406,7 +516,44 @@
     els.collapseAllGroups?.addEventListener("click", () => setAllGroupsOpen(false));
   }
 
+  function onDossierFieldChange() {
+    if (dossierSilent || !modalCardId || !isOwned(modalCardId)) return;
+    saveOwnedDossier(modalCardId, {
+      size: els.dossierSize?.value || "",
+      got: els.dossierGot?.value || "",
+      from: (els.dossierFrom?.value || "").trim(),
+      note: (els.dossierNote?.value || "").trim(),
+    });
+  }
+
   function onGridClick(e) {
+    const priorityBtn = e.target.closest(".priority-btn[data-wish-id]");
+    if (priorityBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id = priorityBtn.dataset.wishId;
+      const priority = priorityBtn.dataset.priority;
+      if (id && priority) setWishPriority(id, priority);
+      return;
+    }
+    const gapTheme = e.target.closest("[data-gap-theme]");
+    if (gapTheme) {
+      e.preventDefault();
+      const theme = gapTheme.getAttribute("data-gap-theme") || "";
+      showTab("collection");
+      if (els.search) els.search.value = "";
+      if (els.catalogueFilter) els.catalogueFilter.value = "";
+      if (els.yearFilter) els.yearFilter.value = "";
+      if (els.statusFilter) els.statusFilter.value = "";
+      if (els.themeFilter) {
+        const has = [...els.themeFilter.options].some((o) => o.value === theme);
+        els.themeFilter.value = has ? theme : "";
+        if (!has && theme) els.search.value = theme;
+      }
+      applyFilters();
+      document.getElementById("collection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return;
+    }
     const ownBtn = e.target.closest(".own-btn");
     if (ownBtn) {
       e.preventDefault();
@@ -426,21 +573,17 @@
     const btn = e.target.closest("[data-id]");
     if (!btn || btn.classList.contains("wish-btn") || btn.classList.contains("own-btn")) return;
     const id = btn.dataset.id;
-    const card =
-      catalog.cards.find((c) => String(c.id) === id) ||
-      comingDisplayCards.find((c) => String(c.id) === id) ||
-      (comingData?.reveals || []).find((c) => String(c.id) === id) ||
-      allLeakCards().find((c) => String(c.id) === id);
+    const card = findCard(id);
     if (card) openModal(card);
   }
 
   function maybeOpenTabFromHash() {
     const hash = (location.hash || "").toLowerCase();
-    if (hash.includes("wishlist")) showTab("wishlist");
+    if (hash.includes("wishlist") || hash.includes("wish")) showTab("wishlist");
     else if (hash.includes("foryou") || hash.includes("for-you")) showTab("foryou");
-    else if (hash.includes("owned")) showTab("owned");
-    else if (hash.includes("coming")) showTab("coming");
-    else if (hash.includes("collection")) showTab("collection");
+    else if (hash.includes("owned") || hash.includes("nest")) showTab("owned");
+    else if (hash.includes("coming") || hash.includes("soon")) showTab("coming");
+    else if (hash.includes("collection") || hash.includes("browse")) showTab("collection");
   }
 
   function showTab(name) {
@@ -469,17 +612,24 @@
       panel.setAttribute("aria-hidden", on ? "false" : "true");
     }
 
-    els.tabCollection.classList.toggle("is-active", collection);
-    els.tabOwned?.classList.toggle("is-active", ownedTab);
-    els.tabForYou?.classList.toggle("is-active", forYouTab);
-    els.tabWishlist?.classList.toggle("is-active", wishlistTab);
-    els.tabComing.classList.toggle("is-active", coming);
+    const tabFlags = {
+      collection,
+      owned: ownedTab,
+      foryou: forYouTab,
+      wishlist: wishlistTab,
+      coming,
+    };
+    document.querySelectorAll(".tab-btn[data-tab]").forEach((btn) => {
+      const on = Boolean(tabFlags[btn.getAttribute("data-tab")]);
+      btn.classList.toggle("is-active", on);
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+    });
 
     if (coming) {
       history.replaceState(null, "", "#coming-soon");
       if (!comingLoaded) loadComingSoon(false);
     } else if (ownedTab) {
-      history.replaceState(null, "", "#owned");
+      history.replaceState(null, "", "#nest");
       renderOwned();
     } else if (forYouTab) {
       history.replaceState(null, "", "#foryou");
@@ -488,7 +638,7 @@
       history.replaceState(null, "", "#wishlist");
       renderWishlist();
     } else {
-      history.replaceState(null, "", "#collection");
+      history.replaceState(null, "", "#browse");
     }
 
     const y = tabScrollY[name] || 0;
@@ -521,17 +671,67 @@
 
   function syncModalButtons() {
     if (!modalCardId) return;
+    const wished = isWished(modalCardId);
+    const ownedOn = isOwned(modalCardId);
     if (els.modalWish) {
-      const on = isWished(modalCardId);
-      els.modalWish.classList.toggle("is-on", on);
-      els.modalWish.setAttribute("aria-pressed", on ? "true" : "false");
-      els.modalWish.textContent = on ? "Remove from wishlist" : "Add to wishlist";
+      els.modalWish.classList.toggle("is-on", wished);
+      els.modalWish.setAttribute("aria-pressed", wished ? "true" : "false");
+      els.modalWish.textContent = wished ? "Remove from wishlist" : "Add to wishlist";
     }
     if (els.modalOwn) {
-      const on = isOwned(modalCardId);
-      els.modalOwn.classList.toggle("is-on", on);
-      els.modalOwn.setAttribute("aria-pressed", on ? "true" : "false");
-      els.modalOwn.textContent = on ? "Remove from owned" : "Mark as owned";
+      els.modalOwn.classList.toggle("is-on", ownedOn);
+      els.modalOwn.setAttribute("aria-pressed", ownedOn ? "true" : "false");
+      els.modalOwn.textContent = ownedOn ? "Remove from owned" : "Mark as owned";
+    }
+    if (els.modalPriority) {
+      els.modalPriority.hidden = !wished;
+      if (wished) {
+        const current = wishPriorityOf(modalCardId);
+        els.modalPriority.querySelectorAll(".priority-btn").forEach((btn) => {
+          btn.classList.toggle("is-on", btn.getAttribute("data-priority") === current);
+        });
+      }
+    }
+    if (els.modalDossier) {
+      els.modalDossier.hidden = !ownedOn;
+      if (ownedOn) fillDossierForm(modalCardId);
+      else clearDossierForm();
+    }
+  }
+
+  function fillDossierForm(id) {
+    const d = ownedDossierOf(id);
+    const card = findCard(id);
+    const catalogSize = card?.size && card.size !== "One size" ? card.size : "";
+    const size = d.size || catalogSize || "";
+    dossierSilent = true;
+    if (els.dossierSize) {
+      ensureDossierSizeOption(size);
+      els.dossierSize.value = size;
+    }
+    if (els.dossierGot) els.dossierGot.value = d.got || "";
+    if (els.dossierFrom) els.dossierFrom.value = d.from || "";
+    if (els.dossierNote) els.dossierNote.value = d.note || "";
+    dossierSilent = false;
+  }
+
+  function clearDossierForm() {
+    dossierSilent = true;
+    if (els.dossierSize) els.dossierSize.value = "";
+    if (els.dossierGot) els.dossierGot.value = "";
+    if (els.dossierFrom) els.dossierFrom.value = "";
+    if (els.dossierNote) els.dossierNote.value = "";
+    dossierSilent = false;
+  }
+
+  function ensureDossierSizeOption(size) {
+    if (!els.dossierSize || !size) return;
+    const exists = [...els.dossierSize.options].some((o) => o.value === size);
+    if (!exists) {
+      const opt = document.createElement("option");
+      opt.value = size;
+      opt.textContent = size;
+      els.dossierSize.appendChild(opt);
     }
   }
 
@@ -544,8 +744,8 @@
     if (els.wishCountLabel) {
       els.wishCountLabel.textContent =
         wishN === 0
-          ? "Shared family wishlist — same list on every phone."
-          : `${wishN.toLocaleString()} friend${wishN === 1 ? "" : "s"} waiting for a squeeze.`;
+          ? "Shared family wishlist — sorted into soft little shelves."
+          : `${wishN.toLocaleString()} friend${wishN === 1 ? "" : "s"} waiting across Next, Someday & Maybe.`;
     }
 
     const ownN = owned.size;
@@ -556,8 +756,8 @@
     if (els.ownedCountLabel) {
       els.ownedCountLabel.textContent =
         ownN === 0
-          ? "Shared family nest — anyone can tick these off."
-          : `${ownN.toLocaleString()} friend${ownN === 1 ? "" : "s"} already nestled at home.`;
+          ? "Shared family nest — ticks, notes, and progress live here."
+          : `${ownN.toLocaleString()} friend${ownN === 1 ? "" : "s"} nestled at home.`;
     }
   }
 
@@ -646,10 +846,8 @@
     );
   }
 
-  function renderSavedGrid(grid, emptyEl, ids, emptyNone, emptySearch) {
+  function renderSavedGrid(grid, emptyEl, ids, emptyNone, emptySearch, qInput) {
     if (!grid) return;
-    const qInput =
-      grid === els.wishGrid ? els.wishSearch : grid === els.ownedGrid ? els.ownedSearch : null;
     const q = (qInput?.value || "").trim().toLowerCase();
     const cards = [...ids]
       .map(findCard)
@@ -669,25 +867,249 @@
       emptyEl.textContent = ids.size === 0 ? emptyNone : emptySearch;
       emptyEl.hidden = cards.length !== 0;
     }
+    return cards;
+  }
+
+  function makeWishTile(card, i = 0) {
+    const wrap = makeCardTile(card, i);
+    const shelf = document.createElement("div");
+    shelf.className = "priority-seg priority-seg--tile";
+    shelf.setAttribute("role", "group");
+    shelf.setAttribute("aria-label", `Move ${card.name || card.fullName}`);
+    const current = wishPriorityOf(card.id);
+    for (const s of WISH_SHELVES) {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = `priority-btn${current === s.id ? " is-on" : ""}`;
+      btn.dataset.priority = s.id;
+      btn.dataset.wishId = String(card.id);
+      btn.textContent = s.label;
+      shelf.appendChild(btn);
+    }
+    wrap.appendChild(shelf);
+    return wrap;
   }
 
   function renderWishlist() {
-    renderSavedGrid(
-      els.wishGrid,
-      els.wishEmpty,
-      wishlist,
-      "No plush saved yet. Browse the collection and tap a heart to begin.",
-      "No saved plush match that search."
-    );
+    if (!els.wishShelves) return;
+    const q = (els.wishSearch?.value || "").trim().toLowerCase();
+    const cards = [...wishlist]
+      .map(findCard)
+      .filter(Boolean)
+      .filter((c) => {
+        if (!q) return true;
+        const hay = `${c.fullName} ${c.name} ${c.theme} ${c.catalogue} ${c.year} ${c.status} ${c.sku || ""}`.toLowerCase();
+        return hay.includes(q);
+      });
+
+    els.wishShelves.innerHTML = "";
+    let shown = 0;
+    for (const shelf of WISH_SHELVES) {
+      const shelfCards = cards.filter((c) => wishPriorityOf(c.id) === shelf.id);
+      if (!shelfCards.length && q) continue;
+      const article = document.createElement("article");
+      article.className = "wish-shelf";
+      article.innerHTML = `
+        <div class="wish-shelf-head">
+          <h3>${escapeHtml(shelf.label)}</h3>
+          <p>${escapeHtml(shelf.blurb)} · ${shelfCards.length}</p>
+        </div>
+      `;
+      if (!shelfCards.length) {
+        const empty = document.createElement("p");
+        empty.className = "wish-shelf-empty";
+        empty.textContent = "Nothing on this shelf yet.";
+        article.appendChild(empty);
+      } else {
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        shelfCards.forEach((card, i) => {
+          shown += 1;
+          grid.appendChild(makeWishTile(card, i));
+        });
+        article.appendChild(grid);
+      }
+      els.wishShelves.appendChild(article);
+    }
+
+    if (els.wishEmpty) {
+      if (wishlist.size === 0) {
+        els.wishEmpty.textContent = "No plush saved yet. Browse the collection and tap a heart to begin.";
+        els.wishEmpty.hidden = false;
+        els.wishShelves.hidden = true;
+      } else if (!shown) {
+        els.wishEmpty.textContent = "No saved plush match that search.";
+        els.wishEmpty.hidden = false;
+        els.wishShelves.hidden = true;
+      } else {
+        els.wishEmpty.hidden = true;
+        els.wishShelves.hidden = false;
+      }
+    }
+  }
+
+  function setKeyForCard(card) {
+    return card.setCode || card.theme || "unknown";
+  }
+
+  function setLabelForCard(card) {
+    return card.setName || card.theme || "Friends";
+  }
+
+  function buildSetProgress() {
+    /** @type {Map<string, { key: string, label: string, theme: string, total: any[], owned: any[], missing: any[] }>} */
+    const sets = new Map();
+    for (const card of catalog.cards || []) {
+      const key = setKeyForCard(card);
+      if (!sets.has(key)) {
+        sets.set(key, {
+          key,
+          label: setLabelForCard(card),
+          theme: card.theme || "",
+          total: [],
+          owned: [],
+          missing: [],
+        });
+      }
+      const row = sets.get(key);
+      row.total.push(card);
+      if (isOwned(card.id)) row.owned.push(card);
+      else row.missing.push(card);
+    }
+    return [...sets.values()]
+      .filter((s) => s.owned.length > 0 && s.missing.length > 0 && s.total.length >= 3)
+      .map((s) => ({
+        ...s,
+        ratio: s.owned.length / s.total.length,
+        missingCount: s.missing.length,
+      }))
+      .sort((a, b) => b.ratio - a.ratio || a.missingCount - b.missingCount || a.label.localeCompare(b.label));
+  }
+
+  function renderCollectionMap() {
+    if (!els.collectionMap) return;
+    const ownedCards = [...owned].map(findCard).filter(Boolean);
+    if (!ownedCards.length) {
+      els.collectionMap.hidden = true;
+      els.collectionMap.innerHTML = "";
+      return;
+    }
+
+    const themes = new Map();
+    const catalogues = new Map();
+    const years = new Set();
+    for (const card of ownedCards) {
+      bumpCount(themes, card.theme);
+      bumpCount(catalogues, card.catalogue);
+      if (card.year) years.add(card.year);
+    }
+
+    const progress = buildSetProgress();
+    const closeSets = progress.filter((s) => s.missingCount <= 12).slice(0, 5);
+    const topThemes = topCounts(themes, 5, 1);
+
+    const yearList = [...years].sort();
+    const yearSpan =
+      yearList.length === 0
+        ? "—"
+        : yearList.length === 1
+          ? yearList[0]
+          : `${yearList[0]}–${yearList[yearList.length - 1]}`;
+
+    els.collectionMap.hidden = false;
+    els.collectionMap.innerHTML = `
+      <div class="map-head">
+        <h3>Collection map</h3>
+        <p>A soft read of what’s already home — and what’s nearly a complete set.</p>
+      </div>
+      <div class="map-stats">
+        <div class="map-stat">
+          <strong>${ownedCards.length}</strong>
+          <span>hugged</span>
+        </div>
+        <div class="map-stat">
+          <strong>${themes.size}</strong>
+          <span>themes</span>
+        </div>
+        <div class="map-stat">
+          <strong>${catalogues.size}</strong>
+          <span>catalogues</span>
+        </div>
+        <div class="map-stat">
+          <strong>${escapeHtml(yearSpan)}</strong>
+          <span>years</span>
+        </div>
+      </div>
+      ${
+        topThemes.length
+          ? `<div class="map-bars">
+              <h4>Theme progress</h4>
+              ${topThemes
+                .map(([theme, n]) => {
+                  const total = (catalog.cards || []).filter((c) => c.theme === theme).length || 1;
+                  const pct = Math.min(100, Math.round((n / total) * 100));
+                  return `<button type="button" class="map-bar" data-gap-theme="${escapeAttr(theme)}">
+                    <span class="map-bar-label"><span>${escapeHtml(theme)}</span><span>${n}/${total}</span></span>
+                    <span class="map-bar-track"><span class="map-bar-fill" style="width:${pct}%"></span></span>
+                  </button>`;
+                })
+                .join("")}
+            </div>`
+          : ""
+      }
+      ${
+        closeSets.length
+          ? `<div class="map-gaps">
+              <h4>Almost nestled</h4>
+              <p class="map-gaps-note">Sets you’re close to completing — tap a missing friend to open them.</p>
+              <div class="gap-list" id="gapList"></div>
+            </div>`
+          : ""
+      }
+    `;
+
+    const gapList = els.collectionMap.querySelector("#gapList");
+    if (gapList && closeSets.length) {
+      for (const set of closeSets) {
+        const block = document.createElement("article");
+        block.className = "gap-card";
+        const pct = Math.round(set.ratio * 100);
+        block.innerHTML = `
+          <button type="button" class="gap-card-head" data-gap-theme="${escapeAttr(set.theme || set.label)}">
+            <span>
+              <strong>${escapeHtml(set.label)}</strong>
+              <span class="gap-meta">${set.owned.length} of ${set.total.length} · ${pct}%</span>
+            </span>
+            <span class="map-bar-track gap-track"><span class="map-bar-fill" style="width:${pct}%"></span></span>
+          </button>
+        `;
+        const missing = set.missing.slice(0, 6);
+        const grid = document.createElement("div");
+        grid.className = "gap-missing";
+        missing.forEach((card, i) => grid.appendChild(makeCardTile(card, i)));
+        if (set.missing.length > 6) {
+          const more = document.createElement("p");
+          more.className = "gap-more";
+          more.textContent = `+${set.missing.length - 6} more still out there`;
+          block.appendChild(grid);
+          block.appendChild(more);
+        } else {
+          block.appendChild(grid);
+        }
+        gapList.appendChild(block);
+      }
+    }
   }
 
   function renderOwned() {
+    renderCollectionMap();
     renderSavedGrid(
       els.ownedGrid,
       els.ownedEmpty,
       owned,
       "Nothing marked as owned yet. Browse the collection and tap a check to begin.",
-      "No owned plush match that search."
+      "No owned plush match that search.",
+      els.ownedSearch
     );
   }
 
