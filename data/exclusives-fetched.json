@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-10T16:04:33Z",
+  "generated": "2026-08-17T15:32:11Z",
   "source": "https://jellycat.com/events-experiences/",
   "experiences": [
     {
@@ -28,7 +28,7 @@
       "url": "https://jellycat.com/jellycat-general-store-in-birmingham-manchester/"
     }
   ],
-  "count": 19,
+  "count": 15,
   "cards": [
     {
       "id": "exclusive-cafe-shanghai-amuseables-berrity-latte",
@@ -101,102 +101,6 @@
       "source": "jellycat-experience-page",
       "experienceId": "cafe-shanghai",
       "experienceLabel": "Café · Shanghai & Beijing"
-    },
-    {
-      "id": "exclusive-diner-new-york-amuseables-crember-cheesecake",
-      "fullName": "Amuseables Crember Cheesecake",
-      "name": "Crember Cheesecake",
-      "theme": "Amuseables Food & Drink",
-      "catalogue": "Exclusives",
-      "year": "2023",
-      "status": "Live",
-      "subBrand": "Amuseables",
-      "version": "Diner Experience",
-      "type": "Soft Toy",
-      "availability": "Store Exclusive",
-      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
-      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/amuseables-new-york-cheescake-7.jpg?t=1778195909",
-      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/amuseables-new-york-cheescake-7.jpg?t=1778195909",
-      "blurb": "Amuseables Crember Cheesecake from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
-      "categories": [
-        "Exclusives",
-        "Diner · New York"
-      ],
-      "source": "jellycat-experience-page",
-      "experienceId": "diner-new-york",
-      "experienceLabel": "Diner · New York"
-    },
-    {
-      "id": "exclusive-diner-new-york-amuseables-nibbles-chip-cookie",
-      "fullName": "Amuseables Nibbles Chip Cookie",
-      "name": "Nibbles Chip Cookie",
-      "theme": "Amuseables Food & Drink",
-      "catalogue": "Exclusives",
-      "year": "2023",
-      "status": "Live",
-      "subBrand": "Amuseables",
-      "version": "Diner Experience",
-      "type": "Soft Toy",
-      "availability": "Store Exclusive",
-      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
-      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/diner-refresh-cookie-436-x-549.jpg?t=1757001628",
-      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/diner-refresh-cookie-436-x-549.jpg?t=1757001628",
-      "blurb": "Amuseables Nibbles Chip Cookie from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
-      "categories": [
-        "Exclusives",
-        "Diner · New York"
-      ],
-      "source": "jellycat-experience-page",
-      "experienceId": "diner-new-york",
-      "experienceLabel": "Diner · New York"
-    },
-    {
-      "id": "exclusive-diner-new-york-bubbeca-milkshake",
-      "fullName": "Bubbeca Milkshake",
-      "name": "Bubbeca Milkshake",
-      "theme": "Amuseables Food & Drink",
-      "catalogue": "Exclusives",
-      "year": "2023",
-      "status": "Live",
-      "subBrand": "Amuseables",
-      "version": "Diner Experience",
-      "type": "Soft Toy",
-      "availability": "Store Exclusive",
-      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
-      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/peanut-and-milkshake-1.jpg?t=1751017650",
-      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/peanut-and-milkshake-1.jpg?t=1751017650",
-      "blurb": "Bubbeca Milkshake from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
-      "categories": [
-        "Exclusives",
-        "Diner · New York"
-      ],
-      "source": "jellycat-experience-page",
-      "experienceId": "diner-new-york",
-      "experienceLabel": "Diner · New York"
-    },
-    {
-      "id": "exclusive-diner-new-york-oatus-bear",
-      "fullName": "Oatus Bear",
-      "name": "Oatus Bear",
-      "theme": "Bears",
-      "catalogue": "Exclusives",
-      "year": "2023",
-      "status": "Live",
-      "subBrand": "",
-      "version": "Diner Experience",
-      "type": "Soft Toy",
-      "availability": "Store Exclusive",
-      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
-      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/chip-and-oatus-1.jpg?t=1751020323",
-      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/chip-and-oatus-1.jpg?t=1751020323",
-      "blurb": "Oatus Bear from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
-      "categories": [
-        "Exclusives",
-        "Diner · New York"
-      ],
-      "source": "jellycat-experience-page",
-      "experienceId": "diner-new-york",
-      "experienceLabel": "Diner · New York"
     },
     {
       "id": "exclusive-fish-chips-london-amuseables-charlie-chip",
