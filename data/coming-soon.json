@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-24T15:47:49Z",
+  "generated": "2026-08-26T16:13:41Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,9 +13,16 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 0,
-      "gallery": [],
-      "heroImage": null
+      "revealedCount": 11,
+      "gallery": [
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2086/53759/A2SBOOT__19472.1787753488.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2088/53783/A4BCBG__57806.1787753522.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2090/53735/A4MITT__47638.1787753556.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2092/53744/A4VINC__14900.1787753532.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2093/53769/A6STA__05869.1787753522.jpg"
+      ],
+      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg"
     },
     {
       "code": "new",
@@ -55,6 +62,193 @@
     }
   ],
   "reveals": [
+    {
+      "id": 2085,
+      "fullName": "Amuseables Pomilly",
+      "name": "Amuseables Pomilly",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A2HAT",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2085/53754/A2HAT__80545.1787753472.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg",
+      "url": "https://us.jellycat.com/amuseables-pomilly/",
+      "blurb": "Amuseables Pomilly is the queen of the Christmas party! She spends December bobbing between festive gatherings,..."
+    },
+    {
+      "id": 2086,
+      "fullName": "Amuseables Perta Snow Boot",
+      "name": "Amuseables Perta Snow Boot",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A2SBOOT",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2086/53759/A2SBOOT__19472.1787753488.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2086/53759/A2SBOOT__19472.1787753488.jpg",
+      "url": "https://us.jellycat.com/amuseables-perta-snow-boot/",
+      "blurb": "Once Amuseables Perta Snow Boot commits to a project, she gives it some major welly – and her Christmas decorations are..."
+    },
+    {
+      "id": 2088,
+      "fullName": "Amuseables Birthday Cake Bag",
+      "name": "Amuseables Birthday Cake Bag",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A4BCBG",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2088/53783/A4BCBG__57806.1787753522.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2088/53783/A4BCBG__57806.1787753522.jpg",
+      "url": "https://us.jellycat.com/amuseables-birthday-cake-bag/",
+      "blurb": "With its scarlet strap and plush strawberry details, the Amuseables Birthday Cake Bag rises to accessorising occasions..."
+    },
+    {
+      "id": 2090,
+      "fullName": "Amuseables Fitswell Mitten",
+      "name": "Amuseables Fitswell Mitten",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A4MITT",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2090/53735/A4MITT__47638.1787753556.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2090/53735/A4MITT__47638.1787753556.jpg",
+      "url": "https://us.jellycat.com/amuseables-fitswell-mitten/",
+      "blurb": "Amuseables Fitswell Mitten loves nothing better than to hang loose with her best friends, Amuseables Perta Snow Boot..."
+    },
+    {
+      "id": 2092,
+      "fullName": "Amuseables Mullover Spiced Drink",
+      "name": "Amuseables Mullover Spiced Drink",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A4VINC",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2092/53744/A4VINC__14900.1787753532.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2092/53744/A4VINC__14900.1787753532.jpg",
+      "url": "https://us.jellycat.com/amuseables-mullover-spiced-drink/",
+      "blurb": "Whenever Mullover Spiced Drink needs some quiet, he grabs his snowboard and heads to one of the less crowded slopes..."
+    },
+    {
+      "id": 2093,
+      "fullName": "Amuseables Silver Star",
+      "name": "Amuseables Silver Star",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "A6STA",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2093/53769/A6STA__05869.1787753522.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2093/53769/A6STA__05869.1787753522.jpg",
+      "url": "https://us.jellycat.com/amuseables-silver-star/",
+      "blurb": "For years now, Amuseables Silver Star has been spreading a little winter wonder in secret. It isn’t easy – especially..."
+    },
+    {
+      "id": 2094,
+      "fullName": "Bizzlestomp Bear",
+      "name": "Bizzlestomp Bear",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "ASP1B",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2094/53725/ASP1B__88900.1787748395.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2094/53725/ASP1B__88900.1787748395.jpg",
+      "url": "https://us.jellycat.com/bizzlestomp-bear/",
+      "blurb": "Mighty in stature he may be, but as a keen amateur ice sculptor, Bizzlestomp Bear happens to prefer life in miniature..."
+    },
+    {
+      "id": 2096,
+      "fullName": "Rufferty Puppy Pouch",
+      "name": "Rufferty Puppy Pouch",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "BCP4PP",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2096/53824/BCP4PP__24516.1787758004.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2096/53824/BCP4PP__24516.1787758004.jpg",
+      "url": "https://us.jellycat.com/rufferty-puppy-pouch/",
+      "blurb": "Rufferty Puppy rarely comes back from anywhere with exactly what he left with. There are usually an extra few..."
+    },
+    {
+      "id": 2098,
+      "fullName": "Tawoola Owl",
+      "name": "Tawoola Owl",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "GRU3WL",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2098/53740/GRU3WL__86481.1787748413.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/53740/GRU3WL__86481.1787748413.jpg",
+      "url": "https://us.jellycat.com/tawoola-owl/",
+      "blurb": "Nobody does gifting quite like Tawoola Owl. Her thoughtfulness is second to none – and while her keen eye for detail..."
+    },
+    {
+      "id": 2099,
+      "fullName": "Munro Scottie Dog 'Winter Jumper'",
+      "name": "Munro Scottie Dog 'Winter Jumper'",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "MUN2JUM",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
+      "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
+      "blurb": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper. ..."
+    },
+    {
+      "id": 2100,
+      "fullName": "Ulrich Wolf",
+      "name": "Ulrich Wolf",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "WOL1W",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2100/53764/WOL1W__77322.1787753412.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2100/53764/WOL1W__77322.1787753412.jpg",
+      "url": "https://us.jellycat.com/ulrich-wolf/",
+      "blurb": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat..."
+    },
     {
       "id": 1842,
       "fullName": "Broox Bat",
@@ -857,100 +1051,100 @@
   ],
   "news": [
     {
+      "title": "Amuseables Pomilly",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Amuseables Pomilly is the queen of the Christmas party! She spends December bobbing between festive gatherings,...",
+      "url": "https://us.jellycat.com/amuseables-pomilly/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2085/53754/A2HAT__80545.1787753472.jpg"
+    },
+    {
+      "title": "Amuseables Perta Snow Boot",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Once Amuseables Perta Snow Boot commits to a project, she gives it some major welly – and her Christmas decorations are...",
+      "url": "https://us.jellycat.com/amuseables-perta-snow-boot/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2086/53759/A2SBOOT__19472.1787753488.jpg"
+    },
+    {
+      "title": "Amuseables Birthday Cake Bag",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "With its scarlet strap and plush strawberry details, the Amuseables Birthday Cake Bag rises to accessorising occasions...",
+      "url": "https://us.jellycat.com/amuseables-birthday-cake-bag/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2088/53783/A4BCBG__57806.1787753522.jpg"
+    },
+    {
+      "title": "Amuseables Fitswell Mitten",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Amuseables Fitswell Mitten loves nothing better than to hang loose with her best friends, Amuseables Perta Snow Boot...",
+      "url": "https://us.jellycat.com/amuseables-fitswell-mitten/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2090/53735/A4MITT__47638.1787753556.jpg"
+    },
+    {
+      "title": "Amuseables Mullover Spiced Drink",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Whenever Mullover Spiced Drink needs some quiet, he grabs his snowboard and heads to one of the less crowded slopes...",
+      "url": "https://us.jellycat.com/amuseables-mullover-spiced-drink/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2092/53744/A4VINC__14900.1787753532.jpg"
+    },
+    {
+      "title": "Amuseables Silver Star",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "For years now, Amuseables Silver Star has been spreading a little winter wonder in secret. It isn’t easy – especially...",
+      "url": "https://us.jellycat.com/amuseables-silver-star/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2093/53769/A6STA__05869.1787753522.jpg"
+    },
+    {
+      "title": "Bizzlestomp Bear",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Mighty in stature he may be, but as a keen amateur ice sculptor, Bizzlestomp Bear happens to prefer life in miniature...",
+      "url": "https://us.jellycat.com/bizzlestomp-bear/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2094/53725/ASP1B__88900.1787748395.jpg"
+    },
+    {
+      "title": "Rufferty Puppy Pouch",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Rufferty Puppy rarely comes back from anywhere with exactly what he left with. There are usually an extra few...",
+      "url": "https://us.jellycat.com/rufferty-puppy-pouch/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2096/53824/BCP4PP__24516.1787758004.jpg"
+    },
+    {
+      "title": "Tawoola Owl",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Nobody does gifting quite like Tawoola Owl. Her thoughtfulness is second to none – and while her keen eye for detail...",
+      "url": "https://us.jellycat.com/tawoola-owl/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2098/53740/GRU3WL__86481.1787748413.jpg"
+    },
+    {
+      "title": "Munro Scottie Dog 'Winter Jumper'",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper. ...",
+      "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg"
+    },
+    {
+      "title": "Ulrich Wolf",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat...",
+      "url": "https://us.jellycat.com/ulrich-wolf/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2100/53764/WOL1W__77322.1787753412.jpg"
+    },
+    {
       "title": "Broox Bat",
       "date": "",
       "category": "New Arrivals",
       "summary": "Broox Bat has a problem... he doesn’t like the dark. He’s not scared of it, he’d just rather avoid it (at all costs!)...",
       "url": "https://us.jellycat.com/broox-bat/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1842/50697/BAT3B__37327.1750934772.jpg"
-    },
-    {
-      "title": "Ooky Jack O Lantern",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "If you’re throwing a Halloween party, there’s only one DJ you want. Nay, one DJ you need! And that’s Ooky Jack O...",
-      "url": "https://us.jellycat.com/ooky-jack-o-lantern/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1845/50709/OOK3JOL__38839.1751390672.jpg"
-    },
-    {
-      "title": "Amuseables Peanut ‘Cat’",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "It started as a fancy dress outfit for a birthday party (Peanut was disappointed to find it had no dress code, so he...",
-      "url": "https://us.jellycat.com/amuseables-peanut-cat-outfit/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1865/51190/A6PCT__48621.1755274481.png"
-    },
-    {
-      "title": "Ricky Rain Frog Pouch",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "For those who like their essentials neatly contained (and instantly recognizable), the Ricky Rain Frog Pouch is the...",
-      "url": "https://us.jellycat.com/ricky-rain-frog-pouch/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1946/53709/RR4P__27305.1787052456.jpg"
-    },
-    {
-      "title": "Amuseables Life Ring",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Amuseables Life Ring loves to be noticed. Bright orange, bold white bands and sliders that shout “look at me”, this...",
-      "url": "https://us.jellycat.com/amuseables-life-ring/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2036/52939/A2LF__27934.1776943680.jpg"
-    },
-    {
-      "title": "Amuseables Sun 'Roller Skates'",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Amuseables Sun has discovered a new passion: roller skating. At dawn one summer solstice, she slipped on her skates and...",
-      "url": "https://us.jellycat.com/amuseables-sun-roller-skates/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2037/52931/A2SUNRS__79304.1776943679.jpg"
-    },
-    {
-      "title": "Bartholomew Bear ‘Seafarer’",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Bartholomew Bear was anxious about taking to the seas, but when Bashful Bunny invited him out on a boat trip, he knew...",
-      "url": "https://us.jellycat.com/bartholomew-bear-seafarer-outfit/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2038/52936/BARM2FM__38150.1776943679.jpg"
-    },
-    {
-      "title": "Puddlesea Bunny",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Puddlesea Bunny is a creative genius whose medium is... anything she finds at the beach. Sand, shingle, seaweed: she'll...",
-      "url": "https://us.jellycat.com/puddlesea-bunny-original/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2039/53002/BAS3PWBL__26700.1778239656.jpg"
-    },
-    {
-      "title": "Pinchsnap Crab",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Pinchsnap Crab has a job he takes very seriously. Not just anybody can be a pillow tester – it takes a lot of time and...",
-      "url": "https://us.jellycat.com/pinchsnap-crab/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2040/52948/CR2CRB__72051.1776943680.jpg"
-    },
-    {
-      "title": "Fancy Carp",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Fancy Carp is world-renowned for the elegance of her furniture store. If a sofa isn’t opulent, she’s simply not...",
-      "url": "https://us.jellycat.com/fancy-carp/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2041/52949/KO4C__75652.1776943680.jpg"
-    },
-    {
-      "title": "Larry Lobster ‘Sailor’",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Stunt double to the stars, Larry Lobster is hard at work on the new nautical action spectacular Ocean’s Edge.After...",
-      "url": "https://us.jellycat.com/larry-lobster-sailor-outfit/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2042/52954/LOB2LAR__18246.1776943680.jpg"
-    },
-    {
-      "title": "Maffles Manatee",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Maffles Manatee is a candle connoisseur. Personal favorites include Ocean Breeze (there’s no scent like home) and...",
-      "url": "https://us.jellycat.com/maffles-manatee/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2043/52963/MAN2TEE__90246.1776943680.jpg"
     }
   ],
   "leaks": [
