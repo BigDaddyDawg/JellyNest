@@ -86,6 +86,35 @@
     revealsNote: document.getElementById("revealsNote"),
     leaksList: document.getElementById("leaksList"),
     leaksNote: document.getElementById("leaksNote"),
+    panelFind: document.getElementById("panelFind"),
+    tabFind: document.getElementById("tabFind"),
+    findStatus: document.getElementById("findStatus"),
+    findIntro: document.getElementById("findIntro"),
+    findIntroNote: document.getElementById("findIntroNote"),
+    findLocateBtn: document.getElementById("findLocateBtn"),
+    findWorkspace: document.getElementById("findWorkspace"),
+    findMap: document.getElementById("findMap"),
+    findRadius: document.getElementById("findRadius"),
+    findRadiusLabel: document.getElementById("findRadiusLabel"),
+    findResultCount: document.getElementById("findResultCount"),
+    findClearSelection: document.getElementById("findClearSelection"),
+    findResults: document.getElementById("findResults"),
+    findEmpty: document.getElementById("findEmpty"),
+    findJourneyBar: document.getElementById("findJourneyBar"),
+    findJourneyBtn: document.getElementById("findJourneyBtn"),
+    findPickPlaceBtn: document.getElementById("findPickPlaceBtn"),
+    findLocationKicker: document.getElementById("findLocationKicker"),
+    findLocationLabel: document.getElementById("findLocationLabel"),
+    findChangeLocation: document.getElementById("findChangeLocation"),
+    findLocationModal: document.getElementById("findLocationModal"),
+    findLocationClose: document.getElementById("findLocationClose"),
+    findLocationForm: document.getElementById("findLocationForm"),
+    findLocationQuery: document.getElementById("findLocationQuery"),
+    findLocationSearchBtn: document.getElementById("findLocationSearchBtn"),
+    findLocationResults: document.getElementById("findLocationResults"),
+    findLocationBusy: document.getElementById("findLocationBusy"),
+    findLocationError: document.getElementById("findLocationError"),
+    findUseGps: document.getElementById("findUseGps"),
   };
 
   /** @type {{cards: any[], themes?: string[], catalogues?: string[], years?: string[], statuses?: string[], count?: number}} */
@@ -122,12 +151,41 @@
     owned: 0,
     foryou: 0,
     wishlist: 0,
+    find: 0,
     coming: 0,
   };
   /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
   let wishSync = null;
   /** @type {ReturnType<typeof window.FamilyListSync.create> | null} */
   let ownedSync = null;
+
+  /** @type {{ id: number, name: string, address: string, phone: string, url: string, lat: number, lng: number }[]} */
+  let stockists = [];
+  let stockistsLoaded = false;
+  let stockistsLoading = false;
+  /** @type {{ lat: number, lng: number } | null} */
+  let findUserPos = null;
+  /** @type {"gps" | "place" | "pin"} */
+  let findLocationSource = "gps";
+  let findLocationName = "Your location";
+  let findRadiusKm = 15;
+  /** @type {{ store: object, distanceKm: number }[]} */
+  let findResults = [];
+  /** @type {Set<number>} */
+  let findSelected = new Set();
+  /** @type {number[]} selection order for multi-stop routes */
+  let findSelectedOrder = [];
+  let findMapReady = false;
+  /** @type {any} */
+  let findLeafletMap = null;
+  /** @type {any} */
+  let findUserMarker = null;
+  /** @type {any} */
+  let findRadiusCircle = null;
+  /** @type {Map<number, any>} */
+  let findStoreMarkers = new Map();
+  /** @type {Promise<void> | null} */
+  let leafletPromise = null;
 
   initFloaties();
   loadLists();
@@ -138,7 +196,7 @@
     if (!("serviceWorker" in navigator)) return;
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register(`service-worker.js?v=15`)
+        .register(`service-worker.js?v=17`)
         .then((reg) => {
           if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           reg.update().catch(() => {});
@@ -166,7 +224,7 @@
 
   async function boot() {
     try {
-      const res = await fetch(`./data/cards.json?v=15`, { cache: "no-cache" });
+      const res = await fetch(`./data/cards.json?v=17`, { cache: "no-cache" });
       if (!res.ok) throw new Error(`Failed to load catalog (${res.status})`);
       catalog = await res.json();
       await initFamilyVault();
@@ -510,6 +568,23 @@
       ownedSearchTimer = setTimeout(renderOwned, 160);
     });
     els.comingRefresh?.addEventListener("click", () => loadComingSoon(true));
+    els.findLocateBtn?.addEventListener("click", () => startFindSearch());
+    els.findPickPlaceBtn?.addEventListener("click", () => openFindLocationModal());
+    els.findChangeLocation?.addEventListener("click", () => openFindLocationModal());
+    els.findLocationClose?.addEventListener("click", () => els.findLocationModal?.close());
+    els.findLocationModal?.addEventListener("click", (e) => {
+      if (e.target === els.findLocationModal) els.findLocationModal.close();
+    });
+    els.findLocationForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      searchFindPlaces();
+    });
+    els.findLocationResults?.addEventListener("click", onFindLocationResultsClick);
+    els.findUseGps?.addEventListener("click", () => useFindGpsLocation());
+    els.findRadius?.addEventListener("input", onFindRadiusInput);
+    els.findClearSelection?.addEventListener("click", clearFindSelection);
+    els.findJourneyBtn?.addEventListener("click", () => startFindJourney());
+    els.findResults?.addEventListener("click", onFindResultsClick);
     window.addEventListener("hashchange", maybeOpenTabFromHash);
 
     els.expandAllGroups?.addEventListener("click", () => setAllGroupsOpen(true));
@@ -583,6 +658,7 @@
     else if (hash.includes("foryou") || hash.includes("for-you")) showTab("foryou");
     else if (hash.includes("owned") || hash.includes("nest")) showTab("owned");
     else if (hash.includes("coming") || hash.includes("soon")) showTab("coming");
+    else if (hash.includes("find") || hash.includes("store")) showTab("find");
     else if (hash.includes("collection") || hash.includes("browse")) showTab("collection");
   }
 
@@ -596,6 +672,7 @@
     const ownedTab = name === "owned";
     const forYouTab = name === "foryou";
     const wishlistTab = name === "wishlist";
+    const findTab = name === "find";
     const coming = name === "coming";
 
     const panels = [
@@ -603,6 +680,7 @@
       [els.panelOwned, ownedTab],
       [els.panelForYou, forYouTab],
       [els.panelWishlist, wishlistTab],
+      [els.panelFind, findTab],
       [els.panelComing, coming],
     ];
     for (const [panel, on] of panels) {
@@ -617,6 +695,7 @@
       owned: ownedTab,
       foryou: forYouTab,
       wishlist: wishlistTab,
+      find: findTab,
       coming,
     };
     document.querySelectorAll(".tab-btn[data-tab]").forEach((btn) => {
@@ -628,6 +707,9 @@
     if (coming) {
       history.replaceState(null, "", "#coming-soon");
       if (!comingLoaded) loadComingSoon(false);
+    } else if (findTab) {
+      history.replaceState(null, "", "#find");
+      renderFindTab();
     } else if (ownedTab) {
       history.replaceState(null, "", "#nest");
       renderOwned();
@@ -1855,6 +1937,560 @@
 
   function escapeAttr(str) {
     return escapeHtml(str).replaceAll("'", "&#39;");
+  }
+
+  function haversineKm(lat1, lng1, lat2, lng2) {
+    const toRad = (d) => (d * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLng = toRad(lng2 - lng1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  function formatDistanceKm(km) {
+    if (km < 1) return `${Math.round(km * 1000)} m`;
+    if (km < 10) return `${km.toFixed(1)} km`;
+    return `${Math.round(km)} km`;
+  }
+
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve();
+    if (leafletPromise) return leafletPromise;
+    leafletPromise = new Promise((resolve, reject) => {
+      if (!document.querySelector('link[data-leaflet="1"]')) {
+        const link = document.createElement("link");
+        link.rel = "stylesheet";
+        link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        link.setAttribute("data-leaflet", "1");
+        document.head.appendChild(link);
+      }
+      const script = document.createElement("script");
+      script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("Could not load map library"));
+      document.head.appendChild(script);
+    });
+    return leafletPromise;
+  }
+
+  async function loadStockists() {
+    if (stockistsLoaded) return stockists;
+    if (stockistsLoading) {
+      while (stockistsLoading) await new Promise((r) => setTimeout(r, 80));
+      return stockists;
+    }
+    stockistsLoading = true;
+    try {
+      const res = await fetch(`./data/stockists.json?v=17`, { cache: "no-cache" });
+      if (!res.ok) throw new Error(`Stockists unavailable (${res.status})`);
+      const data = await res.json();
+      stockists = Array.isArray(data.stores) ? data.stores : [];
+      stockistsLoaded = true;
+      return stockists;
+    } finally {
+      stockistsLoading = false;
+    }
+  }
+
+  function renderFindTab() {
+    loadStockists().catch(() => {});
+    if (findUserPos && els.findWorkspace && !els.findWorkspace.hidden) {
+      requestAnimationFrame(() => {
+        if (findLeafletMap) findLeafletMap.invalidateSize();
+        updateFindMapView();
+      });
+    }
+  }
+
+  function setFindStatus(msg) {
+    if (els.findStatus) els.findStatus.textContent = msg;
+  }
+
+  function setFindIntroNote(msg) {
+    if (els.findIntroNote) els.findIntroNote.textContent = msg;
+  }
+
+  function updateFindLocationChrome() {
+    const planning = findLocationSource !== "gps";
+    if (els.findLocationKicker) {
+      els.findLocationKicker.textContent = planning ? "Planning near" : "Searching near";
+    }
+    if (els.findLocationLabel) els.findLocationLabel.textContent = findLocationName;
+    if (findUserMarker) {
+      const tip = findLocationSource === "gps" ? "You are here" : findLocationName;
+      findUserMarker.setTooltipContent(tip);
+    }
+  }
+
+  function showFindWorkspace() {
+    if (els.findIntro) els.findIntro.hidden = true;
+    if (els.findWorkspace) els.findWorkspace.hidden = false;
+    if (els.findJourneyBar) els.findJourneyBar.hidden = false;
+  }
+
+  function resetFindLocateBtn() {
+    if (els.findLocateBtn) {
+      els.findLocateBtn.disabled = false;
+      els.findLocateBtn.textContent = "Share location & search";
+    }
+  }
+
+  async function getFindGpsPosition() {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 60000,
+      });
+    });
+  }
+
+  async function applyFindLocation(pos, label, source) {
+    findUserPos = { lat: pos.lat, lng: pos.lng };
+    findLocationName = label || "Your location";
+    findLocationSource = source;
+    findRadiusKm = Number(els.findRadius?.value) || 15;
+
+    await Promise.all([loadStockists(), loadLeaflet()]);
+    showFindWorkspace();
+    updateFindLocationChrome();
+
+    if (!findMapReady) await initFindMap();
+    else updateFindLocationOnMap();
+
+    runFindSearch();
+    resetFindLocateBtn();
+    updateFindLocationChrome();
+
+    if (source === "gps") {
+      setFindStatus("Drag the radius slider to widen or tighten your hunt.");
+    } else {
+      setFindStatus("Planning ahead — change the spot any time, or tap the map to fine-tune.");
+    }
+  }
+
+  async function startFindSearch() {
+    if (!navigator.geolocation) {
+      setFindIntroNote("Your browser doesn’t support location — pick a place instead.");
+      return;
+    }
+    if (els.findLocateBtn) {
+      els.findLocateBtn.disabled = true;
+      els.findLocateBtn.textContent = "Finding you…";
+    }
+    setFindStatus("Getting your location…");
+
+    try {
+      const pos = await getFindGpsPosition();
+      await applyFindLocation(
+        { lat: pos.coords.latitude, lng: pos.coords.longitude },
+        "Your location",
+        "gps"
+      );
+    } catch (err) {
+      const geoDenied = err && typeof err === "object" && "code" in err && err.code === 1;
+      const geoFailed = err && typeof err === "object" && "code" in err;
+      if (geoFailed) {
+        setFindStatus(geoDenied ? "Location permission needed to find nearby stockists." : "Couldn’t get your location. Try again outdoors with signal.");
+        setFindIntroNote(
+          geoDenied
+            ? "Allow location in settings, or pick a place instead for trip planning."
+            : "Check location is on for this site, or pick a place instead."
+        );
+      } else {
+        setFindStatus("Couldn’t load stockist data. Check your connection and try again.");
+        setFindIntroNote("The shop list needs a quick download — Wi‑Fi or mobile data helps.");
+      }
+      resetFindLocateBtn();
+      console.error(err);
+    }
+  }
+
+  function openFindLocationModal() {
+    if (!els.findLocationModal) return;
+    if (els.findLocationError) els.findLocationError.hidden = true;
+    if (els.findLocationBusy) els.findLocationBusy.hidden = true;
+    if (els.findLocationResults) {
+      els.findLocationResults.hidden = true;
+      els.findLocationResults.innerHTML = "";
+    }
+    if (els.findLocationQuery) {
+      const prefill = findLocationSource !== "gps" ? findLocationName : "";
+      els.findLocationQuery.value = prefill;
+    }
+    if (typeof els.findLocationModal.showModal === "function") els.findLocationModal.showModal();
+    requestAnimationFrame(() => els.findLocationQuery?.focus());
+  }
+
+  function formatPhotonPlace(feature) {
+    const p = feature.properties || {};
+    const parts = [p.name, p.city, p.state, p.country].filter(Boolean);
+    return [...new Set(parts.map(String))].join(", ");
+  }
+
+  async function searchFindPlaces() {
+    const query = (els.findLocationQuery?.value || "").trim();
+    if (!query) return;
+
+    if (els.findLocationError) els.findLocationError.hidden = true;
+    if (els.findLocationResults) {
+      els.findLocationResults.hidden = true;
+      els.findLocationResults.innerHTML = "";
+    }
+    if (els.findLocationBusy) els.findLocationBusy.hidden = false;
+    if (els.findLocationSearchBtn) els.findLocationSearchBtn.disabled = true;
+
+    try {
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&limit=6&lang=en`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`Place search failed (${res.status})`);
+      const data = await res.json();
+      const features = Array.isArray(data.features) ? data.features : [];
+      if (!features.length) {
+        if (els.findLocationError) {
+          els.findLocationError.textContent = "No places matched — try a town name or postcode.";
+          els.findLocationError.hidden = false;
+        }
+        return;
+      }
+      if (!els.findLocationResults) return;
+      els.findLocationResults.innerHTML = features
+        .map((feature, i) => {
+          const [lng, lat] = feature.geometry?.coordinates || [];
+          const label = formatPhotonPlace(feature);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return "";
+          return `
+            <button type="button" class="find-place-option" data-find-place-idx="${i}"
+              data-lat="${lat}" data-lng="${lng}" data-label="${escapeAttr(label)}">
+              ${escapeHtml(label)}
+            </button>`;
+        })
+        .filter(Boolean)
+        .join("");
+      els.findLocationResults.hidden = false;
+    } catch (err) {
+      if (els.findLocationError) {
+        els.findLocationError.textContent = "Couldn’t look up that place — check your connection.";
+        els.findLocationError.hidden = false;
+      }
+      console.error(err);
+    } finally {
+      if (els.findLocationBusy) els.findLocationBusy.hidden = true;
+      if (els.findLocationSearchBtn) els.findLocationSearchBtn.disabled = false;
+    }
+  }
+
+  function onFindLocationResultsClick(e) {
+    const btn = e.target.closest("[data-lat][data-lng]");
+    if (!btn) return;
+    e.preventDefault();
+    const lat = Number(btn.getAttribute("data-lat"));
+    const lng = Number(btn.getAttribute("data-lng"));
+    const label = btn.getAttribute("data-label") || "Selected place";
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+    els.findLocationModal?.close();
+    applyFindLocation({ lat, lng }, label, "place").catch((err) => {
+      setFindStatus("Couldn’t load stockists. Check your connection and try again.");
+      console.error(err);
+    });
+  }
+
+  async function useFindGpsLocation() {
+    if (!navigator.geolocation) {
+      if (els.findLocationError) {
+        els.findLocationError.textContent = "This browser can’t access GPS — search for a place instead.";
+        els.findLocationError.hidden = false;
+      }
+      return;
+    }
+    if (els.findUseGps) els.findUseGps.disabled = true;
+    if (els.findLocationBusy) els.findLocationBusy.hidden = false;
+    try {
+      const pos = await getFindGpsPosition();
+      els.findLocationModal?.close();
+      await applyFindLocation(
+        { lat: pos.coords.latitude, lng: pos.coords.longitude },
+        "Your location",
+        "gps"
+      );
+    } catch (err) {
+      if (els.findLocationError) {
+        els.findLocationError.textContent =
+          err && typeof err === "object" && "code" in err && err.code === 1
+            ? "Location permission denied — allow it, or search for a place."
+            : "Couldn’t get GPS — try searching for a town instead.";
+        els.findLocationError.hidden = false;
+      }
+    } finally {
+      if (els.findUseGps) els.findUseGps.disabled = false;
+      if (els.findLocationBusy) els.findLocationBusy.hidden = true;
+    }
+  }
+
+  async function reverseGeocodeLabel(lat, lng) {
+    const url = `https://photon.komoot.io/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}&lang=en`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("Reverse geocode failed");
+    const data = await res.json();
+    const feature = data.features?.[0];
+    if (!feature) return "Dropped pin";
+    return formatPhotonPlace(feature) || "Dropped pin";
+  }
+
+  async function onFindMapClick(e) {
+    const { lat, lng } = e.latlng;
+    let label = "Dropped pin";
+    try {
+      label = await reverseGeocodeLabel(lat, lng);
+    } catch {
+      /* keep generic label */
+    }
+    try {
+      await applyFindLocation({ lat, lng }, label, "pin");
+    } catch (err) {
+      setFindStatus("Couldn’t update search spot — try again.");
+      console.error(err);
+    }
+  }
+
+  function updateFindLocationOnMap() {
+    if (!findLeafletMap || !findUserPos) return;
+    const latlng = [findUserPos.lat, findUserPos.lng];
+    if (findUserMarker) findUserMarker.setLatLng(latlng);
+    if (findRadiusCircle) findRadiusCircle.setLatLng(latlng);
+    updateFindMapView();
+  }
+
+  async function initFindMap() {
+    if (!els.findMap || !findUserPos) return;
+    if (findMapReady) {
+      updateFindLocationOnMap();
+      return;
+    }
+    const L = window.L;
+    if (!L) return;
+
+    findLeafletMap = L.map(els.findMap, {
+      zoomControl: true,
+      attributionControl: true,
+    }).setView([findUserPos.lat, findUserPos.lng], 12);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(findLeafletMap);
+
+    findUserMarker = L.circleMarker([findUserPos.lat, findUserPos.lng], {
+      radius: 9,
+      color: "#2f2a33",
+      weight: 2,
+      fillColor: "#b9d7ea",
+      fillOpacity: 0.95,
+    }).addTo(findLeafletMap);
+    findUserMarker.bindTooltip("You are here", { direction: "top", offset: [0, -8] });
+
+    findRadiusCircle = L.circle([findUserPos.lat, findUserPos.lng], {
+      radius: findRadiusKm * 1000,
+      color: "#d48493",
+      weight: 2,
+      fillColor: "#e9a8b3",
+      fillOpacity: 0.18,
+    }).addTo(findLeafletMap);
+
+    findLeafletMap.on("click", onFindMapClick);
+
+    findMapReady = true;
+    updateFindLocationChrome();
+    updateFindMapView();
+  }
+
+  function updateFindMapView() {
+    if (!findLeafletMap || !findUserPos || !findRadiusCircle) return;
+    findRadiusCircle.setRadius(findRadiusKm * 1000);
+    findLeafletMap.fitBounds(findRadiusCircle.getBounds(), { padding: [28, 28], maxZoom: 14 });
+  }
+
+  function onFindRadiusInput() {
+    findRadiusKm = Number(els.findRadius?.value) || 15;
+    if (els.findRadiusLabel) els.findRadiusLabel.textContent = `${findRadiusKm} km`;
+    updateFindMapView();
+    if (findUserPos) runFindSearch();
+  }
+
+  function runFindSearch() {
+    if (!findUserPos || !stockists.length) return;
+    const hits = [];
+    for (const store of stockists) {
+      const lat = Number(store.lat);
+      const lng = Number(store.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) continue;
+      const distanceKm = haversineKm(findUserPos.lat, findUserPos.lng, lat, lng);
+      if (distanceKm <= findRadiusKm) hits.push({ store, distanceKm });
+    }
+    hits.sort((a, b) => a.distanceKm - b.distanceKm || a.store.name.localeCompare(b.store.name));
+    findResults = hits;
+
+    const validIds = new Set(hits.map((h) => h.store.id));
+    findSelectedOrder = findSelectedOrder.filter((id) => validIds.has(id));
+    findSelected = new Set(findSelectedOrder);
+
+    renderFindResults();
+    paintFindMarkers();
+    updateFindJourneyBar();
+  }
+
+  function renderFindResults() {
+    const count = findResults.length;
+    if (els.findResultCount) {
+      els.findResultCount.textContent =
+        count === 0
+          ? `No stockists within ${findRadiusKm} km`
+          : `${count} stockist${count === 1 ? "" : "s"} within ${findRadiusKm} km`;
+    }
+    if (els.findEmpty) els.findEmpty.hidden = count > 0;
+    if (els.findClearSelection) els.findClearSelection.hidden = findSelected.size === 0;
+    if (!els.findResults) return;
+
+    if (!count) {
+      els.findResults.innerHTML = "";
+      return;
+    }
+
+    els.findResults.innerHTML = findResults
+      .map(({ store, distanceKm }) => {
+        const id = store.id;
+        const selected = findSelected.has(id);
+        const safeName = escapeHtml(store.name);
+        const safeAddress = escapeHtml(store.address || "Address not listed");
+        const dist = formatDistanceKm(distanceKm);
+        return `
+          <article class="find-card${selected ? " is-selected" : ""}" data-find-id="${id}">
+            <button type="button" class="find-card-main" data-find-toggle="${id}" aria-pressed="${selected ? "true" : "false"}">
+              <span class="find-card-check" aria-hidden="true">${selected ? "✓" : ""}</span>
+              <span class="find-card-copy">
+                <span class="find-card-name">${safeName}</span>
+                <span class="find-card-address">${safeAddress}</span>
+              </span>
+              <span class="find-card-distance">${dist}</span>
+            </button>
+            <button type="button" class="find-card-go" data-find-go="${id}">Start journey</button>
+          </article>`;
+      })
+      .join("");
+  }
+
+  function paintFindMarkers() {
+    if (!findLeafletMap || !window.L) return;
+    const L = window.L;
+    const keep = new Set(findResults.map((h) => h.store.id));
+
+    for (const [id, marker] of findStoreMarkers) {
+      if (!keep.has(id)) {
+        findLeafletMap.removeLayer(marker);
+        findStoreMarkers.delete(id);
+      }
+    }
+
+    for (const { store } of findResults) {
+      const id = store.id;
+      const selected = findSelected.has(id);
+      let marker = findStoreMarkers.get(id);
+      const icon = L.divIcon({
+        className: `find-pin${selected ? " is-selected" : ""}`,
+        html: `<span aria-hidden="true">${selected ? "★" : "●"}</span>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+      });
+      if (marker) {
+        marker.setIcon(icon);
+        continue;
+      }
+      marker = L.marker([store.lat, store.lng], { icon }).addTo(findLeafletMap);
+      marker.bindTooltip(escapeHtml(store.name), { direction: "top", offset: [0, -10] });
+      marker.on("click", () => toggleFindSelection(id));
+      findStoreMarkers.set(id, marker);
+    }
+  }
+
+  function toggleFindSelection(id) {
+    const numId = Number(id);
+    if (findSelected.has(numId)) {
+      findSelected.delete(numId);
+      findSelectedOrder = findSelectedOrder.filter((x) => x !== numId);
+    } else {
+      findSelected.add(numId);
+      findSelectedOrder.push(numId);
+    }
+    renderFindResults();
+    paintFindMarkers();
+    updateFindJourneyBar();
+  }
+
+  function clearFindSelection() {
+    findSelected.clear();
+    findSelectedOrder = [];
+    renderFindResults();
+    paintFindMarkers();
+    updateFindJourneyBar();
+  }
+
+  function updateFindJourneyBar() {
+    const n = findSelected.size;
+    if (els.findJourneyBtn) {
+      els.findJourneyBtn.disabled = n === 0;
+      els.findJourneyBtn.textContent = n <= 1 ? "Start journey" : `Start journey (${n} stops)`;
+    }
+  }
+
+  function onFindResultsClick(e) {
+    const goBtn = e.target.closest("[data-find-go]");
+    if (goBtn) {
+      e.preventDefault();
+      const id = Number(goBtn.getAttribute("data-find-go"));
+      if (id) startFindJourney([id]);
+      return;
+    }
+    const toggleBtn = e.target.closest("[data-find-toggle]");
+    if (toggleBtn) {
+      e.preventDefault();
+      const id = Number(toggleBtn.getAttribute("data-find-toggle"));
+      if (id) toggleFindSelection(id);
+    }
+  }
+
+  function startFindJourney(overrideIds) {
+    if (!findUserPos) return;
+    const ids = overrideIds || findSelectedOrder.slice();
+    if (!ids.length) return;
+
+    const byId = new Map(findResults.map((h) => [h.store.id, h.store]));
+    const stops = ids.map((id) => byId.get(id)).filter(Boolean);
+    if (!stops.length) return;
+
+    if (stops.length > 10) {
+      setFindStatus("Google Maps supports up to 10 stops — starting with your first picks.");
+      stops.splice(10);
+    }
+
+    const url = buildGoogleMapsJourneyUrl(findUserPos, stops);
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function buildGoogleMapsJourneyUrl(origin, stops) {
+    const fmt = (s) => `${s.lat},${s.lng}`;
+    const originStr = fmt(origin);
+    if (stops.length === 1) {
+      return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(originStr)}&destination=${encodeURIComponent(fmt(stops[0]))}&travelmode=driving`;
+    }
+    const destination = stops[stops.length - 1];
+    const waypoints = stops
+      .slice(0, -1)
+      .map(fmt)
+      .join("|");
+    return `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(originStr)}&destination=${encodeURIComponent(fmt(destination))}&waypoints=${encodeURIComponent(waypoints)}&travelmode=driving`;
   }
 
   function initFloaties() {

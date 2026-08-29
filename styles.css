@@ -243,7 +243,7 @@ body {
   bottom: 0;
   z-index: 50;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   gap: 0.15rem;
   padding: 0.4rem 0.35rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
   background: rgba(255, 248, 242, 0.92);
@@ -1687,6 +1687,415 @@ body {
   line-height: 1.4;
 }
 
+/* —— Find a store —— */
+.find-intro {
+  padding: 0 1rem 1.5rem;
+}
+
+.find-intro-card {
+  max-width: 28rem;
+  margin: 0 auto;
+  padding: 1.35rem 1.25rem;
+  border-radius: var(--radius);
+  background: var(--glass);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.find-intro-copy {
+  margin: 0 0 1.1rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.find-locate-btn {
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.95rem 1.2rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff8f2;
+  background: linear-gradient(135deg, var(--blush-deep), #c96b7f);
+  box-shadow: 0 12px 28px rgba(212, 132, 147, 0.38);
+  cursor: pointer;
+}
+
+.find-locate-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.find-pick-btn {
+  appearance: none;
+  width: 100%;
+  margin-top: 0.65rem;
+  border: 2px solid rgba(212, 132, 147, 0.35);
+  border-radius: 999px;
+  padding: 0.85rem 1.2rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--blush-deep);
+  background: rgba(255, 248, 242, 0.65);
+  cursor: pointer;
+}
+
+.find-pick-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.find-intro-note {
+  margin: 0.85rem 0 0;
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.find-workspace {
+  padding: 0 0.85rem 6.5rem;
+}
+
+.find-location-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0.15rem 0.85rem;
+  padding: 0.75rem 0.95rem;
+  border-radius: 18px;
+  background: rgba(255, 248, 242, 0.88);
+  border: 1px solid rgba(212, 132, 147, 0.22);
+}
+
+.find-location-copy {
+  display: grid;
+  gap: 0.12rem;
+  min-width: 0;
+}
+
+.find-location-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.find-location-copy strong {
+  font-size: 0.98rem;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.find-map-shell {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  background: var(--cream);
+}
+
+.find-map {
+  height: min(52vw, 280px);
+  min-height: 220px;
+  width: 100%;
+  z-index: 1;
+}
+
+.find-radius-panel {
+  padding: 0.85rem 1rem 1rem;
+  background: rgba(255, 248, 242, 0.94);
+  border-top: 1px solid rgba(212, 132, 147, 0.18);
+}
+
+.find-radius-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.55rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.find-radius-label strong {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.find-radius-slider {
+  width: 100%;
+  accent-color: var(--blush-deep);
+}
+
+.find-radius-hint {
+  margin: 0.45rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.find-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 1.1rem 0.35rem 0.65rem;
+}
+
+.find-toolbar p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.find-tool-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--blush-deep);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.find-results {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.find-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.45rem;
+  align-items: stretch;
+  border-radius: 18px;
+  border: 1px solid rgba(212, 132, 147, 0.22);
+  background: rgba(255, 248, 242, 0.88);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.find-card.is-selected {
+  border-color: var(--blush-deep);
+  box-shadow: 0 10px 24px rgba(212, 132, 147, 0.2);
+}
+
+.find-card-main {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.85rem 0.5rem 0.85rem 0.85rem;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.find-card-check {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 8px;
+  border: 2px solid rgba(212, 132, 147, 0.45);
+  display: grid;
+  place-items: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--blush-deep);
+  margin-top: 0.1rem;
+}
+
+.find-card.is-selected .find-card-check {
+  background: var(--blush-deep);
+  border-color: var(--blush-deep);
+  color: #fff8f2;
+}
+
+.find-card-copy {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.find-card-name {
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.find-card-address {
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.find-card-distance {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--mint-deep);
+  white-space: nowrap;
+  padding-top: 0.15rem;
+}
+
+.find-card-go {
+  appearance: none;
+  border: 0;
+  border-left: 1px solid rgba(212, 132, 147, 0.18);
+  background: rgba(233, 168, 179, 0.12);
+  color: var(--blush-deep);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  padding: 0.65rem 0.45rem;
+  cursor: pointer;
+}
+
+.find-journey-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(4.35rem + env(safe-area-inset-bottom, 0px));
+  z-index: 45;
+  padding: 0.55rem 0.85rem;
+  background: linear-gradient(180deg, transparent, rgba(243, 235, 227, 0.92) 28%);
+  pointer-events: none;
+}
+
+.find-journey-btn {
+  pointer-events: auto;
+  appearance: none;
+  width: 100%;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.95rem 1.2rem;
+  font: inherit;
+  font-weight: 800;
+  color: #fff8f2;
+  background: linear-gradient(135deg, var(--mint-deep), #5a9a7d);
+  box-shadow: 0 12px 28px rgba(111, 173, 147, 0.35);
+  cursor: pointer;
+}
+
+.find-journey-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.find-pin {
+  background: transparent;
+  border: 0;
+  color: var(--blush-deep);
+  font-size: 1.1rem;
+  line-height: 1;
+  text-shadow: 0 1px 3px rgba(47, 42, 51, 0.25);
+}
+
+.find-pin.is-selected {
+  color: var(--mint-deep);
+  font-size: 1.25rem;
+}
+
+.leaflet-container {
+  font-family: var(--font-body);
+}
+
+.find-location-modal::backdrop {
+  background: rgba(47, 42, 51, 0.35);
+}
+
+.find-location-shell {
+  position: relative;
+  width: min(92vw, 26rem);
+  margin: auto;
+  padding: 1.35rem 1.15rem 1.15rem;
+  border-radius: var(--radius);
+  background: var(--cream);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.find-location-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.find-location-lead {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.find-location-form {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.find-location-search {
+  width: 100%;
+}
+
+.find-location-submit {
+  margin: 0;
+}
+
+.find-location-results {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  max-height: 12rem;
+  overflow: auto;
+}
+
+.find-place-option {
+  appearance: none;
+  border: 1px solid rgba(212, 132, 147, 0.22);
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 248, 242, 0.92);
+  text-align: left;
+  font: inherit;
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.find-place-option:hover {
+  border-color: var(--blush-deep);
+}
+
+.find-location-busy,
+.find-location-error {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+}
+
+.find-location-error {
+  color: #b44a5d;
+}
+
+.find-use-gps {
+  margin-top: 0.85rem;
+}
+
 @media (max-width: 640px) {
   .news-item { grid-template-columns: 1fr; }
   .news-thumb, .news-thumb.placeholder { width: 100%; height: 140px; }
@@ -1707,8 +2116,18 @@ body {
   .modal-meta { text-align: center; }
   .modal-facts { text-align: left; }
   .dossier-grid { text-align: left; }
-  .tab-btn { font-size: 0.62rem; }
-  .tab-btn .tab-icon { font-size: 1.05rem; }
+  .tab-btn { font-size: 0.58rem; }
+  .tab-btn .tab-icon { font-size: 1rem; }
+  .find-card {
+    grid-template-columns: 1fr;
+  }
+  .find-card-go {
+    writing-mode: horizontal-tb;
+    transform: none;
+    border-left: 0;
+    border-top: 1px solid rgba(212, 132, 147, 0.18);
+    padding: 0.65rem;
+  }
 }
 
 @media (max-width: 560px) {

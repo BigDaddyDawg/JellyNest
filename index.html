@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="JellyNest" />
   <title>JellyNest · Jellycat Gallery</title>
-  <link rel="manifest" href="manifest.webmanifest?v=15" />
-  <link rel="icon" href="icon.svg?v=15" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=15" />
+  <link rel="manifest" href="manifest.webmanifest?v=17" />
+  <link rel="icon" href="icon.svg?v=17" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=17" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bagelow:wght@500;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=15" />
+  <link rel="stylesheet" href="styles.css?v=17" />
 </head>
 <body>
   <div class="sky" aria-hidden="true">
@@ -164,6 +164,57 @@
     <p class="empty" id="wishEmpty" hidden>No plush saved yet. Browse the collection and tap a heart to begin.</p>
   </section>
 
+  <section id="panelFind" class="find tab-panel" role="tabpanel" aria-labelledby="tabFind" hidden>
+    <div class="tab-page-head">
+      <h2>Find a store</h2>
+      <p id="findStatus">Share your location to discover Jellycat stockists near you.</p>
+    </div>
+
+    <div class="find-intro" id="findIntro">
+      <div class="find-intro-card">
+        <p class="find-intro-copy">We’ll peek at official Jellycat stockists in your area — independents, department stores, and gift shops.</p>
+        <button type="button" class="find-locate-btn" id="findLocateBtn">Share location &amp; search</button>
+        <button type="button" class="find-pick-btn" id="findPickPlaceBtn">Pick a place instead</button>
+        <p class="find-intro-note" id="findIntroNote">Your location stays on your phone — or pick a town ahead of a trip.</p>
+      </div>
+    </div>
+
+    <div class="find-workspace" id="findWorkspace" hidden>
+      <div class="find-location-bar">
+        <div class="find-location-copy">
+          <span class="find-location-kicker" id="findLocationKicker">Searching near</span>
+          <strong id="findLocationLabel">Your location</strong>
+        </div>
+        <button type="button" class="find-tool-btn" id="findChangeLocation">Change</button>
+      </div>
+
+      <div class="find-map-shell">
+        <div id="findMap" class="find-map" aria-label="Search area map"></div>
+        <div class="find-radius-panel">
+          <label class="find-radius-label" for="findRadius">
+            <span>Search radius</span>
+            <strong id="findRadiusLabel">15 km</strong>
+          </label>
+          <input type="range" id="findRadius" class="find-radius-slider" min="3" max="60" value="15" step="1" />
+          <p class="find-radius-hint">Slide to widen the circle — or tap the map to move your search spot.</p>
+        </div>
+      </div>
+
+      <div class="find-toolbar">
+        <p id="findResultCount">Searching…</p>
+        <button type="button" class="find-tool-btn" id="findClearSelection" hidden>Clear picks</button>
+      </div>
+      <div class="find-results" id="findResults" aria-live="polite"></div>
+      <p class="empty" id="findEmpty" hidden>No stockists in this radius — widen the circle to hunt further afield.</p>
+    </div>
+
+    <div class="find-journey-bar" id="findJourneyBar" hidden>
+      <button type="button" class="find-journey-btn" id="findJourneyBtn" disabled>
+        Start journey
+      </button>
+    </div>
+  </section>
+
   <section id="panelComing" class="coming tab-panel" role="tabpanel" aria-labelledby="tabComing" hidden>
     <div class="tab-page-head">
       <h2>Coming Soon</h2>
@@ -214,6 +265,10 @@
       <span>Wish</span>
       <span class="tab-count" id="wishTabCount" hidden>0</span>
     </button>
+    <button type="button" class="tab-btn" role="tab" data-tab="find" id="tabFind" aria-selected="false" aria-controls="panelFind">
+      <span class="tab-icon" aria-hidden="true">⌖</span>
+      <span>Find</span>
+    </button>
     <button type="button" class="tab-btn" role="tab" data-tab="coming" id="tabComing" aria-selected="false" aria-controls="panelComing">
       <span class="tab-icon" aria-hidden="true">☼</span>
       <span>Soon</span>
@@ -224,6 +279,25 @@
     <p>JellyNest · fan gallery · product data via the official <a href="https://us.jellycat.com/" rel="noopener" target="_blank">Jellycat store</a></p>
     <p class="fine">Jellycat and all related marks are trademarks of Jellycat Limited. Not affiliated with Jellycat.</p>
   </footer>
+
+  <dialog class="modal find-location-modal" id="findLocationModal">
+    <div class="find-location-shell">
+      <button type="button" class="modal-close" id="findLocationClose" aria-label="Close">×</button>
+      <h3 class="find-location-title">Change search spot</h3>
+      <p class="find-location-lead">Pick a town, postcode, or address — handy for planning a holiday hunt.</p>
+      <form class="find-location-form" id="findLocationForm">
+        <label class="search-wrap find-location-search">
+          <span class="sr-only">Town or postcode</span>
+          <input id="findLocationQuery" type="search" placeholder="e.g. Edinburgh, M1 1AE, Paris…" autocomplete="off" />
+        </label>
+        <button type="submit" class="find-locate-btn find-location-submit" id="findLocationSearchBtn">Search</button>
+      </form>
+      <div class="find-location-results" id="findLocationResults" hidden></div>
+      <p class="find-location-busy" id="findLocationBusy" hidden>Looking that up…</p>
+      <p class="find-location-error" id="findLocationError" hidden></p>
+      <button type="button" class="find-pick-btn find-use-gps" id="findUseGps">Use my current location</button>
+    </div>
+  </dialog>
 
   <dialog class="modal" id="cardModal">
     <div class="modal-shell">
@@ -304,8 +378,8 @@
   </dialog>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-  <script src="family-vault-config.js?v=15"></script>
-  <script src="family-list-sync.js?v=15"></script>
-  <script src="app.js?v=15" defer></script>
+  <script src="family-vault-config.js?v=17"></script>
+  <script src="family-list-sync.js?v=17"></script>
+  <script src="app.js?v=17" defer></script>
 </body>
 </html>

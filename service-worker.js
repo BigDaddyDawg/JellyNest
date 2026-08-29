@@ -1,5 +1,5 @@
-const CACHE_NAME = "jellynest-static-v15";
-const ASSET_V = "15";
+const CACHE_NAME = "jellynest-static-v17";
+const ASSET_V = "17";
 const CORE_ASSETS = [
   "./",
   "index.html",
@@ -14,6 +14,7 @@ const CORE_ASSETS = [
   "apple-touch-icon.png",
   `data/coming-soon.json?v=${ASSET_V}`,
   `data/cards.json?v=${ASSET_V}`,
+  `data/stockists.json?v=${ASSET_V}`,
 ];
 
 /** Network-first with offline fallback — keeps the gallery fresh after publishes. */
@@ -69,7 +70,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (path.endsWith("/cards.json") || path.endsWith("/coming-soon.json") || path.endsWith("/service-worker.js")) {
+  if (path.endsWith("/cards.json") || path.endsWith("/coming-soon.json") || path.endsWith("/stockists.json") || path.endsWith("/service-worker.js")) {
     event.respondWith(networkFirst(event.request));
     return;
   }
