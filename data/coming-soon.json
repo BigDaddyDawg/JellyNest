@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-26T16:13:41Z",
+  "generated": "2026-08-30T18:22:26Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -31,7 +31,7 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 47,
+      "revealedCount": 46,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1845/50709/OOK3JOL__38839.1751390672.jpg",
@@ -49,7 +49,7 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 34,
+      "revealedCount": 33,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png",
@@ -230,7 +230,7 @@
       "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
       "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
-      "blurb": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper. ..."
+      "blurb": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper..."
     },
     {
       "id": 2100,
@@ -1030,23 +1030,6 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2083/53654/JEL6J__62129.1785756365.jpg",
       "url": "https://us.jellycat.com/jellycat-jack-junior/",
       "blurb": "Jellycat Jack Junior has questions. Good ones, too.Small in size but no less curious, he’s constantly asking them – why..."
-    },
-    {
-      "id": 2084,
-      "fullName": "Breakfast Stickers",
-      "name": "Breakfast Stickers",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "New",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "JBRUN1S",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2084/53683/JBRUN1S__37655.1786721313.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2084/53683/JBRUN1S__37655.1786721313.jpg",
-      "url": "https://us.jellycat.com/breakfast-stickers/",
-      "blurb": "The best way to start your day? Stick on a little Jellycat joy! "
     }
   ],
   "news": [
@@ -1126,7 +1109,7 @@
       "title": "Munro Scottie Dog 'Winter Jumper'",
       "date": "",
       "category": "New Arrivals",
-      "summary": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper. ...",
+      "summary": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper...",
       "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg"
     },
