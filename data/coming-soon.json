@@ -1,5 +1,5 @@
 {
-  "generated": "2026-08-31T20:45:56Z",
+  "generated": "2026-09-02T18:22:35Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -31,7 +31,7 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 46,
+      "revealedCount": 45,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1845/50709/OOK3JOL__38839.1751390672.jpg",
@@ -55,7 +55,7 @@
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/128/48496/A2BFL__06733.1749224357.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/163/48556/A2SCL__15428.1749467849.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/234/41065/A6PACHOC__33370.1727975123.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/224/40999/A6EC__36544.1727975036.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/237/48696/A6PE__41727.1749765441.jpg"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg"
@@ -435,23 +435,6 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2042/52954/LOB2LAR__18246.1776943680.jpg",
       "url": "https://us.jellycat.com/larry-lobster-sailor-outfit/",
       "blurb": "Stunt double to the stars, Larry Lobster is hard at work on the new nautical action spectacular Ocean’s Edge.After..."
-    },
-    {
-      "id": 2043,
-      "fullName": "Maffles Manatee",
-      "name": "Maffles Manatee",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "MAN2TEE",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2043/52963/MAN2TEE__90246.1776943680.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2043/52963/MAN2TEE__90246.1776943680.jpg",
-      "url": "https://us.jellycat.com/maffles-manatee/",
-      "blurb": "Maffles Manatee is a candle connoisseur. Personal favorites include Ocean Breeze (there’s no scent like home) and..."
     },
     {
       "id": 2044,
