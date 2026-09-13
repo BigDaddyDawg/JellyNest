@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-09T18:15:35Z",
+  "generated": "2026-09-13T17:52:30Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,9 +13,10 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 1,
+      "revealedCount": 2,
       "gallery": [
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/53740/GRU3WL__86481.1787748413.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/53740/GRU3WL__86481.1787748413.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2102/53852/AS2SKGO__24497.1788967622.jpg"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/53740/GRU3WL__86481.1787748413.jpg"
     },
@@ -44,7 +45,7 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 39,
+      "revealedCount": 42,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53550/A2BC__85468.1784904923.png",
@@ -65,7 +66,7 @@
       "rarity": "Preview",
       "setCode": "coming-soon",
       "setName": "Coming Soon",
-      "story": "Christmas",
+      "story": "All Soft Toys",
       "type": "Soft Toy",
       "color": "",
       "sku": "GRU3WL",
@@ -73,6 +74,23 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/53740/GRU3WL__86481.1787748413.jpg",
       "url": "https://us.jellycat.com/tawoola-owl/",
       "blurb": "Nobody does gifting quite like Tawoola Owl. Her thoughtfulness is second to none – and while her keen eye for detail..."
+    },
+    {
+      "id": 2102,
+      "fullName": "Amuseables Sports Ski Club Goggles",
+      "name": "Amuseables Sports Ski Club Goggles",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "AS2SKGO",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2102/53852/AS2SKGO__24497.1788967622.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2102/53852/AS2SKGO__24497.1788967622.jpg",
+      "url": "https://us.jellycat.com/amuseables-sports-ski-club-goggles/",
+      "blurb": "Amuseables Sports Ski Club Goggles is snowed under with Christmas planning – but he’s not phased. Life’s a breeze when..."
     },
     {
       "id": 1842,
@@ -918,6 +936,14 @@
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2098/53740/GRU3WL__86481.1787748413.jpg"
     },
     {
+      "title": "Amuseables Sports Ski Club Goggles",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Amuseables Sports Ski Club Goggles is snowed under with Christmas planning – but he’s not phased. Life’s a breeze when...",
+      "url": "https://us.jellycat.com/amuseables-sports-ski-club-goggles/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2102/53852/AS2SKGO__24497.1788967622.jpg"
+    },
+    {
       "title": "Broox Bat",
       "date": "",
       "category": "New Arrivals",
@@ -996,14 +1022,6 @@
       "summary": "Fancy Carp is world-renowned for the elegance of her furniture store. If a sofa isn’t opulent, she’s simply not...",
       "url": "https://us.jellycat.com/fancy-carp/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2041/52949/KO4C__75652.1776943680.jpg"
-    },
-    {
-      "title": "Larry Lobster ‘Sailor’",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Stunt double to the stars, Larry Lobster is hard at work on the new nautical action spectacular Ocean’s Edge.After...",
-      "url": "https://us.jellycat.com/larry-lobster-sailor-outfit/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2042/52954/LOB2LAR__18246.1776943680.jpg"
     }
   ],
   "leaks": [
