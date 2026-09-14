@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-07T19:05:04Z",
+  "generated": "2026-09-14T19:48:15Z",
   "source": "https://jellycat.com/events-experiences/",
   "experiences": [
     {
@@ -28,7 +28,7 @@
       "url": "https://jellycat.com/jellycat-general-store-in-birmingham-manchester/"
     }
   ],
-  "count": 15,
+  "count": 19,
   "cards": [
     {
       "id": "exclusive-cafe-shanghai-amuseables-berrity-latte",
@@ -101,6 +101,102 @@
       "source": "jellycat-experience-page",
       "experienceId": "cafe-shanghai",
       "experienceLabel": "Café · Shanghai & Beijing"
+    },
+    {
+      "id": "exclusive-diner-new-york-amuseables-breck-hot-dog-chilli-and",
+      "fullName": "Amuseables Breck Hot Dog Chilli and",
+      "name": "Breck Hot Dog Chilli and",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2023",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Diner Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Breck Hot Dog Chilli and from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Diner · New York"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "diner-new-york",
+      "experienceLabel": "Diner · New York"
+    },
+    {
+      "id": "exclusive-diner-new-york-amuseables-mckenna",
+      "fullName": "Amuseables McKenna",
+      "name": "McKenna",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2023",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Diner Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables McKenna from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Diner · New York"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "diner-new-york",
+      "experienceLabel": "Diner · New York"
+    },
+    {
+      "id": "exclusive-diner-new-york-amuseables-mckenna-burger-double-stacked-and",
+      "fullName": "Amuseables McKenna Burger Double-stacked and",
+      "name": "McKenna Burger Double-stacked and",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2023",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Diner Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
+      "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/1024w/image-manager/burger..1.jpg?t=1788961432",
+      "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/1024w/image-manager/burger..1.jpg?t=1788961432",
+      "blurb": "Amuseables McKenna Burger Double-stacked and from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Diner · New York"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "diner-new-york",
+      "experienceLabel": "Diner · New York"
+    },
+    {
+      "id": "exclusive-diner-new-york-amuseables-rustic-fries-with",
+      "fullName": "Amuseables Rustic Fries With",
+      "name": "Rustic Fries With",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2023",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Diner Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-diner-experience-new-york/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Rustic Fries With from the Jellycat Diner Experience (FAO Schwarz, New York) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Diner · New York"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "diner-new-york",
+      "experienceLabel": "Diner · New York"
     },
     {
       "id": "exclusive-fish-chips-london-amuseables-charlie-chip",
