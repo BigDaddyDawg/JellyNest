@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-07T20:23:04Z",
+  "generated": "2026-10-11T19:18:05Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -31,7 +31,7 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 44,
+      "revealedCount": 47,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1842/50697/BAT3B__37327.1750934772.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1845/50709/OOK3JOL__38839.1751390672.jpg",
@@ -51,14 +51,14 @@
       "releaseDate": null,
       "revealedCount": 33,
       "gallery": [
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53897/A2BC__75820.1789644375.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/128/48496/A2BFL__06733.1749224357.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/163/48556/A2SCL__15428.1749467849.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/224/40999/A6EC__36544.1727975036.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/237/48696/A6PE__41727.1749765441.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/237/48696/A6PE__41727.1749765441.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/238/48708/A6PIC__68653.1749467819.jpg"
       ],
-      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg"
+      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53897/A2BC__75820.1789644375.jpg"
     }
   ],
   "reveals": [
@@ -295,8 +295,8 @@
       "type": "Soft Toy",
       "color": "",
       "sku": "A4MITTE",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2126/54080/A4MITTE__06533.1790743612.png",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2126/54080/A4MITTE__06533.1790743612.png",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2126/54170/A4MITTE__98661.1791458857.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2126/54170/A4MITTE__98661.1791458857.jpg",
       "url": "https://us.jellycat.com/amuseables-fitzsnug-mitten/",
       "blurb": "Amuseables Fitzsnug Mitten is a homebody at heart. While her twin Fitswell can usually be found out and about in..."
     },
@@ -1047,6 +1047,57 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2112/53906/MP4BARL__89659.1789679110.png",
       "url": "https://us.jellycat.com/leola-bear-musical-pull/",
       "blurb": "Ready for days of play and nights of peace, the Leola Bear Musical Pull plays a gentle lullaby to soothe little ones..."
+    },
+    {
+      "id": 2114,
+      "fullName": "Amuseables Sports Sparely Bowling Pin",
+      "name": "Amuseables Sports Sparely Bowling Pin",
+      "version": "New",
+      "rarity": "New",
+      "setCode": "new",
+      "setName": "New Arrivals",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "AS2BP",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2114/53985/AS2BP__78085.1790695653.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2114/53985/AS2BP__78085.1790695653.jpg",
+      "url": "https://us.jellycat.com/amuseables-sports-sparely-bowling-pin/",
+      "blurb": "Amuseables Sports Sparely Bowling Pin considers himself somewhat of an amateur philosopher. After all, he’s weathered..."
+    },
+    {
+      "id": 2132,
+      "fullName": "Personalized Leola Bear Blankie",
+      "name": "Personalized Leola Bear Blankie",
+      "version": "New",
+      "rarity": "New",
+      "setCode": "new",
+      "setName": "New Arrivals",
+      "story": "All Baby",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "PERSBLNK4BARL",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2132/54186/PERSBLNK4BARL__50445.1791501969.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2132/54186/PERSBLNK4BARL__50445.1791501969.jpg",
+      "url": "https://us.jellycat.com/personalised-leola-bear-blankie/",
+      "blurb": "Styled in the same pastel hue as Leola Bear herself, the Leola Bear Blankie pairs a cosy blanket with gentle paws and..."
+    },
+    {
+      "id": 2133,
+      "fullName": "Personalized Leola Bear Soother",
+      "name": "Personalized Leola Bear Soother",
+      "version": "New",
+      "rarity": "New",
+      "setCode": "new",
+      "setName": "New Arrivals",
+      "story": "All Baby",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "PERSSTH4BARL",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2133/54181/PERSSTH4BARL__35910.1791501969.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2133/54181/PERSSTH4BARL__35910.1791501969.jpg",
+      "url": "https://us.jellycat.com/personalised-leola-bear-soother/",
+      "blurb": "Inspired by Leola Bear’s flair for fashion, this soother brings a touch of personalised style to every cuddle. With the..."
     }
   ],
   "news": [
