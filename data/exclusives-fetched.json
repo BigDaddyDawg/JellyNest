@@ -1,5 +1,5 @@
 {
-  "generated": "2026-10-26T20:23:55Z",
+  "generated": "2026-11-02T23:03:35Z",
   "source": "https://jellycat.com/events-experiences/",
   "experiences": [
     {
@@ -28,7 +28,7 @@
       "url": "https://jellycat.com/jellycat-general-store-in-birmingham-manchester/"
     }
   ],
-  "count": 19,
+  "count": 23,
   "cards": [
     {
       "id": "exclusive-cafe-shanghai-amuseables-berrity-latte",
@@ -485,6 +485,102 @@
       "source": "jellycat-experience-page",
       "experienceId": "fish-chips-london",
       "experienceLabel": "Fish & Chips · London / Selfridges"
+    },
+    {
+      "id": "exclusive-patisserie-paris-amuseables-aeree-raspberry-souffl-souffl",
+      "fullName": "Amuseables Aeree Raspberry Soufflé Soufflé",
+      "name": "Aeree Raspberry Soufflé Soufflé",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Patisserie Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-patisserie-experience-paris/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Aeree Raspberry Soufflé Soufflé from the Jellycat Patisserie Experience (Galeries Lafayette / FAO Schwarz Paris) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Patisserie · Paris"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "patisserie-paris",
+      "experienceLabel": "Patisserie · Paris"
+    },
+    {
+      "id": "exclusive-patisserie-paris-amuseables-aeree-raspberry-souffl-they-re",
+      "fullName": "Amuseables Aeree Raspberry Soufflé. They're",
+      "name": "Aeree Raspberry Soufflé. They're",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Patisserie Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-patisserie-experience-paris/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Aeree Raspberry Soufflé. They're from the Jellycat Patisserie Experience (Galeries Lafayette / FAO Schwarz Paris) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Patisserie · Paris"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "patisserie-paris",
+      "experienceLabel": "Patisserie · Paris"
+    },
+    {
+      "id": "exclusive-patisserie-paris-amuseables-pralinda-paris-brest-most",
+      "fullName": "Amuseables Pralinda Paris-Brest Most",
+      "name": "Pralinda Paris-Brest Most",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Patisserie Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-patisserie-experience-paris/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Pralinda Paris-Brest Most from the Jellycat Patisserie Experience (Galeries Lafayette / FAO Schwarz Paris) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Patisserie · Paris"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "patisserie-paris",
+      "experienceLabel": "Patisserie · Paris"
+    },
+    {
+      "id": "exclusive-patisserie-paris-amuseables-scrump",
+      "fullName": "Amuseables Scrump",
+      "name": "Scrump",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Patisserie Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-patisserie-experience-paris/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Scrump from the Jellycat Patisserie Experience (Galeries Lafayette / FAO Schwarz Paris) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Patisserie · Paris"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "patisserie-paris",
+      "experienceLabel": "Patisserie · Paris"
     }
   ]
 }
