@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-08T19:17:53Z",
+  "generated": "2026-11-09T23:45:29Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,9 +13,11 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 0,
-      "gallery": [],
-      "heroImage": null
+      "revealedCount": 1,
+      "gallery": [
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg"
+      ],
+      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg"
     },
     {
       "code": "new",
@@ -55,6 +57,23 @@
     }
   ],
   "reveals": [
+    {
+      "id": 2159,
+      "fullName": "Shuffly Penguin",
+      "name": "Shuffly Penguin",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "PEN6J",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2159/54374/PEN6J__01175.1793823966.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg",
+      "url": "https://us.jellycat.com/shuffly-penguin/",
+      "blurb": "Shuffly Penguin has a fine pair of lungs, which he’s used to beat all sorts of records: lowest note sung, longest time..."
+    },
     {
       "id": 2085,
       "fullName": "Amuseables Pomilly",
@@ -789,6 +808,14 @@
   ],
   "news": [
     {
+      "title": "Shuffly Penguin",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Shuffly Penguin has a fine pair of lungs, which he’s used to beat all sorts of records: lowest note sung, longest time...",
+      "url": "https://us.jellycat.com/shuffly-penguin/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2159/54374/PEN6J__01175.1793823966.jpg"
+    },
+    {
       "title": "Amuseables Pomilly",
       "date": "",
       "category": "New Arrivals",
@@ -875,14 +902,6 @@
       "summary": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat...",
       "url": "https://us.jellycat.com/ulrich-wolf/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2100/53764/WOL1W__77322.1787753412.jpg"
-    },
-    {
-      "title": "Amuseables Sports Ski Club Goggles",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Amuseables Sports Ski Club Goggles is snowed under with Christmas planning – but he’s not phased. Life’s a breeze when...",
-      "url": "https://us.jellycat.com/amuseables-sports-ski-club-goggles/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2102/53852/AS2SKGO__24497.1788967622.jpg"
     }
   ],
   "leaks": [
