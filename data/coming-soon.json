@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-09T23:45:29Z",
+  "generated": "2026-11-11T21:42:30Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,11 +13,12 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 1,
+      "revealedCount": 2,
       "gallery": [
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg"
       ],
-      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg"
+      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg"
     },
     {
       "code": "new",
@@ -44,7 +45,7 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 30,
+      "revealedCount": 34,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53897/A2BC__75820.1789644375.jpg",
@@ -57,6 +58,23 @@
     }
   ],
   "reveals": [
+    {
+      "id": 1437,
+      "fullName": "Yummy Bunny",
+      "name": "Yummy Bunny",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "YUMMY_BUNNY",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1437/46426/YUM6MINB__15698.1794323918.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg",
+      "url": "https://us.jellycat.com/yummy-bunny/",
+      "blurb": "Yummy Bunny Mint is full of curiosity, and so cute you won't want to leave them anywhere! In ruffled, mint-green fur..."
+    },
     {
       "id": 2159,
       "fullName": "Shuffly Penguin",
@@ -808,6 +826,14 @@
   ],
   "news": [
     {
+      "title": "Yummy Bunny",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Yummy Bunny Mint is full of curiosity, and so cute you won't want to leave them anywhere! In ruffled, mint-green fur...",
+      "url": "https://us.jellycat.com/yummy-bunny/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1437/46426/YUM6MINB__15698.1794323918.jpg"
+    },
+    {
       "title": "Shuffly Penguin",
       "date": "",
       "category": "New Arrivals",
@@ -894,14 +920,6 @@
       "summary": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper...",
       "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg"
-    },
-    {
-      "title": "Ulrich Wolf",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat...",
-      "url": "https://us.jellycat.com/ulrich-wolf/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2100/53764/WOL1W__77322.1787753412.jpg"
     }
   ],
   "leaks": [
