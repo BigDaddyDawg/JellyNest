@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-09T23:44:35Z",
+  "generated": "2026-11-16T23:41:52Z",
   "source": "https://jellycat.com/events-experiences/",
   "experiences": [
     {
@@ -28,7 +28,7 @@
       "url": "https://jellycat.com/jellycat-general-store-in-birmingham-manchester/"
     }
   ],
-  "count": 23,
+  "count": 25,
   "cards": [
     {
       "id": "exclusive-cafe-shanghai-amuseables-berrity-latte",
@@ -199,6 +199,30 @@
       "experienceLabel": "Diner · New York"
     },
     {
+      "id": "exclusive-fish-chips-london-amuseables-boiled-egg",
+      "fullName": "Amuseables Boiled Egg",
+      "name": "Boiled Egg",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Fish & Chips Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-fish-chips-experience-london/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Boiled Egg from the Jellycat Fish & Chips Experience (Selfridges London) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Fish & Chips · London / Selfridges"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "fish-chips-london",
+      "experienceLabel": "Fish & Chips · London / Selfridges"
+    },
+    {
       "id": "exclusive-fish-chips-london-amuseables-charlie-chip",
       "fullName": "Amuseables Charlie Chip",
       "name": "Charlie Chip",
@@ -334,6 +358,30 @@
       "thumb": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/jellycat-featuredcategorycarousel-amuseable-pickled-onion-640x824.jpg?t=1746656138",
       "full": "https://cdn11.bigcommerce.com/s-e66ltxu1n1/images/stencil/original/image-manager/jellycat-featuredcategorycarousel-amuseable-pickled-onion-640x824.jpg?t=1746656138",
       "blurb": "Amuseables Onnie Pickled Onion from the Jellycat Fish & Chips Experience (Selfridges London) — store / experience exclusive, not sold on jellycat.com.",
+      "categories": [
+        "Exclusives",
+        "Fish & Chips · London / Selfridges"
+      ],
+      "source": "jellycat-experience-page",
+      "experienceId": "fish-chips-london",
+      "experienceLabel": "Fish & Chips · London / Selfridges"
+    },
+    {
+      "id": "exclusive-fish-chips-london-amuseables-peanut-and",
+      "fullName": "Amuseables Peanut... and",
+      "name": "Peanut... and",
+      "theme": "Amuseables Food & Drink",
+      "catalogue": "Exclusives",
+      "year": "2024",
+      "status": "Live",
+      "subBrand": "Amuseables",
+      "version": "Fish & Chips Experience",
+      "type": "Soft Toy",
+      "availability": "Store Exclusive",
+      "url": "https://jellycat.com/jellycat-fish-chips-experience-london/",
+      "thumb": "",
+      "full": "",
+      "blurb": "Amuseables Peanut... and from the Jellycat Fish & Chips Experience (Selfridges London) — store / experience exclusive, not sold on jellycat.com.",
       "categories": [
         "Exclusives",
         "Fish & Chips · London / Selfridges"
