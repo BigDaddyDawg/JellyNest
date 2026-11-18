@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-16T23:42:44Z",
+  "generated": "2026-11-18T22:27:17Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -26,7 +26,7 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 44,
+      "revealedCount": 43,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2086/53759/A2SBOOT__19472.1787753488.jpg",
@@ -804,23 +804,6 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2148/54281/BAR4BGBR__82155.1792682854.jpg",
       "url": "https://us.jellycat.com/bartholomew-bear-shoulder-bag/",
       "blurb": "The Bartholomew Bear Shoulder Bag is the ultimate accessory for city strolls, holidays away, or even a summer picnic..."
-    },
-    {
-      "id": 2159,
-      "fullName": "Shuffly Penguin",
-      "name": "Shuffly Penguin",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "PEN6J",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2159/54374/PEN6J__01175.1793823966.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg",
-      "url": "https://us.jellycat.com/shuffly-penguin/",
-      "blurb": "Shuffly Penguin has a fine pair of lungs, which he’s used to beat all sorts of records: lowest note sung, longest time..."
     }
   ],
   "news": [
