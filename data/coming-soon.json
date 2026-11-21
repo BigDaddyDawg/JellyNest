@@ -1,5 +1,5 @@
 {
-  "generated": "2026-11-18T22:27:17Z",
+  "generated": "2026-11-21T16:15:02Z",
   "sources": {
     "catalogue": "https://us.jellycat.com",
     "news": "https://www.jellycat.com/jelly-journal/",
@@ -13,9 +13,10 @@
       "blurb": "Fresh arrivals are on the way! New Jellycat toys and Amuseables are getting ready for their big debut. Keep your eyes peeled…",
       "productUrl": "https://us.jellycat.com/collections/coming-soon",
       "releaseDate": null,
-      "revealedCount": 1,
+      "revealedCount": 2,
       "gallery": [
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2161/54417/SMG2CAT__59182.1795188140.png"
       ],
       "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/1437/46426/YUM6MINB__15698.1794323918.jpg"
     },
@@ -26,16 +27,16 @@
       "blurb": "It’s official: new Jellycat toys have landed! Cheeky Amuseables, luxury gifts, Jellycat bags and charms... Who will you discover?",
       "productUrl": "https://us.jellycat.com/new",
       "releaseDate": null,
-      "revealedCount": 43,
+      "revealedCount": 38,
       "gallery": [
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2086/53759/A2SBOOT__19472.1787753488.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2088/53783/A4BCBG__57806.1787753522.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2090/53735/A4MITT__47638.1787753556.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2092/53744/A4VINC__14900.1787753532.jpg",
-        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2093/54147/A6STA__46083.1791286066.jpg"
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2094/53725/ASP1B__88900.1787748395.jpg",
+        "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2096/53824/BCP4PP__24516.1787758004.jpg"
       ],
-      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg"
+      "heroImage": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2086/53759/A2SBOOT__19472.1787753488.jpg"
     },
     {
       "code": "back-in-stock",
@@ -44,7 +45,7 @@
       "blurb": "Jellycat favorites return. From long-missed soft toys to popular Amuseables, these companions won’t stay for long – catch them before they’re gone again!",
       "productUrl": "https://us.jellycat.com/collections/back-in-stock",
       "releaseDate": null,
-      "revealedCount": 34,
+      "revealedCount": 31,
       "gallery": [
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/114/40944/A6BE__18474.1727974965.jpg",
         "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/126/53897/A2BC__75820.1789644375.jpg",
@@ -75,21 +76,21 @@
       "blurb": "Yummy Bunny Mint is full of curiosity, and so cute you won't want to leave them anywhere! In ruffled, mint-green fur..."
     },
     {
-      "id": 2085,
-      "fullName": "Amuseables Pomilly",
-      "name": "Amuseables Pomilly",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Baby",
+      "id": 2161,
+      "fullName": "Smudge Cream Cat",
+      "name": "Smudge Cream Cat",
+      "version": "Coming soon",
+      "rarity": "Preview",
+      "setCode": "coming-soon",
+      "setName": "Coming Soon",
+      "story": "Coming Soon",
       "type": "Soft Toy",
       "color": "",
-      "sku": "A2HAT",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2085/53754/A2HAT__80545.1787753472.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2085/53754/A2HAT__80545.1787753472.jpg",
-      "url": "https://us.jellycat.com/amuseables-pomilly/",
-      "blurb": "Amuseables Pomilly is the queen of the Christmas party! She spends December bobbing between festive gatherings,..."
+      "sku": "SMG2CAT",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2161/54417/SMG2CAT__59182.1795188140.png",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2161/54417/SMG2CAT__59182.1795188140.png",
+      "url": "https://us.jellycat.com/smudge-cat/",
+      "blurb": "Smudge Cream Cat is living the dream as a character model for artists. His unique talent, which makes him so in demand?..."
     },
     {
       "id": 2086,
@@ -160,23 +161,6 @@
       "blurb": "Whenever Mullover Spiced Drink needs some quiet, he grabs his snowboard and heads to one of the less crowded slopes..."
     },
     {
-      "id": 2093,
-      "fullName": "Amuseables Silver Star",
-      "name": "Amuseables Silver Star",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Baby",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "A6STA",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2093/54147/A6STA__46083.1791286066.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2093/54147/A6STA__46083.1791286066.jpg",
-      "url": "https://us.jellycat.com/amuseables-silver-star/",
-      "blurb": "For years now, Amuseables Silver Star has been spreading a little winter wonder in secret. It isn’t easy – especially..."
-    },
-    {
       "id": 2094,
       "fullName": "Bizzlestomp Bear",
       "name": "Bizzlestomp Bear",
@@ -211,40 +195,6 @@
       "blurb": "Rufferty Puppy rarely comes back from anywhere with exactly what he left with. There are usually an extra few..."
     },
     {
-      "id": 2098,
-      "fullName": "Tawoola Owl",
-      "name": "Tawoola Owl",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "GRU3WL",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2098/54239/GRU3WL__34806.1792078029.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2098/54239/GRU3WL__34806.1792078029.jpg",
-      "url": "https://us.jellycat.com/tawoola-owl/",
-      "blurb": "Nobody does gifting quite like Tawoola Owl. Her thoughtfulness is second to none – and while her keen eye for detail..."
-    },
-    {
-      "id": 2099,
-      "fullName": "Munro Scottie Dog 'Winter Jumper'",
-      "name": "Munro Scottie Dog 'Winter Jumper'",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "MUN2JUM",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2099/53730/MUN2JUM__06433.1787753440.jpg",
-      "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
-      "blurb": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper..."
-    },
-    {
       "id": 2100,
       "fullName": "Ulrich Wolf",
       "name": "Ulrich Wolf",
@@ -260,23 +210,6 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2100/53764/WOL1W__77322.1787753412.jpg",
       "url": "https://us.jellycat.com/ulrich-wolf/",
       "blurb": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat..."
-    },
-    {
-      "id": 2102,
-      "fullName": "Amuseables Sports Ski Club Goggles",
-      "name": "Amuseables Sports Ski Club Goggles",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "AS2SKGO",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2102/53852/AS2SKGO__24497.1788967622.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2102/53852/AS2SKGO__24497.1788967622.jpg",
-      "url": "https://us.jellycat.com/amuseables-sports-ski-club-goggles/",
-      "blurb": "Amuseables Sports Ski Club Goggles is snowed under with Christmas planning – but he’s not phased. Life’s a breeze when..."
     },
     {
       "id": 2108,
@@ -364,23 +297,6 @@
       "blurb": "Ready for days of play and nights of peace, the Leola Bear Musical Pull plays a gentle lullaby to soothe little ones..."
     },
     {
-      "id": 2114,
-      "fullName": "Amuseables Sports Sparely Bowling Pin",
-      "name": "Amuseables Sports Sparely Bowling Pin",
-      "version": "New",
-      "rarity": "New",
-      "setCode": "new",
-      "setName": "New Arrivals",
-      "story": "All Soft Toys",
-      "type": "Soft Toy",
-      "color": "",
-      "sku": "AS2BP",
-      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2114/53985/AS2BP__78085.1790695653.jpg",
-      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2114/53985/AS2BP__78085.1790695653.jpg",
-      "url": "https://us.jellycat.com/amuseables-sports-sparely-bowling-pin/",
-      "blurb": "Amuseables Sports Sparely Bowling Pin considers himself somewhat of an amateur philosopher. After all, he’s weathered..."
-    },
-    {
       "id": 2115,
       "fullName": "Amuseables Pinecone Tree",
       "name": "Amuseables Pinecone Tree",
@@ -433,8 +349,8 @@
     },
     {
       "id": 2118,
-      "fullName": "Bartholomew Bear Jr. Winter Warmer Decoration",
-      "name": "Bartholomew Bear Jr. Winter Warmer Decoration",
+      "fullName": "Bartholomew Bear Jr. Winter Warmer Ornament",
+      "name": "Bartholomew Bear Jr. Winter Warmer Ornament",
       "version": "New",
       "rarity": "New",
       "setCode": "new",
@@ -450,8 +366,8 @@
     },
     {
       "id": 2119,
-      "fullName": "Bartholomew Bear Winter Warmer Decoration",
-      "name": "Bartholomew Bear Winter Warmer Decoration",
+      "fullName": "Bartholomew Bear Winter Warmer Ornament",
+      "name": "Bartholomew Bear Winter Warmer Ornament",
       "version": "New",
       "rarity": "New",
       "setCode": "new",
@@ -484,8 +400,8 @@
     },
     {
       "id": 2121,
-      "fullName": "Leola Bear Winter Warmer Decoration",
-      "name": "Leola Bear Winter Warmer Decoration",
+      "fullName": "Leola Bear Winter Warmer Ornament",
+      "name": "Leola Bear Winter Warmer Ornament",
       "version": "New",
       "rarity": "New",
       "setCode": "new",
@@ -804,6 +720,23 @@
       "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2148/54281/BAR4BGBR__82155.1792682854.jpg",
       "url": "https://us.jellycat.com/bartholomew-bear-shoulder-bag/",
       "blurb": "The Bartholomew Bear Shoulder Bag is the ultimate accessory for city strolls, holidays away, or even a summer picnic..."
+    },
+    {
+      "id": 2159,
+      "fullName": "Shuffly Penguin",
+      "name": "Shuffly Penguin",
+      "version": "New",
+      "rarity": "New",
+      "setCode": "new",
+      "setName": "New Arrivals",
+      "story": "All Soft Toys",
+      "type": "Soft Toy",
+      "color": "",
+      "sku": "PEN6J",
+      "thumb": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2159/54374/PEN6J__01175.1793823966.jpg",
+      "full": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/original/products/2159/54374/PEN6J__01175.1793823966.jpg",
+      "url": "https://us.jellycat.com/shuffly-penguin/",
+      "blurb": "Shuffly Penguin has a fine pair of lungs, which he’s used to beat all sorts of records: lowest note sung, longest time..."
     }
   ],
   "news": [
@@ -816,12 +749,12 @@
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/1437/46426/YUM6MINB__15698.1794323918.jpg"
     },
     {
-      "title": "Amuseables Pomilly",
+      "title": "Smudge Cream Cat",
       "date": "",
       "category": "New Arrivals",
-      "summary": "Amuseables Pomilly is the queen of the Christmas party! She spends December bobbing between festive gatherings,...",
-      "url": "https://us.jellycat.com/amuseables-pomilly/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2085/53754/A2HAT__80545.1787753472.jpg"
+      "summary": "Smudge Cream Cat is living the dream as a character model for artists. His unique talent, which makes him so in demand?...",
+      "url": "https://us.jellycat.com/smudge-cat/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2161/54417/SMG2CAT__59182.1795188140.png"
     },
     {
       "title": "Amuseables Perta Snow Boot",
@@ -856,14 +789,6 @@
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2092/53744/A4VINC__14900.1787753532.jpg"
     },
     {
-      "title": "Amuseables Silver Star",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "For years now, Amuseables Silver Star has been spreading a little winter wonder in secret. It isn’t easy – especially...",
-      "url": "https://us.jellycat.com/amuseables-silver-star/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2093/54147/A6STA__46083.1791286066.jpg"
-    },
-    {
       "title": "Bizzlestomp Bear",
       "date": "",
       "category": "New Arrivals",
@@ -880,28 +805,36 @@
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2096/53824/BCP4PP__24516.1787758004.jpg"
     },
     {
-      "title": "Tawoola Owl",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Nobody does gifting quite like Tawoola Owl. Her thoughtfulness is second to none – and while her keen eye for detail...",
-      "url": "https://us.jellycat.com/tawoola-owl/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2098/54239/GRU3WL__34806.1792078029.jpg"
-    },
-    {
-      "title": "Munro Scottie Dog 'Winter Jumper'",
-      "date": "",
-      "category": "New Arrivals",
-      "summary": "Munro Scottie Dog isn’t usually one to brag, but even he has to admit... he's looking fetching in his Winter Jumper...",
-      "url": "https://us.jellycat.com/munro-scottie-dog-winter-jumper-outfit/",
-      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2099/53730/MUN2JUM__06433.1787753440.jpg"
-    },
-    {
       "title": "Ulrich Wolf",
       "date": "",
       "category": "New Arrivals",
       "summary": "Ulrich Wolf is daintily dipping his toes into the world of ballet... as the principal choreographer for an all-Jellycat...",
       "url": "https://us.jellycat.com/ulrich-wolf/",
       "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2100/53764/WOL1W__77322.1787753412.jpg"
+    },
+    {
+      "title": "Leola Bear Comforter",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Fashioned after Bartholomew Bear’s own cousin and stylist, the Leola Bear Comforter is crafted in pastel fur, with...",
+      "url": "https://us.jellycat.com/leola-bear-comforter/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2108/53929/CMF4BARL__33702.1789679145.png"
+    },
+    {
+      "title": "Leola Bear Blankie",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "Styled in the same pastel hue as Leola Bear herself, the Leola Bear Blankie pairs a cosy blanket with gentle paws and...",
+      "url": "https://us.jellycat.com/leola-bear-blankie/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2109/53911/BLNK4BARL__42534.1789679118.png"
+    },
+    {
+      "title": "Leola Bear Ring Rattle",
+      "date": "",
+      "category": "New Arrivals",
+      "summary": "A stylistic nod to Leola Bear herself – the artistic Jellycat behind all of Bartholomew Bear’s costumes – the Leola...",
+      "url": "https://us.jellycat.com/leola-bear-ring-rattle/",
+      "image": "https://cdn11.bigcommerce.com/s-23s5gfmhr7/images/stencil/500w/products/2110/53917/BARL4RR__87435.1789679127.png"
     }
   ],
   "leaks": [
